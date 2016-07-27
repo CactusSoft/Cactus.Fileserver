@@ -1,15 +1,14 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Cactus.Fileserver.Asp5")]
+[assembly: AssemblyTitle("Cactus.Fileserver.Asp5.Images")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("CactusSoft LLC")]
-[assembly: AssemblyProduct("Cactus.Fileserver.Asp5")]
+[assembly: AssemblyProduct("Cactus.Fileserver.Asp5.Images")]
 [assembly: AssemblyCopyright("Copyright © CactusSoft LLC 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("3bbe085a-7b36-40ff-ab73-573133a94f21")]
+[assembly: Guid("193131c0-78fe-41a1-87df-e0377d90a7e6")]
 
 // Version information for an assembly consists of the following four values:
 //

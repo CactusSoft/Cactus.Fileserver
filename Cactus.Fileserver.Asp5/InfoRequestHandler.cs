@@ -8,11 +8,11 @@ using Newtonsoft.Json;
 
 namespace Cactus.Fileserver.Asp5
 {
-    public class Asp5InfoRequestHandler
+    public class InfoRequestHandler
     {
         private readonly IFileStorageService storageService;
 
-        public Asp5InfoRequestHandler(IFileStorageService storageService)
+        public InfoRequestHandler(IFileStorageService storageService)
         {
             this.storageService = storageService;
         }

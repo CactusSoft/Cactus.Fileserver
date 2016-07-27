@@ -22,7 +22,7 @@
     <DnxInvisibleContent Include=".npmrc" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Cactus.Fileserver.Asp5\Cactus.Fileserver.Asp5.csproj" />
+    <ProjectReference Include="..\Cactus.Fileserver.Asp5.Images\Cactus.Fileserver.Asp5.Images.csproj" />
     <ProjectReference Include="..\Cactus.Fileserver.Core\Cactus.Fileserver.Core.csproj" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\DotNet.Web\Microsoft.DotNet.Web.targets" Condition="'$(VSToolsPath)' != ''" />

@@ -1,5 +1,7 @@
 ﻿using System;
 using Cactus.Fileserver.Asp5.Config;
+using Cactus.Fileserver.Asp5.Images.Config;
+using ImageResizer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,14 +20,12 @@ namespace LocalFileserver
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
+            var imageServerConfig = new LocalImageServerConfig(@"d:\temp", new Uri("http://localhost:38420"), @"/file")
+            {
+                DefaultInstructions = new Instructions("autorotate=true&maxwidth=200&maxheight=200&copymetadata=true&mode=crop")
+            };
             app.UseErrorTrace()
-               .UseFileserver(
-                    new LocalFileserverConfig(
-                        @"d:\temp",
-                        new Uri("http://localhost:38420"),
-                        @"/file"
-                    )
-                );
+               .UseImageFileserver(imageServerConfig);
         }
     }
 

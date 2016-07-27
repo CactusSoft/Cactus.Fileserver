@@ -15,6 +15,8 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "LocalFileserverExample", "L
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Asp5", "Cactus.Fileserver.Asp5\Cactus.Fileserver.Asp5.csproj", "{3BBE085A-7B36-40FF-AB73-573133A94F21}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Asp5.Images", "Cactus.Fileserver.Asp5.Images\Cactus.Fileserver.Asp5.Images.csproj", "{193131C0-78FE-41A1-87DF-E0377D90A7E6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{3BBE085A-7B36-40FF-AB73-573133A94F21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BBE085A-7B36-40FF-AB73-573133A94F21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BBE085A-7B36-40FF-AB73-573133A94F21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{193131C0-78FE-41A1-87DF-E0377D90A7E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{193131C0-78FE-41A1-87DF-E0377D90A7E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{193131C0-78FE-41A1-87DF-E0377D90A7E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{193131C0-78FE-41A1-87DF-E0377D90A7E6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
