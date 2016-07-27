@@ -22,7 +22,12 @@ namespace Cactus.Fileserver.Asp5
             if (context.Request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase))
             {
                 var path = context.Request.Path.ToUriComponent();
-                path = path.Substring(0, path.LastIndexOf(AppBuilderExtension.InfoPathSegment));
+                var infoSegmentIndex = path.LastIndexOf(AppBuilderExtension.InfoPathSegment, StringComparison.OrdinalIgnoreCase);
+                if (infoSegmentIndex > 0)
+                {
+                    path = path.Substring(0, infoSegmentIndex);
+                }
+
                 var uri = string.Concat(
                         context.Request.Scheme,
                         "://",

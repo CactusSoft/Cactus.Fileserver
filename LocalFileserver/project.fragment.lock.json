@@ -5,7 +5,7 @@
       "type": "project",
       "framework": ".NETFramework,Version=v4.6.1",
       "compile": {
-        "bin/Release/Cactus.Fileserver.Asp5.Images.dll": {}
+        "bin/Debug/Cactus.Fileserver.Asp5.Images.dll": {}
       },
       "runtime": {
         "../packages/ImageResizer.4.0.5/lib/net45/ImageResizer.dll": {},
@@ -20,26 +20,26 @@
         "../packages/System.Security.Cryptography.Encoding.4.0.0/lib/net46/System.Security.Cryptography.Encoding.dll": {},
         "../packages/System.Security.Cryptography.Primitives.4.0.0/lib/net46/System.Security.Cryptography.Primitives.dll": {},
         "../packages/System.Security.Cryptography.X509Certificates.4.1.0/lib/net461/System.Security.Cryptography.X509Certificates.dll": {},
-        "bin/Release/Cactus.Fileserver.Asp5.Images.dll": {}
+        "bin/Debug/Cactus.Fileserver.Asp5.Images.dll": {}
       }
     },
     "Cactus.Fileserver.Core/1.0.0": {
       "type": "project",
       "framework": ".NETFramework,Version=v4.5",
       "compile": {
-        "bin/Release/Cactus.Fileserver.Core.dll": {}
+        "bin/Debug/Cactus.Fileserver.Core.dll": {}
       },
       "runtime": {
         "../packages/Newtonsoft.Json.9.0.1/lib/net45/Newtonsoft.Json.dll": {},
         "../packages/log4net.2.0.5/lib/net45-full/log4net.dll": {},
-        "bin/Release/Cactus.Fileserver.Core.dll": {}
+        "bin/Debug/Cactus.Fileserver.Core.dll": {}
       }
     },
     "Cactus.Fileserver.Asp5/1.0.0": {
       "type": "project",
       "framework": ".NETFramework,Version=v4.6.1",
       "compile": {
-        "bin/Release/Cactus.Fileserver.Asp5.dll": {}
+        "bin/Debug/Cactus.Fileserver.Asp5.dll": {}
       },
       "runtime": {
         "../packages/Microsoft.AspNet.WebApi.Client.5.2.3/lib/net45/System.Net.Http.Formatting.dll": {},
@@ -53,7 +53,7 @@
         "../packages/System.Security.Cryptography.Encoding.4.0.0/lib/net46/System.Security.Cryptography.Encoding.dll": {},
         "../packages/System.Security.Cryptography.Primitives.4.0.0/lib/net46/System.Security.Cryptography.Primitives.dll": {},
         "../packages/System.Security.Cryptography.X509Certificates.4.1.0/lib/net461/System.Security.Cryptography.X509Certificates.dll": {},
-        "bin/Release/Cactus.Fileserver.Asp5.dll": {}
+        "bin/Debug/Cactus.Fileserver.Asp5.dll": {}
       }
     }
   }
