@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.AzureStor
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Owin", "Cactus.Fileserver.Owin\Cactus.Fileserver.Owin.csproj", "{BDDA880E-2135-4CB9-A3E3-C2340A0F2246}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "LocalFileserverExample", "LocalFileserver\LocalFileserverExample.xproj", "{1ED97881-B624-4978-9EB1-469DD9E122B5}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "LocalFileserverExample", "LocalFileserverExample\LocalFileserverExample.xproj", "{1ED97881-B624-4978-9EB1-469DD9E122B5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Asp5", "Cactus.Fileserver.Asp5\Cactus.Fileserver.Asp5.csproj", "{3BBE085A-7B36-40FF-AB73-573133A94F21}"
 EndProject
