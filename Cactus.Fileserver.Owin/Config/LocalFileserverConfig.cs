@@ -29,8 +29,7 @@ namespace Cactus.Fileserver.Owin.Config
             {
                 return () =>
                 {
-                    var fileStorage = new LocalFileStorage<MetaInfo>(storageFolder, new Uri(BaseUri, Path),
-                        new RandomNameProvider<MetaInfo>());
+                    var fileStorage = new LocalFileStorage<MetaInfo>(storageFolder, new Uri(BaseUri, Path + '/'), new RandomNameProvider<MetaInfo>());
                     var metaStorage = new LocalMetaInfoStorage<MetaInfo>(storageFolder);
                     return new FileStorageService<MetaInfo>(metaStorage, fileStorage, SecurityManager());
 
