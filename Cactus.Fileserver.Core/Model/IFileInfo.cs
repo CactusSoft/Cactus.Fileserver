@@ -1,4 +1,6 @@
-﻿namespace Cactus.Fileserver.Core.Model
+﻿using System.Collections.Generic;
+
+namespace Cactus.Fileserver.Core.Model
 {
     public interface IFileInfo
     {
@@ -8,6 +10,6 @@
 
         string Owner { get; set; }
 
-        int Size { get; set; }
+        IDictionary<string, string> Extra { get; }
     }
 }

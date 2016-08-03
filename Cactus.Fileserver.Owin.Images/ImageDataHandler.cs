@@ -1,12 +1,11 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Cactus.Fileserver.Core;
-using Cactus.Fileserver.Core.Model;
 using ImageResizer;
 using Microsoft.Owin;
+using Microsoft.Owin.Logging;
 
 namespace Cactus.Fileserver.Owin.Images
 {
@@ -14,35 +13,32 @@ namespace Cactus.Fileserver.Owin.Images
     {
         private readonly Instructions defaultInstructions;
         private readonly Instructions mandatoryInstructions;
+        private readonly ILogger log;
 
-        public ImageDataHandler(IFileStorageService storageService, Instructions defaultInstructions, Instructions mandatoryInstructions) : base(storageService)
+        public ImageDataHandler(ILoggerFactory logFactory, IFileStorageService storageService, Instructions defaultInstructions, Instructions mandatoryInstructions) : base(logFactory, storageService)
         {
             this.defaultInstructions = defaultInstructions;
             this.mandatoryInstructions = mandatoryInstructions;
+            log = logFactory.Create(typeof (ImageDataHandler).FullName);
         }
 
         protected override async Task<Uri> HandleNewFileRequest(IOwinContext context, HttpContent newFileContent)
         {
             if (newFileContent.Headers.ContentType.MediaType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
             {
+                log.WriteVerbose("Image content detected, start processing");
                 var instructions = BuildInstructions(context.Request);
                 using (var stream = await newFileContent.ReadAsStreamAsync())
                 {
                     using (var streamToStore = ProcessImage(stream, instructions))
                     {
-                        var info = new IncomeFileInfo
-                        {
-                            MimeType = newFileContent.Headers.ContentType.ToString(),
-                            Name = GetOriginalFileName(newFileContent),
-                            Size = (int)streamToStore.Length,
-                            Owner = GetOwner(context)
-                        };
-
+                        var info = BuildFileInfo(context, newFileContent);
                         return await StorageService.Create(streamToStore, info);
                     }
                 }
             }
 
+            log.WriteVerbose("No image content detected, run regular file storing workflow");
             return await base.HandleNewFileRequest(context, newFileContent);
         }
 

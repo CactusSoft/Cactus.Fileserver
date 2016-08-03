@@ -43,11 +43,21 @@ namespace Cactus.Fileserver.AzureStorage
             var blockBlob = cloudBlobContainer.GetBlockBlobReference(targetFile);
             blockBlob.Properties.ContentType = info.MimeType;
             blockBlob.Properties.CacheControl = cacheControl;
+
             if (!info.MimeType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
             {
                 blockBlob.Properties.ContentDisposition =
                     $"attachment;filename=UTF-8''{Uri.EscapeDataString(info.Name)}";
             }
+
+            if (info.Extra != null)
+            {
+                foreach (var kvp in info.Extra)
+                {
+                    blockBlob.Metadata.Add(kvp);
+                }
+            }
+
             await blockBlob.UploadFromStreamAsync(stream);
             return blockBlob.Uri;
         }

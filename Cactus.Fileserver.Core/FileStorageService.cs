@@ -1,5 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
+using System.Security;
 using System.Threading.Tasks;
 using Cactus.Fileserver.Core.Model;
 using Cactus.Fileserver.Core.Security;
@@ -25,7 +27,7 @@ namespace Cactus.Fileserver.Core
             var info = metaStorage.Get(uri);
             if (!securityManager.MayRead(info))
             {
-                throw new AccessViolationException("No access to delete");
+                throw new SecurityException("No access to read");
             }
             return await fileStorage.Get(uri);
         }
@@ -34,15 +36,15 @@ namespace Cactus.Fileserver.Core
         {
             if (!securityManager.MayCreate(fileInfo))
             {
-                throw new AccessViolationException("No access to delete");
+                throw new SecurityException("No access to create");
             }
-
+           
             T meta = new T
             {
                 MimeType = fileInfo.MimeType,
                 Name = fileInfo.Name,
                 Owner = fileInfo.Owner,
-                Size = fileInfo.Size
+                Extra = fileInfo.Extra?.ToDictionary(e => e.Key, e => e.Value) // copy values
             };
             meta.Uri = await fileStorage.Add(stream, meta);
             metaStorage.Add(meta);
@@ -54,7 +56,7 @@ namespace Cactus.Fileserver.Core
             var info = metaStorage.Get(uri);
             if (!securityManager.MayDelete(info))
             {
-                throw new AccessViolationException("No access to delete");
+                throw new SecurityException("No access to delete");
             }
 
             await fileStorage.Delete(uri);
@@ -63,7 +65,13 @@ namespace Cactus.Fileserver.Core
 
         public IFileInfo GetInfo(Uri uri)
         {
-            return metaStorage.Get(uri);
+            var res = metaStorage.Get(uri);
+            if (!securityManager.MayRead(res))
+            {
+                throw new SecurityException("No access to read");
+            }
+
+            return res;
         }
     }
 }

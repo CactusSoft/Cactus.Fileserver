@@ -9,7 +9,7 @@
     <licenseUrl>https://github.com/CactusSoft/Cactus.Fileserver/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/CactusSoft/Cactus.Fileserver/</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>Simple HTTP-based file storage</description>
+    <description>Simple HTTP-based images and file storage</description>
     <releaseNotes></releaseNotes>
     <copyright>Copyright 2016 CactusSoft LLC</copyright>
     <tags></tags>

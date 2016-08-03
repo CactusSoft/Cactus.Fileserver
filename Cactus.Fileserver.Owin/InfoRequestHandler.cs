@@ -4,15 +4,18 @@ using System.Threading.Tasks;
 using Cactus.Fileserver.Core;
 using Cactus.Fileserver.Owin.Config;
 using Microsoft.Owin;
+using Microsoft.Owin.Logging;
 
 namespace Cactus.Fileserver.Owin
 {
     public class InfoRequestHandler
     {
+        private readonly ILogger log;
         private readonly IFileStorageService storageService;
 
-        public InfoRequestHandler(IFileStorageService storageService)
+        public InfoRequestHandler(ILoggerFactory logFactory, IFileStorageService storageService)
         {
+            log = logFactory.Create(typeof(InfoRequestHandler).FullName);
             this.storageService = storageService;
         }
 
@@ -40,6 +43,7 @@ namespace Cactus.Fileserver.Owin
             }
             else
             {
+                log.WriteWarning("Unsupported method {0}", context.Request.Method);
                 Trace.TraceWarning("Unsupported method");
                 context.Response.StatusCode = 405;
             }

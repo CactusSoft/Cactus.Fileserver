@@ -1,4 +1,5 @@
 ﻿using Cactus.Fileserver.Owin.Config;
+using Microsoft.Owin.Logging;
 using Owin;
 
 namespace Cactus.Fileserver.Owin.Images.Config
@@ -15,7 +16,7 @@ namespace Cactus.Fileserver.Owin.Images.Config
                 // Handler to return file content
                 builder.Run(async context =>
                 {
-                    var handler = new ImageDataHandler(config.FileStorage(), config.DefaultInstructions,config.MandatoryInstructions);
+                    var handler = new ImageDataHandler(builder.GetLoggerFactory(), config.FileStorage(), config.DefaultInstructions, config.MandatoryInstructions);
                     await handler.Handle(context);
                 });
             });

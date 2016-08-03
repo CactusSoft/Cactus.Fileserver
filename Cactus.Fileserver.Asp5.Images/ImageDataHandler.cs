@@ -3,7 +3,6 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Cactus.Fileserver.Core;
-using Cactus.Fileserver.Core.Model;
 using ImageResizer;
 using Microsoft.AspNetCore.Http;
 
@@ -27,14 +26,7 @@ namespace Cactus.Fileserver.Asp5.Images
                 {
                     using (var streamToStore = ProcessImage(stream, instructions))
                     {
-                        var info = new IncomeFileInfo
-                        {
-                            MimeType = newFileContent.Headers.ContentType.ToString(),
-                            Name = (newFileContent.Headers.ContentDisposition.FileName ?? "").Trim('"'),
-                            Size = (int)streamToStore.Length,
-                            Owner = context.User.Identity.Name
-                        };
-
+                        var info = BuildFileInfo(context, newFileContent);
                         var uri = await StorageService.Create(streamToStore, info);
                         context.Response.StatusCode = 201;
                         context.Response.Headers.Add("Location", new[] { uri.ToString() });

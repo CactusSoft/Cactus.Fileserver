@@ -62,12 +62,16 @@ namespace Cactus.Fileserver.Core.Storage
             return new Uri(baseUri, filename);
         }
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public async Task Delete(Uri uri)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             File.Delete(uri.GetResource());
         }
 
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public async Task<Stream> Get(Uri uri)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             var fullFilePath = Path.Combine(baseFolder, uri.GetResource());
             var stream = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);

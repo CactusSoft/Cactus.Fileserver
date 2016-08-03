@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Microsoft.Owin.Logging;
 using Owin;
 
 namespace Cactus.Fileserver.Owin.Config
@@ -17,7 +18,7 @@ namespace Cactus.Fileserver.Owin.Config
                 // Handler to return file content
                 builder.Run(async context =>
                 {
-                    var handler = new DataRequestHandler(config.FileStorage());
+                    var handler = new DataRequestHandler(builder.GetLoggerFactory(), config.FileStorage());
                     await handler.Handle(context);
                 });
             });
@@ -30,11 +31,11 @@ namespace Cactus.Fileserver.Owin.Config
             app.MapWhen(c => (c.Request.Path.HasValue &&
                                  c.Request.Path.Value.EndsWith(InfoPathSegment, StringComparison.OrdinalIgnoreCase)) ||
                                  c.Request.Query.Any(e => e.Key.Equals(InfoQueryKey, StringComparison.OrdinalIgnoreCase)),
-            infoBuilder =>
+            builder =>
             {
-                infoBuilder.Run(async context =>
+                builder.Run(async context =>
                 {
-                    var handler = new InfoRequestHandler(config.FileStorage());
+                    var handler = new InfoRequestHandler(builder.GetLoggerFactory(), config.FileStorage());
                     await handler.Handle(context);
                 });
             });

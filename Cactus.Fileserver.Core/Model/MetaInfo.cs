@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Cactus.Fileserver.Core.Model
 {
@@ -8,10 +9,10 @@ namespace Cactus.Fileserver.Core.Model
 
         public string Name { get; set; }
 
-        public int Size { get; set; }
-
         public string Owner { get; set; }
 
         public Uri Uri { get; set; }
+
+        public IDictionary<string,string> Extra { get; set; } 
     }
 }

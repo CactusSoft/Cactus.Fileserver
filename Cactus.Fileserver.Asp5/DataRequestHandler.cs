@@ -76,18 +76,49 @@ namespace Cactus.Fileserver.Asp5
             var fileName = newFileContent.Headers.ContentDisposition.FileName ?? "";
             using (var stream = await newFileContent.ReadAsStreamAsync())
             {
-                var info = new IncomeFileInfo
-                {
-                    MimeType = newFileContent.Headers.ContentType.ToString(),
-                    Name = fileName.Trim('"'),
-                    Size = (int)stream.Length,
-                    Owner = context.User.Identity.Name
-                };
-
+                var info = BuildFileInfo(context, newFileContent);
                 var uri = await StorageService.Create(stream, info);
                 context.Response.StatusCode = 201;
                 context.Response.Headers.Add("Location", new[] { uri.ToString() });
             }
+        }
+
+        /// <summary>
+        /// Try to extract original file name from the request
+        /// </summary>
+        /// <param name="httpContent"></param>
+        /// <returns>Returns empty string if nothing found</returns>
+        protected virtual string GetOriginalFileName(HttpContent httpContent)
+        {
+            return httpContent.Headers.ContentDisposition.FileName?.Trim('"') ?? "";
+        }
+
+        /// <summary>
+        /// Returns a string that represent file owner based on authentication context.
+        /// By default returns Identity.Name or nul if user is not authenticated.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns>Owner as a string or null</returns>
+        protected virtual string GetOwner(HttpContext context)
+        {
+            return context?.User?.Identity?.Name;
+        }
+
+        /// <summary>
+        /// Returns file info extracted from the request.
+        /// Good point to add extra fields or override some of them
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        protected virtual IFileInfo BuildFileInfo(HttpContext context, HttpContent content)
+        {
+            return new IncomeFileInfo
+            {
+                MimeType = content.Headers.ContentType.ToString(),
+                Name = GetOriginalFileName(content),
+                Owner = GetOwner(context)
+            };
         }
     }
 }

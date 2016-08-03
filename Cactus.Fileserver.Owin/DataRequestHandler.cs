@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -7,17 +6,19 @@ using System.Threading.Tasks;
 using Cactus.Fileserver.Core;
 using Cactus.Fileserver.Core.Model;
 using Microsoft.Owin;
-using Newtonsoft.Json;
+using Microsoft.Owin.Logging;
 
 namespace Cactus.Fileserver.Owin
 {
     public class DataRequestHandler
     {
         protected readonly IFileStorageService StorageService;
+        private readonly ILogger log;
 
-        public DataRequestHandler(IFileStorageService storageService)
+        public DataRequestHandler(ILoggerFactory logFactory, IFileStorageService storageService)
         {
-            this.StorageService = storageService;
+            log = logFactory.Create(typeof(DataRequestHandler).FullName);
+            StorageService = storageService;
         }
 
         public virtual async Task Handle(IOwinContext context)
@@ -36,6 +37,7 @@ namespace Cactus.Fileserver.Owin
             }
             else
             {
+                log.WriteWarning("Method not allowed: {0}", context.Request.Method);
                 context.Response.StatusCode = 405;
                 context.Response.ReasonPhrase = "Method not allowed";
             }
@@ -53,7 +55,7 @@ namespace Cactus.Fileserver.Owin
         {
             await StorageService.Delete(context.Request.Uri);
         }
-        
+
         protected virtual async Task HandlePost(IOwinContext context)
         {
             var streamContent = new StreamContent(context.Request.Body);
@@ -63,12 +65,12 @@ namespace Cactus.Fileserver.Owin
             var firstFileContent = provider.Contents.FirstOrDefault(c => !string.IsNullOrWhiteSpace(c.Headers.ContentDisposition.FileName));
             if (firstFileContent != null)
             {
-                var uri=await HandleNewFileRequest(context, firstFileContent);
-                await context.Response.ResponseOk(new {Uri = uri});
+                var uri = await HandleNewFileRequest(context, firstFileContent);
+                await context.Response.ResponseOk(new { Uri = uri });
                 return; //process only the first one
             }
 
-            // No file content found, response BAD REQUEST
+            log.WriteWarning("No file content found, response 400 BAD REQUEST");
             context.Response.StatusCode = 400;
         }
 
@@ -76,13 +78,7 @@ namespace Cactus.Fileserver.Owin
         {
             using (var stream = await newFileContent.ReadAsStreamAsync())
             {
-                var info = new IncomeFileInfo
-                {
-                    MimeType = newFileContent.Headers.ContentType.ToString(),
-                    Name = GetOriginalFileName(newFileContent),
-                    Size = (int)stream.Length,
-                    Owner = GetOwner(context)
-                };
+                var info = BuildFileInfo(context, newFileContent);
                 return await StorageService.Create(stream, info);
             }
         }
@@ -106,6 +102,23 @@ namespace Cactus.Fileserver.Owin
         protected virtual string GetOwner(IOwinContext context)
         {
             return context.Authentication?.User?.Identity?.Name;
+        }
+
+        /// <summary>
+        /// Returns file info extracted from the request.
+        /// Good point to add extra fields or override some of them
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        protected virtual IFileInfo BuildFileInfo(IOwinContext context, HttpContent content)
+        {
+            return new IncomeFileInfo
+            {
+                MimeType = content.Headers.ContentType.ToString(),
+                Name = GetOriginalFileName(content),
+                Owner = GetOwner(context)
+            };
         }
     }
 }
