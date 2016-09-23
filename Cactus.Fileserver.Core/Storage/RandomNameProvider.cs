@@ -24,12 +24,12 @@ namespace Cactus.Fileserver.Core.Storage
         {
             randomNumberGenerator.NextBytes(buffer);
             var res = Convert.ToBase64String(buffer).Replace('+', '-').Replace('/', '_');
-            if (info.Name != null && StoreExt)
+            if (info.OriginalName != null && StoreExt)
             {
-                var lastDot = info.Name.LastIndexOf('.');
-                if (lastDot > 0 && lastDot < info.Name.Length-1)
+                var lastDot = info.OriginalName.LastIndexOf('.');
+                if (lastDot > 0 && lastDot < info.OriginalName.Length-1)
                 {
-                    res += info.Name.Substring(lastDot);
+                    res += info.OriginalName.Substring(lastDot);
                 }
             }
 

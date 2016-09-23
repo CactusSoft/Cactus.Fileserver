@@ -8,6 +8,7 @@ namespace Cactus.Fileserver.Core.Storage
         void Add(T info);
 
         void Delete(Uri uri);
+
         T Get(Uri uri);
     }
 }

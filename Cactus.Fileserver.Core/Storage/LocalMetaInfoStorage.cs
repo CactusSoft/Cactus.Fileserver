@@ -53,17 +53,22 @@ namespace Cactus.Fileserver.Core.Storage
 
         public T Get(Uri uri)
         {
-            var fullFilename = GetFile(uri);
-            using (var stream = new FileStream(fullFilename, FileMode.Open))
-            {
-                var sr = new StreamReader(stream);
-                return JsonConvert.DeserializeObject<T>(sr.ReadToEnd());
-            }
+            var metafile = GetFile(uri);
+            return GetMetadata(metafile);
         }
 
         protected string GetFile(Uri uri)
         {
             return Path.Combine(baseFolder, uri.GetResource() + MetafileExt);
+        }
+
+        protected T GetMetadata(string metafile)
+        {
+            using (var stream = new FileStream(metafile, FileMode.Open))
+            {
+                var sr = new StreamReader(stream);
+                return JsonConvert.DeserializeObject<T>(sr.ReadToEnd());
+            }
         }
     }
 }

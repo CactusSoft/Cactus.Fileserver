@@ -71,6 +71,7 @@
     <Compile Include="Config\IImageServerConfig.cs" />
     <Compile Include="Config\LocalImageServerConfig.cs" />
     <Compile Include="ImageDataHandler.cs" />
+    <Compile Include="ImageProcessingResult.cs" />
     <Compile Include="InstructionsExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

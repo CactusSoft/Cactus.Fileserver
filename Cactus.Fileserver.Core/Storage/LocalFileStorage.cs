@@ -14,26 +14,26 @@ namespace Cactus.Fileserver.Core.Storage
         private readonly string baseFolder;
         private const int MaxTriesCount = 10;
 
-        public LocalFileStorage(string folder, Uri baseUri, IStoredNameProvider<T> nameProvider)
+        public LocalFileStorage(Uri baseUri, IStoredNameProvider<T> nameProvider, string storeFolder = null)
         {
             this.baseUri = baseUri;
             this.nameProvider = nameProvider;
             baseFolder = Path.GetTempPath();
-            if (!string.IsNullOrEmpty(folder))
+            if (!string.IsNullOrEmpty(storeFolder))
             {
                 try
                 {
-                    if (!Directory.Exists(folder))
+                    if (!Directory.Exists(storeFolder))
                     {
-                        Directory.CreateDirectory(folder);
+                        Directory.CreateDirectory(storeFolder);
                     }
 
-                    baseFolder = folder;
+                    baseFolder = storeFolder;
                     Log.Info("Storage folder is configured successfully");
                 }
                 catch (Exception)
                 {
-                    Log.ErrorFormat("Configuration error. StorageFolder {0} is unaccesable, temporary folder {1} will be used instead", folder, baseFolder);
+                    Log.ErrorFormat("Configuration error. StorageFolder {0} is unaccesable, temporary folder {1} will be used instead", storeFolder, baseFolder);
                 }
             }
         }

@@ -28,11 +28,11 @@ namespace Cactus.Fileserver.Tests
         public void ExtensionStoredTest()
         {
             var p = new RandomNameProvider<MetaInfo>() { StoreExt = true };
-            var name1 = p.GetName(new MetaInfo { Name = "test.com" });
-            var name2 = p.GetName(new MetaInfo { Name = "test." });
-            var name3 = p.GetName(new MetaInfo { Name = "test" });
-            var name4 = p.GetName(new MetaInfo { Name = "" });
-            var name5 = p.GetName(new MetaInfo { Name = null });
+            var name1 = p.GetName(new MetaInfo { OriginalName = "test.com" });
+            var name2 = p.GetName(new MetaInfo { OriginalName = "test." });
+            var name3 = p.GetName(new MetaInfo { OriginalName = "test" });
+            var name4 = p.GetName(new MetaInfo { OriginalName = "" });
+            var name5 = p.GetName(new MetaInfo { OriginalName = null });
 
 
             Assert.IsTrue(name1.EndsWith(".com"));

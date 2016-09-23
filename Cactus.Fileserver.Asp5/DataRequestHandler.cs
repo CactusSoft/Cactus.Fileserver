@@ -116,7 +116,7 @@ namespace Cactus.Fileserver.Asp5
             return new IncomeFileInfo
             {
                 MimeType = content.Headers.ContentType.ToString(),
-                Name = GetOriginalFileName(content),
+                OriginalName = GetOriginalFileName(content),
                 Owner = GetOwner(context)
             };
         }

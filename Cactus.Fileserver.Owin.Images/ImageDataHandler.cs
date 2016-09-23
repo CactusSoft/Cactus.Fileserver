@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Cactus.Fileserver.Core;
+using Cactus.Fileserver.Core.Model;
 using ImageResizer;
 using Microsoft.Owin;
 using Microsoft.Owin.Logging;
@@ -19,7 +20,7 @@ namespace Cactus.Fileserver.Owin.Images
         {
             this.defaultInstructions = defaultInstructions;
             this.mandatoryInstructions = mandatoryInstructions;
-            log = logFactory.Create(typeof (ImageDataHandler).FullName);
+            log = logFactory.Create(typeof(ImageDataHandler).FullName);
         }
 
         protected override async Task<Uri> HandleNewFileRequest(IOwinContext context, HttpContent newFileContent)
@@ -30,9 +31,11 @@ namespace Cactus.Fileserver.Owin.Images
                 var instructions = BuildInstructions(context.Request);
                 using (var stream = await newFileContent.ReadAsStreamAsync())
                 {
-                    using (var streamToStore = ProcessImage(stream, instructions))
+                    using (var streamToStore = new MemoryStream())
                     {
-                        var info = BuildFileInfo(context, newFileContent);
+                        var res = ProcessImage(stream, streamToStore, instructions);
+                        streamToStore.Position = 0;
+                        var info = BuildFileInfo(context, newFileContent, res);
                         return await StorageService.Create(streamToStore, info);
                     }
                 }
@@ -43,26 +46,54 @@ namespace Cactus.Fileserver.Owin.Images
         }
 
         /// <summary>
+        /// Build file info based on input info and result of image conversion
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="newFileContent"></param>
+        /// <param name="processingResult"></param>
+        /// <returns></returns>
+        private IFileInfo BuildFileInfo(IOwinContext context, HttpContent newFileContent, ImageProcessingResult processingResult)
+        {
+            var res = BuildFileInfo(context, newFileContent);
+            if (processingResult.MediaType != null)
+                res.MimeType = processingResult.MediaType;
+
+            if (processingResult.FileExt != null && !res.OriginalName.EndsWith(processingResult.FileExt, StringComparison.OrdinalIgnoreCase))
+            {
+                // Need to correct file ext
+                var dotIndex = res.OriginalName.LastIndexOf('.');
+                if (dotIndex > 0)
+                {
+                    res.OriginalName = res.OriginalName.Substring(0, dotIndex);
+                }
+                res.OriginalName += '.' + processingResult.FileExt;
+            }
+            return res;
+        }
+
+        /// <summary>
         /// Apply instructions to an image.
         /// A good point to extra configuration of Image Resizer
         /// </summary>
         /// <param name="inputStream">Input image stream</param>
+        /// <param name="outputStream">Output stream to write the result</param>
         /// <param name="instructions">Instructions to apply</param>
         /// <returns>Result image as a stream. Caller have to care about the stream disposing.</returns>
-        protected virtual Stream ProcessImage(Stream inputStream, Instructions instructions)
+        protected virtual ImageProcessingResult ProcessImage(Stream inputStream, Stream outputStream, Instructions instructions)
         {
-            var outputStream = new MemoryStream();
-            try
-            {
-                ImageBuilder.Current.Build(inputStream, outputStream, instructions);
-                outputStream.Position = 0;
-                return outputStream;
-            }
-            catch
-            {
-                outputStream.Dispose();
-                throw;
-            }
+            if (!inputStream.CanRead)
+                throw new ArgumentException("inputStream is nor readable");
+            if (!outputStream.CanWrite)
+                throw new ArgumentException("outputStream is nor writable");
+
+            var job = ImageBuilder.Current.Build(inputStream, outputStream, instructions);
+
+            var res = new ImageProcessingResult();
+            if (!string.IsNullOrEmpty(job.ResultFileExtension))
+                res.FileExt = job.ResultFileExtension;
+            if (!string.IsNullOrEmpty(job.ResultMimeType))
+                res.MediaType = job.ResultMimeType;
+            return res;
         }
 
         /// <summary>

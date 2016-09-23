@@ -54,7 +54,7 @@ namespace Cactus.Fileserver.Owin
         protected virtual async Task HandleDelete(IOwinContext context)
         {
             await StorageService.Delete(context.Request.Uri);
-        }
+        }   
 
         protected virtual async Task HandlePost(IOwinContext context)
         {
@@ -90,7 +90,7 @@ namespace Cactus.Fileserver.Owin
         /// <returns>Returns empty string if nothing found</returns>
         protected virtual string GetOriginalFileName(HttpContent httpContent)
         {
-            return httpContent.Headers.ContentDisposition.FileName?.Trim('"') ?? "";
+            return httpContent.Headers.ContentDisposition.FileName?.Trim('"') ?? "anonymous";
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace Cactus.Fileserver.Owin
             return new IncomeFileInfo
             {
                 MimeType = content.Headers.ContentType.ToString(),
-                Name = GetOriginalFileName(content),
+                OriginalName = GetOriginalFileName(content),
                 Owner = GetOwner(context)
             };
         }

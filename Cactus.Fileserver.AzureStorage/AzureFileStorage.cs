@@ -47,7 +47,7 @@ namespace Cactus.Fileserver.AzureStorage
             if (!info.MimeType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
             {
                 blockBlob.Properties.ContentDisposition =
-                    $"attachment;filename=UTF-8''{Uri.EscapeDataString(info.Name)}";
+                    $"attachment;filename=UTF-8''{Uri.EscapeDataString(info.OriginalName)}";
             }
 
             if (info.Extra != null)

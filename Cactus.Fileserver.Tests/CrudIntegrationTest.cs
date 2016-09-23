@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
-using Cactus.Fileserver.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using RestSharp;

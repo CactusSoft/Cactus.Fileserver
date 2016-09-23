@@ -30,7 +30,7 @@ namespace Cactus.Fileserver.Asp5.Config
             {
                 return () =>
                 {
-                    var fileStorage = new LocalFileStorage<MetaInfo>(storageFolder, new Uri(BaseUri, Path + '/'), new RandomNameProvider<MetaInfo>());
+                    var fileStorage = new LocalFileStorage<MetaInfo>(new Uri(BaseUri, Path + '/'), new RandomNameProvider<MetaInfo>(), storageFolder);
                     var metaStorage = new LocalMetaInfoStorage<MetaInfo>(storageFolder);
                     return new FileStorageService<MetaInfo>(metaStorage, fileStorage, SecurityManager());
                 };

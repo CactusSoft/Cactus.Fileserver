@@ -38,15 +38,17 @@ namespace Cactus.Fileserver.Core
             {
                 throw new SecurityException("No access to create");
             }
-           
-            T meta = new T
+
+            var meta = new T
             {
                 MimeType = fileInfo.MimeType,
-                Name = fileInfo.Name,
+                OriginalName = fileInfo.OriginalName,
                 Owner = fileInfo.Owner,
                 Extra = fileInfo.Extra?.ToDictionary(e => e.Key, e => e.Value) // copy values
             };
+
             meta.Uri = await fileStorage.Add(stream, meta);
+            meta.StoragePath = meta.Uri.AbsolutePath;
             metaStorage.Add(meta);
             return meta.Uri;
         }
