@@ -32,7 +32,7 @@ namespace Cactus.Fileserver.Core
             return await fileStorage.Get(uri);
         }
 
-        public async Task<Uri> Create(Stream stream, IFileInfo fileInfo)
+        public async Task<MetaInfo> Create(Stream stream, IFileInfo fileInfo)
         {
             if (!securityManager.MayCreate(fileInfo))
             {
@@ -50,7 +50,7 @@ namespace Cactus.Fileserver.Core
             meta.Uri = await fileStorage.Add(stream, meta);
             meta.StoragePath = meta.Uri.AbsolutePath;
             metaStorage.Add(meta);
-            return meta.Uri;
+            return meta;
         }
 
         public async Task Delete(Uri uri)

@@ -23,7 +23,7 @@ namespace Cactus.Fileserver.Owin.Images
             log = logFactory.Create(typeof(ImageDataHandler).FullName);
         }
 
-        protected override async Task<Uri> HandleNewFileRequest(IOwinContext context, HttpContent newFileContent)
+        protected override async Task<MetaInfo> HandleNewFileRequest(IOwinContext context, HttpContent newFileContent)
         {
             if (newFileContent.Headers.ContentType.MediaType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
             {
@@ -52,7 +52,7 @@ namespace Cactus.Fileserver.Owin.Images
         /// <param name="newFileContent"></param>
         /// <param name="processingResult"></param>
         /// <returns></returns>
-        private IFileInfo BuildFileInfo(IOwinContext context, HttpContent newFileContent, ImageProcessingResult processingResult)
+        protected virtual IFileInfo BuildFileInfo(IOwinContext context, HttpContent newFileContent, ImageProcessingResult processingResult)
         {
             var res = BuildFileInfo(context, newFileContent);
             if (processingResult.MediaType != null)

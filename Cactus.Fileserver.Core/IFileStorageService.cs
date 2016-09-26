@@ -20,7 +20,7 @@ namespace Cactus.Fileserver.Core
         /// <param name="stream"></param>
         /// <param name="fileInfo"></param>
         /// <returns></returns>
-        Task<Uri> Create(Stream stream, IFileInfo fileInfo);
+        Task<MetaInfo> Create(Stream stream, IFileInfo fileInfo);
 
         /// <summary>
         /// Delete file by URI

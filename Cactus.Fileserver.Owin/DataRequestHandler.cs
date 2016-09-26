@@ -54,7 +54,7 @@ namespace Cactus.Fileserver.Owin
         protected virtual async Task HandleDelete(IOwinContext context)
         {
             await StorageService.Delete(context.Request.Uri);
-        }   
+        }
 
         protected virtual async Task HandlePost(IOwinContext context)
         {
@@ -65,8 +65,8 @@ namespace Cactus.Fileserver.Owin
             var firstFileContent = provider.Contents.FirstOrDefault(c => !string.IsNullOrWhiteSpace(c.Headers.ContentDisposition.FileName));
             if (firstFileContent != null)
             {
-                var uri = await HandleNewFileRequest(context, firstFileContent);
-                await context.Response.ResponseOk(new { Uri = uri });
+                var meta = await HandleNewFileRequest(context, firstFileContent);
+                await context.Response.ResponseOk(BuldOkResponseObject(meta));
                 return; //process only the first one
             }
 
@@ -74,7 +74,12 @@ namespace Cactus.Fileserver.Owin
             context.Response.StatusCode = 400;
         }
 
-        protected virtual async Task<Uri> HandleNewFileRequest(IOwinContext context, HttpContent newFileContent)
+        protected virtual object BuldOkResponseObject(MetaInfo meta)
+        {
+            return new { meta.Uri };
+        }
+
+        protected virtual async Task<MetaInfo> HandleNewFileRequest(IOwinContext context, HttpContent newFileContent)
         {
             using (var stream = await newFileContent.ReadAsStreamAsync())
             {
