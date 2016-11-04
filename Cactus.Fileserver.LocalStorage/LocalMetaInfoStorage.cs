@@ -2,6 +2,7 @@
 using System.IO;
 using System.Runtime.Serialization.Json;
 using Cactus.Fileserver.Core;
+using Cactus.Fileserver.Core.Logging;
 using Cactus.Fileserver.Core.Model;
 using Cactus.Fileserver.Core.Storage;
 

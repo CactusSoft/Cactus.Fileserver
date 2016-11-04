@@ -19,6 +19,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.ImageResi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.LocalStorage", "Cactus.Fileserver.LocalStorage\Cactus.Fileserver.LocalStorage.csproj", "{5174C316-76D4-4F0B-BEC9-887A06D98F8E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Core.Nuget", "Cactus.Fileserver.Core.Nuget\Cactus.Fileserver.Core.Nuget.csproj", "{0451BAEF-DF2E-4B98-8644-94EE9415E389}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.ImageResizer.Nuget", "Cactus.Fileserver.ImageResizer.Nuget\Cactus.Fileserver.ImageResizer.Nuget.csproj", "{DEFFD0DC-27B6-4601-8386-9F5E4CBC832D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.LocalStorage.Nuget", "Cactus.Fileserver.LocalStorage.Nuget\Cactus.Fileserver.LocalStorage.Nuget.csproj", "{7715793E-D47E-4C66-A59C-03C152E2A404}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Owin.Nuget", "Cactus.Fileserver.Owin.Nuget\Cactus.Fileserver.Owin.Nuget.csproj", "{45683811-DB79-40AF-BA34-5149BDD63DFD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.AspNetCore.Nuget", "Cactus.Fileserver.AspNetCore.Nuget\Cactus.Fileserver.AspNetCore.Nuget.csproj", "{46A34DA7-59DE-45BE-A992-0098BDD07D6C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +67,22 @@ Global
 		{5174C316-76D4-4F0B-BEC9-887A06D98F8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5174C316-76D4-4F0B-BEC9-887A06D98F8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5174C316-76D4-4F0B-BEC9-887A06D98F8E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DEFFD0DC-27B6-4601-8386-9F5E4CBC832D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DEFFD0DC-27B6-4601-8386-9F5E4CBC832D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DEFFD0DC-27B6-4601-8386-9F5E4CBC832D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7715793E-D47E-4C66-A59C-03C152E2A404}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7715793E-D47E-4C66-A59C-03C152E2A404}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7715793E-D47E-4C66-A59C-03C152E2A404}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{45683811-DB79-40AF-BA34-5149BDD63DFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{45683811-DB79-40AF-BA34-5149BDD63DFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{45683811-DB79-40AF-BA34-5149BDD63DFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46A34DA7-59DE-45BE-A992-0098BDD07D6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46A34DA7-59DE-45BE-A992-0098BDD07D6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46A34DA7-59DE-45BE-A992-0098BDD07D6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46A34DA7-59DE-45BE-A992-0098BDD07D6C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

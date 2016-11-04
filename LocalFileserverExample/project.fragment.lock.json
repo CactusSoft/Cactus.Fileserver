@@ -38,8 +38,6 @@
         "bin/Debug/Cactus.Fileserver.Core.dll": {}
       },
       "runtime": {
-        "../packages/Newtonsoft.Json.9.0.1/lib/net45/Newtonsoft.Json.dll": {},
-        "../packages/log4net.2.0.5/lib/net45-full/log4net.dll": {},
         "bin/Debug/Cactus.Fileserver.Core.dll": {}
       },
       "contentFiles": {

@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Cactus.Fileserver.Core</id>
+    <version>2.0.2</version>
+    <title>Cactus.Fileserver.Core</title>
+    <authors>yan.oreshchenkov</authors>
+    <owners>CactusSoft LLC</owners>
+    <description>
+      Lightweight fileserver. Could be used to store any files and there metadata in local filesystem or storages like Azure BLOB
+    </description>
+    <releaseNotes>
+    </releaseNotes>
+    <summary>
+    </summary>
+    <language>en-US</language>
+    <projectUrl>https://github.com/CactusSoft/Cactus.Fileserver/</projectUrl>
+    <iconUrl>https://nuget.org/Content/Images/packageDefaultIcon-50x50.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <licenseUrl>https://github.com/CactusSoft/Cactus.Fileserver/blob/master/LICENSE</licenseUrl>
+    <copyright>Copyright CactusSoft 2016</copyright>
+    <dependencies>
+        <!--<group targetFramework="net40">
+          <dependency id="log4net" version="1.2.10" />
+        </group>-->
+    </dependencies>
+    <references></references>
+    <tags></tags>
+  </metadata>
+  <files>
+    <file src="lib\" target="lib" />
+    <file src="tools\" target="tools" />
+    <file src="content\" target="content" />
+  </files>
+</package>

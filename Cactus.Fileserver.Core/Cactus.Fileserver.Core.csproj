@@ -31,14 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net, Version=1.2.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\packages\log4net.2.0.5\lib\net45-full\log4net.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
@@ -46,6 +39,7 @@
   <ItemGroup>
     <Compile Include="Config\IFileserverConfig.cs" />
     <Compile Include="FileStorageService.cs" />
+    <Compile Include="Logging\LibLog.cs" />
     <Compile Include="Model\IFileInfo.cs" />
     <Compile Include="GenericProcessBuilder.cs" />
     <Compile Include="Security\ISecurityManager.cs" />
@@ -62,14 +56,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="_CreateNewNuGetPackage\Config.ps1" />
-    <None Include="_CreateNewNuGetPackage\DoNotModify\CreateNuGetPackage.ps1" />
-    <None Include="_CreateNewNuGetPackage\DoNotModify\New-NuGetPackage.ps1" />
-    <None Include="_CreateNewNuGetPackage\DoNotModify\UploadNuGetPackage.ps1" />
-    <None Include="_CreateNewNuGetPackage\RunMeToUploadNuGetPackage.cmd" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="_CreateNewNuGetPackage\DoNotModify\NuGet.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using Cactus.Fileserver.Core;
+using Cactus.Fileserver.Core.Logging;
 using Cactus.Fileserver.Core.Model;
 using Cactus.Fileserver.Core.Storage;
 
