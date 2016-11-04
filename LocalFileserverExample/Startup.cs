@@ -1,11 +1,9 @@
 ﻿using System;
-using Cactus.Fileserver.Asp5.Config;
-using Cactus.Fileserver.Asp5.Images.Config;
-using ImageResizer;
+using System.Threading.Tasks;
+using Cactus.Fileserver.AspNetCore.Config;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 
 namespace LocalFileserver
 {
@@ -20,33 +18,25 @@ namespace LocalFileserver
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
-            var imageServerConfig = new LocalImageServerConfig(@"d:\temp", new Uri("http://localhost:38420"), @"/file")
-            {
-                DefaultInstructions = new Instructions("autorotate=true&maxwidth=200&maxheight=200&copymetadata=true&mode=crop")
-            };
-            app.UseErrorTrace()
-               .UseImageFileserver(imageServerConfig);
-        }
-    }
+            var env = app.ApplicationServices.GetService<IHostingEnvironment>();
+            var fileStorageFolder = env.WebRootPath;
+            var metaStorageFolder = fileStorageFolder;
+            var config = new ServerConfig(fileStorageFolder, metaStorageFolder, new Uri("http://localhost:38420"));
 
-    public static class TraceMiddleware
-    {
-        public static IApplicationBuilder UseErrorTrace(this IApplicationBuilder app)
-        {
-            app.Use(async (context, next) =>
-            {
-                try
+            app
+                .UseStaticFiles(new StaticFileOptions
                 {
-                    await next.Invoke();
-                }
-                catch (Exception e)
+                    DefaultContentType = "application/octet-stream",
+                    ServeUnknownFileTypes = true
+                })
+                .UseFileserver(config)
+                .Run(context =>
                 {
-                    context.Response.ContentType = "application/json";
-                    context.Response.StatusCode = 500;
-                    await context.Response.WriteAsync(JsonConvert.SerializeObject(e, Formatting.Indented));
-                }
-            });
-            return app;
+                    // Strange request, let's just say "BAD REQUEST"
+                    // Instead, you could start your ASP.NET MVC handler here for instance  
+                    context.Response.StatusCode = 400;
+                    return Task.FromResult(0);
+                });
         }
     }
 }

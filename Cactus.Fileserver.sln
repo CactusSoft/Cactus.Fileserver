@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Tests", "Cactus.Fileserver.Tests\Cactus.Fileserver.Tests.csproj", "{E07BBF57-711F-4F38-B283-79D86C81FB3C}"
 EndProject
@@ -13,11 +13,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Owin", "C
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "LocalFileserverExample", "LocalFileserverExample\LocalFileserverExample.xproj", "{1ED97881-B624-4978-9EB1-469DD9E122B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Asp5", "Cactus.Fileserver.Asp5\Cactus.Fileserver.Asp5.csproj", "{3BBE085A-7B36-40FF-AB73-573133A94F21}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.AspNetCore", "Cactus.Fileserver.AspNetCore\Cactus.Fileserver.AspNetCore.csproj", "{3BBE085A-7B36-40FF-AB73-573133A94F21}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Asp5.Images", "Cactus.Fileserver.Asp5.Images\Cactus.Fileserver.Asp5.Images.csproj", "{193131C0-78FE-41A1-87DF-E0377D90A7E6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.ImageResizer", "Cactus.Fileserver.ImageResizer\Cactus.Fileserver.ImageResizer.csproj", "{B036D209-461F-4DEE-AB4B-471DE179ABDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Owin.Images", "Cactus.Fileserver.Owin.Images\Cactus.Fileserver.Owin.Images.csproj", "{F4983F9E-D33E-4E8D-A06E-527C6E312BDB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.LocalStorage", "Cactus.Fileserver.LocalStorage\Cactus.Fileserver.LocalStorage.csproj", "{5174C316-76D4-4F0B-BEC9-887A06D98F8E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,14 +49,14 @@ Global
 		{3BBE085A-7B36-40FF-AB73-573133A94F21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3BBE085A-7B36-40FF-AB73-573133A94F21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3BBE085A-7B36-40FF-AB73-573133A94F21}.Release|Any CPU.Build.0 = Release|Any CPU
-		{193131C0-78FE-41A1-87DF-E0377D90A7E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{193131C0-78FE-41A1-87DF-E0377D90A7E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{193131C0-78FE-41A1-87DF-E0377D90A7E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{193131C0-78FE-41A1-87DF-E0377D90A7E6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F4983F9E-D33E-4E8D-A06E-527C6E312BDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F4983F9E-D33E-4E8D-A06E-527C6E312BDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F4983F9E-D33E-4E8D-A06E-527C6E312BDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F4983F9E-D33E-4E8D-A06E-527C6E312BDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B036D209-461F-4DEE-AB4B-471DE179ABDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B036D209-461F-4DEE-AB4B-471DE179ABDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B036D209-461F-4DEE-AB4B-471DE179ABDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B036D209-461F-4DEE-AB4B-471DE179ABDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5174C316-76D4-4F0B-BEC9-887A06D98F8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5174C316-76D4-4F0B-BEC9-887A06D98F8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5174C316-76D4-4F0B-BEC9-887A06D98F8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5174C316-76D4-4F0B-BEC9-887A06D98F8E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

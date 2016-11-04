@@ -3,7 +3,8 @@
         "ImageResizer": "4.0.5",
         "Microsoft.AspNet.WebApi.Tracing": "5.2.3",
         "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
-        "Microsoft.AspNetCore.Server.Kestrel": "1.0.0",
+        "Microsoft.AspNetCore.Server.Kestrel": "1.0.1",
+        "Microsoft.AspNetCore.StaticFiles": "1.0.0",
         "Newtonsoft.Json": "9.0.1"
     },
 
@@ -17,12 +18,18 @@
   "frameworks": {
     "net461": {
         "dependencies": {
-            "Cactus.Fileserver.Asp5.Images": {
+            "Cactus.Fileserver.AspNetCore": {
                 "target": "project"
             },
             "Cactus.Fileserver.Core": {
                 "target": "project"
-            }        }
+            },
+            "Cactus.Fileserver.ImageResizer": {
+                "target": "project"
+            },
+            "Cactus.Fileserver.LocalStorage": {
+                "target": "project"
+            }       }
     }
   },
 

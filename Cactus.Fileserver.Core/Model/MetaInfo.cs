@@ -6,8 +6,24 @@ namespace Cactus.Fileserver.Core.Model
     /// <summary>
     /// Represent file info. For example image that you uploaded pic.jpeg and received back URL like http://cdn.texas.srv.com/debug-folder/abcdf.png?x=y 
     /// </summary>
-    public class MetaInfo: IFileInfo
+    public class MetaInfo : IFileInfo
     {
+        public MetaInfo()
+        {
+        }
+
+        public MetaInfo(IFileInfo copyFrom)
+        {
+            if (copyFrom != null)
+            {
+                MimeType = copyFrom.MimeType;
+                Extra = copyFrom.Extra;
+                OriginalName = copyFrom.OriginalName;
+                Owner = copyFrom.Owner;
+                Icon = copyFrom.Icon;
+            }
+        }
+
         /// <summary>
         /// The stored file MIME type regarding RFC6838
         /// In our case "image/png" because the original file was converted into PNG format during uploading
@@ -28,6 +44,11 @@ namespace Cactus.Fileserver.Core.Model
         /// Full URL for getting the file. http://cdn.texas.srv.com/debug-folder/abcdf.png?x=y  in our case
         /// </summary>
         public Uri Uri { get; set; }
+
+        /// <summary>
+        /// Icon or thumbnail URI.
+        /// </summary>
+        public Uri Icon { get; set; }
 
         /// <summary>
         /// Server-independent path to the file. In our case "/debug-folder/abcdf.png".

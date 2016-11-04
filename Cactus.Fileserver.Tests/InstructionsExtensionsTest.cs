@@ -1,4 +1,4 @@
-﻿using Cactus.Fileserver.Owin.Images;
+﻿using Cactus.Fileserver.ImageResizer;
 using ImageResizer;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

@@ -53,12 +53,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Middleware\AddFileMiddleware.cs" />
     <Compile Include="Config\AppBuilderExtensions.cs" />
-    <Compile Include="Config\IFileserverConfig.cs" />
-    <Compile Include="Config\LocalFileserverConfig.cs" />
-    <Compile Include="DataRequestHandler.cs" />
-    <Compile Include="InfoRequestHandler.cs" />
+    <Compile Include="Middleware\DeleteFileMiddleware.cs" />
     <Compile Include="OwinResponseExtensions.cs" />
+    <Compile Include="PipelineBuilder.cs" />
+    <Compile Include="Processing\ProcessBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -66,12 +66,20 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="_CreateNewNuGetPackage\Config.ps1" />
+    <None Include="_CreateNewNuGetPackage\DoNotModify\CreateNuGetPackage.ps1" />
+    <None Include="_CreateNewNuGetPackage\DoNotModify\New-NuGetPackage.ps1" />
+    <None Include="_CreateNewNuGetPackage\DoNotModify\UploadNuGetPackage.ps1" />
+    <None Include="_CreateNewNuGetPackage\RunMeToUploadNuGetPackage.cmd" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cactus.Fileserver.Core\Cactus.Fileserver.Core.csproj">
       <Project>{18b3320e-33fa-4295-80da-1e237a419e8f}</Project>
       <Name>Cactus.Fileserver.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="_CreateNewNuGetPackage\DoNotModify\NuGet.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

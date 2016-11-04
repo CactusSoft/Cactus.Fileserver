@@ -41,18 +41,19 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\IFileserverConfig.cs" />
     <Compile Include="FileStorageService.cs" />
     <Compile Include="Model\IFileInfo.cs" />
+    <Compile Include="GenericProcessBuilder.cs" />
     <Compile Include="Security\ISecurityManager.cs" />
     <Compile Include="Security\NothingCheckSecurityManager.cs" />
     <Compile Include="Storage\IFileStorage.cs" />
     <Compile Include="IFileStorageService.cs" />
     <Compile Include="Storage\IMetaInfoStorage.cs" />
     <Compile Include="Storage\IStoredNameProvider.cs" />
-    <Compile Include="Storage\LocalFileStorage.cs" />
-    <Compile Include="Storage\LocalMetaInfoStorage.cs" />
     <Compile Include="Model\IncomeFileInfo.cs" />
     <Compile Include="Storage\RandomNameProvider.cs" />
     <Compile Include="Model\MetaInfo.cs" />
@@ -61,6 +62,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="_CreateNewNuGetPackage\Config.ps1" />
+    <None Include="_CreateNewNuGetPackage\DoNotModify\CreateNuGetPackage.ps1" />
+    <None Include="_CreateNewNuGetPackage\DoNotModify\New-NuGetPackage.ps1" />
+    <None Include="_CreateNewNuGetPackage\DoNotModify\UploadNuGetPackage.ps1" />
+    <None Include="_CreateNewNuGetPackage\RunMeToUploadNuGetPackage.cmd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="_CreateNewNuGetPackage\DoNotModify\NuGet.exe" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

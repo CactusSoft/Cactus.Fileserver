@@ -8,7 +8,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Cactus.Fileserver.Tests</RootNamespace>
     <AssemblyName>Cactus.Fileserver.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <IsCodedUITest>False</IsCodedUITest>
@@ -52,6 +52,7 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.Web.Extensions" />
@@ -62,6 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CrudIntegrationTest.cs" />
+    <Compile Include="ProcessBuilderTest.cs" />
     <Compile Include="InstructionsExtensionsTest.cs" />
     <Compile Include="UriExtensionTest.cs" />
     <Compile Include="RandomNameProviderTest.cs" />
@@ -72,16 +74,13 @@
       <Project>{18b3320e-33fa-4295-80da-1e237a419e8f}</Project>
       <Name>Cactus.Fileserver.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Cactus.Fileserver.Owin.Images\Cactus.Fileserver.Owin.Images.csproj">
-      <Project>{f4983f9e-d33e-4e8d-a06e-527c6e312bdb}</Project>
-      <Name>Cactus.Fileserver.Owin.Images</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Cactus.Fileserver.Owin\Cactus.Fileserver.Owin.csproj">
-      <Project>{bdda880e-2135-4cb9-a3e3-c2340a0f2246}</Project>
-      <Name>Cactus.Fileserver.Owin</Name>
+    <ProjectReference Include="..\Cactus.Fileserver.ImageResizer\Cactus.Fileserver.ImageResizer.csproj">
+      <Project>{b036d209-461f-4dee-ab4b-471de179abda}</Project>
+      <Name>Cactus.Fileserver.ImageResizer</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

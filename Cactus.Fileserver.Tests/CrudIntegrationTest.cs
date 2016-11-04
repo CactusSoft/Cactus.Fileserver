@@ -17,9 +17,9 @@ namespace Cactus.Fileserver.Tests
         {
             var bytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
             var filename = "something.dummy";
-            var mimetype = "application/binary";
+            var mimetype = "application/octet-stream";
             var restClient = new RestClient(baseFileserverUrl);
-            var post = new RestRequest("file", Method.POST) { AlwaysMultipartFormData = true };
+            var post = new RestRequest(Method.POST);
             post.AddFileBytes(filename, bytes, filename, mimetype);
             var postRes = restClient.Execute(post);
             LogRequest(restClient, post, postRes, 0);

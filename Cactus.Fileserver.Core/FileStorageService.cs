@@ -44,6 +44,7 @@ namespace Cactus.Fileserver.Core
                 MimeType = fileInfo.MimeType,
                 OriginalName = fileInfo.OriginalName,
                 Owner = fileInfo.Owner,
+                Icon = fileInfo.Icon,
                 Extra = fileInfo.Extra?.ToDictionary(e => e.Key, e => e.Value) // copy values
             };
 

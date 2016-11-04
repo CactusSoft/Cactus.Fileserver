@@ -1,17 +1,19 @@
 <?xml version="1.0"?>
-<package >
+<package>
   <metadata>
     <id>$id$</id>
-    <version>$version$</version>
+    <version>2.0.0.0</version>
     <title>$title$</title>
     <authors>Yan O</authors>
     <owners>CactusSoft LLC</owners>
     <licenseUrl>https://github.com/CactusSoft/Cactus.Fileserver/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/CactusSoft/Cactus.Fileserver/</projectUrl>
-       <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Simple HTTP-based file storage</description>
-    <releaseNotes></releaseNotes>
-    <copyright>Copyright 2016 CactusSoftLLC</copyright>
-    <tags></tags>
+    <releaseNotes>
+    </releaseNotes>
+    <copyright>Copyright 2016 CactusSoft LLC</copyright>
+    <tags>
+    </tags>
   </metadata>
 </package>
