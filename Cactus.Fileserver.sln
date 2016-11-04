@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Owin.Nuge
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.AspNetCore.Nuget", "Cactus.Fileserver.AspNetCore.Nuget\Cactus.Fileserver.AspNetCore.Nuget.csproj", "{46A34DA7-59DE-45BE-A992-0098BDD07D6C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{405B81EC-3E5E-4260-A3AC-824C4BF98991}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -82,9 +84,15 @@ Global
 		{46A34DA7-59DE-45BE-A992-0098BDD07D6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{46A34DA7-59DE-45BE-A992-0098BDD07D6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46A34DA7-59DE-45BE-A992-0098BDD07D6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{46A34DA7-59DE-45BE-A992-0098BDD07D6C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0451BAEF-DF2E-4B98-8644-94EE9415E389} = {405B81EC-3E5E-4260-A3AC-824C4BF98991}
+		{DEFFD0DC-27B6-4601-8386-9F5E4CBC832D} = {405B81EC-3E5E-4260-A3AC-824C4BF98991}
+		{7715793E-D47E-4C66-A59C-03C152E2A404} = {405B81EC-3E5E-4260-A3AC-824C4BF98991}
+		{45683811-DB79-40AF-BA34-5149BDD63DFD} = {405B81EC-3E5E-4260-A3AC-824C4BF98991}
+		{46A34DA7-59DE-45BE-A992-0098BDD07D6C} = {405B81EC-3E5E-4260-A3AC-824C4BF98991}
 	EndGlobalSection
 EndGlobal
