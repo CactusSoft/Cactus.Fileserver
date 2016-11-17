@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Cactus.Fileserver.AspNetCore</id>
-    <version>2.0.2</version>
+    <version>2.0.5</version>
     <title>Cactus.Fileserver.AspNetCore</title>
     <authors>yan.oreshchenkov</authors>
     <owners>CactusSoft LLC</owners>
@@ -27,16 +27,8 @@
           <dependency id="Newtonsoft.Json" version="9.0.1" />
           <dependency id="System.Collections" version="4.0.11" />
           <dependency id="System.Collections.Concurrent" version="4.0.12" />
-          <dependency id="System.Diagnostics.Debug" version="4.0.11" />
-          <dependency id="System.Diagnostics.DiagnosticSource" version="4.0.0" />
-          <dependency id="System.Globalization" version="4.0.11" />
-          <dependency id="System.Linq" version="4.1.0" />
-          <dependency id="System.Net.Http" version="4.1.0" />
-          <dependency id="System.Net.Http.Formatting.Extension" version="5.2.3.0" />
-          <dependency id="System.Reflection" version="4.1.0" />
-          <dependency id="System.Resources.ResourceManager" version="4.0.1" />
-          <dependency id="System.Runtime.Extensions" version="4.1.0" />
-          <dependency id="System.Runtime.InteropServices" version="4.1.0" />
+          <dependency id="System.Net.Http" version="4.0.0" />
+          <dependency id="System.Net.Http.Formatting.Extension" version="5.2.3" />
           <dependency id="System.Security.Cryptography.Algorithms" version="4.2.0" />
           <dependency id="System.Security.Cryptography.Encoding" version="4.0.0" />
           <dependency id="System.Security.Cryptography.Primitives" version="4.0.0" />

@@ -5,26 +5,27 @@
       "type": "project",
       "framework": ".NETFramework,Version=v4.6.1",
       "compile": {
-        "bin/Debug/Cactus.Fileserver.AspNetCore.dll": {}
+        "bin/Release/Cactus.Fileserver.AspNetCore.dll": {}
       },
       "runtime": {
-        "../packages/Microsoft.AspNet.WebApi.Client.5.2.3/lib/net45/System.Net.Http.Formatting.dll": {},
-        "../packages/Microsoft.AspNetCore.Http.Abstractions.1.0.0/lib/net451/Microsoft.AspNetCore.Http.Abstractions.dll": {},
-        "../packages/Microsoft.AspNetCore.Http.Features.1.0.0/lib/net451/Microsoft.AspNetCore.Http.Features.dll": {},
         "../packages/Microsoft.Extensions.Logging.Abstractions.1.0.0/lib/netstandard1.1/Microsoft.Extensions.Logging.Abstractions.dll": {},
-        "../packages/Microsoft.Extensions.Primitives.1.0.0/lib/netstandard1.0/Microsoft.Extensions.Primitives.dll": {},
         "../packages/Microsoft.Win32.Primitives.4.0.1/lib/net46/Microsoft.Win32.Primitives.dll": {},
         "../packages/Newtonsoft.Json.9.0.1/lib/net45/Newtonsoft.Json.dll": {},
         "../packages/System.Net.Http.4.1.0/lib/net46/System.Net.Http.dll": {},
+        "../packages/System.Net.Http.Formatting.Extension.5.2.3.0/lib/System.Net.Http.Extensions.dll": {},
+        "../packages/System.Net.Http.Formatting.Extension.5.2.3.0/lib/System.Net.Http.Formatting.dll": {},
+        "../packages/System.Net.Http.Formatting.Extension.5.2.3.0/lib/System.Net.Http.Primitives.dll": {},
         "../packages/System.Security.Cryptography.Algorithms.4.2.0/lib/net461/System.Security.Cryptography.Algorithms.dll": {},
         "../packages/System.Security.Cryptography.Encoding.4.0.0/lib/net46/System.Security.Cryptography.Encoding.dll": {},
         "../packages/System.Security.Cryptography.Primitives.4.0.0/lib/net46/System.Security.Cryptography.Primitives.dll": {},
         "../packages/System.Security.Cryptography.X509Certificates.4.1.0/lib/net461/System.Security.Cryptography.X509Certificates.dll": {},
-        "../packages/System.Text.Encodings.Web.4.0.0/lib/netstandard1.0/System.Text.Encodings.Web.dll": {},
-        "bin/Debug/Cactus.Fileserver.AspNetCore.dll": {}
+        "C:/Users/yan.oreshchenkov/.nuget/packages/Microsoft.AspNetCore.Http.Abstractions/1.1.0/lib/net451/Microsoft.AspNetCore.Http.Abstractions.dll": {},
+        "C:/Users/yan.oreshchenkov/.nuget/packages/Microsoft.AspNetCore.Http.Features/1.1.0/lib/net451/Microsoft.AspNetCore.Http.Features.dll": {},
+        "C:/Users/yan.oreshchenkov/.nuget/packages/Microsoft.Extensions.Primitives/1.1.0/lib/netstandard1.0/Microsoft.Extensions.Primitives.dll": {},
+        "bin/Release/Cactus.Fileserver.AspNetCore.dll": {}
       },
       "contentFiles": {
-        "bin/Debug/Cactus.Fileserver.AspNetCore.pdb": {
+        "bin/Release/Cactus.Fileserver.AspNetCore.pdb": {
           "buildAction": "None",
           "codeLanguage": "any",
           "copyToOutput": true
@@ -35,13 +36,13 @@
       "type": "project",
       "framework": ".NETFramework,Version=v4.5",
       "compile": {
-        "bin/Debug/Cactus.Fileserver.Core.dll": {}
+        "bin/Release/Cactus.Fileserver.Core.dll": {}
       },
       "runtime": {
-        "bin/Debug/Cactus.Fileserver.Core.dll": {}
+        "bin/Release/Cactus.Fileserver.Core.dll": {}
       },
       "contentFiles": {
-        "bin/Debug/Cactus.Fileserver.Core.pdb": {
+        "bin/Release/Cactus.Fileserver.Core.pdb": {
           "buildAction": "None",
           "codeLanguage": "any",
           "copyToOutput": true
@@ -52,13 +53,13 @@
       "type": "project",
       "framework": ".NETFramework,Version=v4.6.1",
       "compile": {
-        "bin/Debug/Cactus.Fileserver.LocalStorage.dll": {}
+        "bin/Release/Cactus.Fileserver.LocalStorage.dll": {}
       },
       "runtime": {
-        "bin/Debug/Cactus.Fileserver.LocalStorage.dll": {}
+        "bin/Release/Cactus.Fileserver.LocalStorage.dll": {}
       },
       "contentFiles": {
-        "bin/Debug/Cactus.Fileserver.LocalStorage.pdb": {
+        "bin/Release/Cactus.Fileserver.LocalStorage.pdb": {
           "buildAction": "None",
           "codeLanguage": "any",
           "copyToOutput": true
@@ -69,14 +70,14 @@
       "type": "project",
       "framework": ".NETFramework,Version=v4.5.2",
       "compile": {
-        "bin/Debug/Cactus.Fileserver.ImageResizer.dll": {}
+        "bin/Release/Cactus.Fileserver.ImageResizer.dll": {}
       },
       "runtime": {
         "../packages/ImageResizer.4.0.5/lib/net45/ImageResizer.dll": {},
-        "bin/Debug/Cactus.Fileserver.ImageResizer.dll": {}
+        "bin/Release/Cactus.Fileserver.ImageResizer.dll": {}
       },
       "contentFiles": {
-        "bin/Debug/Cactus.Fileserver.ImageResizer.pdb": {
+        "bin/Release/Cactus.Fileserver.ImageResizer.pdb": {
           "buildAction": "None",
           "codeLanguage": "any",
           "copyToOutput": true

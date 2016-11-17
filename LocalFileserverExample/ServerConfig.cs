@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Cactus.Fileserver.AspNetCore;
@@ -37,28 +36,8 @@ namespace LocalFileserver
                 );
 
             return new PipelineBuilder()
-                .Use(next => (async (request, content, info) =>
-                {
-                    //Extract multipart if need
-                    if (content.IsMimeMultipartContent())
-                    {
-                        var provider = await content.ReadAsMultipartAsync();
-                        var firstFileContent = provider.Contents.FirstOrDefault(c => !string.IsNullOrWhiteSpace(c.Headers.ContentDisposition.FileName));
-                        if (firstFileContent != null)
-                        {
-                            return await next(request, firstFileContent, info);
-                        }
-                        throw new ArgumentException("Multipart content detected, but no files found inside.");
-                    }
-                    return await next(request, content, info);
-                }))
-                .Use(next => (async (request, content, info) =>
-                {
-                    //Set original file info
-                    info.MimeType = content.Headers.ContentType.ToString();
-                    info.OriginalName = content.Headers.ContentDisposition.FileName?.Trim('"') ?? "noname";
-                    return await next(request, content, info);
-                }))
+                .UseMultipartRequestParser()
+                .UseOriginalFileinfo()
                 .Use(next => (async (request, content, info) =>
                 {
                     //Process image + thumbnail if requested or call next otherwise
@@ -77,15 +56,7 @@ namespace LocalFileserver
                     }
                     return await next(request, content, info);
                 }))
-                .Run(async (request, content, info) =>
-                {
-                    //Just store the file whatever it could be
-                    var fileStorage = FileStorage();
-                    using (var stream = await content.ReadAsStreamAsync())
-                    {
-                        return await fileStorage.Create(stream, info);
-                    }
-                });
+                .RunStoreFileAsIs(FileStorage);
         }
     }
 }

@@ -47,7 +47,6 @@ namespace Cactus.Fileserver.LocalStorage
                 // Use JSON and relax.
                 var ser = new DataContractJsonSerializer(typeof(T));
                 ser.WriteObject(writer, info);
-                //writer.WriteAsync(JsonConvert.SerializeObject(info, Formatting.Indented));
             }
         }
 

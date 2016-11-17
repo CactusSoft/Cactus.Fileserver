@@ -13,6 +13,7 @@ namespace LocalFileserver
         // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -24,6 +25,7 @@ namespace LocalFileserver
             var config = new ServerConfig(fileStorageFolder, metaStorageFolder, new Uri("http://localhost:38420"));
 
             app
+                .UseDeveloperExceptionPage()
                 .UseStaticFiles(new StaticFileOptions
                 {
                     DefaultContentType = "application/octet-stream",

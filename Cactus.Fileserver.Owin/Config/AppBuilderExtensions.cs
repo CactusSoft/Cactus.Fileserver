@@ -17,14 +17,14 @@ namespace Cactus.Fileserver.Owin.Config
                     {
                         builder
                             .Use<DeleteFileMiddleware>(builder.GetLoggerFactory(), config.FileStorage())
-                            .Use<AddFileMiddleware>(builder.GetLoggerFactory(), config.NewFilePipeline);
+                            .Use<AddFileMiddleware>(builder.GetLoggerFactory(), config.NewFilePipeline());
                     });
             }
             else
             {
                 app
                     .Use<DeleteFileMiddleware>(app.GetLoggerFactory(), config.FileStorage())
-                    .Use<AddFileMiddleware>(app.GetLoggerFactory(), config.NewFilePipeline);
+                    .Use<AddFileMiddleware>(app.GetLoggerFactory(), config.NewFilePipeline());
             }
 
             return app;
