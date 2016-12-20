@@ -41,7 +41,6 @@
     <Reference Include="System.Net.Http" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ImageProcessingResult.cs" />
     <Compile Include="ImageStorageService.cs" />
     <Compile Include="InstructionsExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

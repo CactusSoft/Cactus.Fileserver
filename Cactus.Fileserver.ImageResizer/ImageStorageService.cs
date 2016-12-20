@@ -19,6 +19,7 @@ namespace Cactus.Fileserver.ImageResizer
         private readonly Instructions defaultThumbnailInstructions;
         private readonly Instructions mandatoryThumbnailInstructions;
         private readonly string paramsPrefix;
+        protected readonly char IconDelimiter = '-';
 
         public ImageStorageService(IFileStorageService storageService, Instructions defaultInstructions, Instructions mandatoryInstructions, Instructions defaultThumbnailInstructions,
             Instructions mandatoryThumbnailInstructions,
@@ -67,6 +68,19 @@ namespace Cactus.Fileserver.ImageResizer
             var thumbnail = await ProcessImage(fileInfo, file, thumbnailInstructions).ConfigureAwait(false);
             fileInfo.Icon = thumbnail.Uri;
             var original = await ProcessImage(fileInfo, file, originalInstructions).ConfigureAwait(false);
+            if (original.Extra == null)
+                original.Extra = new Dictionary<string, string>();
+
+            if (thumbnail.Extra != null)
+            {
+                foreach (var kvp in thumbnail.Extra.Select(e => new KeyValuePair<string, string>(nameof(MetaInfo.Icon) + IconDelimiter + e.Key, e.Value)))
+                    original.Extra.Add(kvp);
+            }
+
+            var iconMimeTypeKey = nameof(MetaInfo.Icon) + IconDelimiter + nameof(MetaInfo.MimeType);
+            if (!original.Extra.ContainsKey(iconMimeTypeKey))
+                original.Extra.Add(iconMimeTypeKey, thumbnail.MimeType);
+
             return original;
         }
 
@@ -75,12 +89,15 @@ namespace Cactus.Fileserver.ImageResizer
         /// For example if the original was a jpeg image, but after processing it's converted into png, file ext & mime type will be updated.
         /// </summary>
         /// <param name="fileInfo">Income file info</param>
-        /// <param name="processingResult">Stored file info</param>
+        /// <param name="job">Processing result</param>
         /// <returns></returns>
-        protected virtual IFileInfo BuildFileInfo(IFileInfo fileInfo, ImageProcessingResult processingResult)
+        protected virtual IFileInfo BuildFileInfo(IFileInfo fileInfo, ImageJob job)
         {
-            var res = new IncomeFileInfo(fileInfo) { MimeType = processingResult.MediaType };
-            if (processingResult.FileExt != null && !res.OriginalName.EndsWith(processingResult.FileExt, StringComparison.OrdinalIgnoreCase))
+            var fileExt = job.ResultFileExtension;
+            var mediaType = job.ResultMimeType ?? fileInfo.MimeType;
+
+            var res = new IncomeFileInfo(fileInfo) { MimeType = mediaType };
+            if (fileExt != null && !res.OriginalName.EndsWith(fileExt, StringComparison.OrdinalIgnoreCase))
             {
                 // Need to correct file ext
                 var dotIndex = res.OriginalName.LastIndexOf('.');
@@ -88,8 +105,17 @@ namespace Cactus.Fileserver.ImageResizer
                 {
                     res.OriginalName = res.OriginalName.Substring(0, dotIndex);
                 }
-                res.OriginalName += '.' + processingResult.FileExt;
+                res.OriginalName += '.' + fileExt;
             }
+            var extra = new Dictionary<string, string>();
+            if (job.FinalHeight.HasValue)
+                extra.Add("Height", job.FinalHeight.Value.ToString("D"));
+            if (job.FinalWidth.HasValue)
+                extra.Add("Width", job.FinalWidth.Value.ToString("D"));
+            if (job.Dest is Stream)
+                extra.Add("Size", ((Stream)job.Dest).Length.ToString("D"));
+            if (extra.Count > 0)
+                res.Extra = extra;
             return res;
         }
 
@@ -101,21 +127,14 @@ namespace Cactus.Fileserver.ImageResizer
         /// <param name="outputStream">Output stream to write the result</param>
         /// <param name="instructions">Instructions to apply</param>
         /// <returns>Result image as a stream. Caller have to care about the stream disposing.</returns>
-        protected virtual ImageProcessingResult ProcessImage(Stream inputStream, Stream outputStream, Instructions instructions)
+        protected virtual ImageJob ProcessImage(Stream inputStream, Stream outputStream, Instructions instructions)
         {
             if (!inputStream.CanRead)
                 throw new ArgumentException("inputStream is nor readable");
             if (!outputStream.CanWrite)
                 throw new ArgumentException("outputStream is nor writable");
 
-            var job = ImageBuilder.Current.Build(inputStream, outputStream, instructions);
-
-            var res = new ImageProcessingResult();
-            if (!string.IsNullOrEmpty(job.ResultFileExtension))
-                res.FileExt = job.ResultFileExtension;
-            if (!string.IsNullOrEmpty(job.ResultMimeType))
-                res.MediaType = job.ResultMimeType;
-            return res;
+            return ImageBuilder.Current.Build(inputStream, outputStream, instructions);
         }
 
         protected virtual async Task<MetaInfo> ProcessImage(IFileInfo fileInfo, byte[] rawData, Instructions instructions)
