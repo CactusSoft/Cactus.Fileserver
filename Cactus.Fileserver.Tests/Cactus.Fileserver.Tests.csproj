@@ -70,10 +70,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Cactus.Fileserver.Core\Cactus.Fileserver.Core.csproj">
-      <Project>{18b3320e-33fa-4295-80da-1e237a419e8f}</Project>
-      <Name>Cactus.Fileserver.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Cactus.Fileserver.ImageResizer\Cactus.Fileserver.ImageResizer.csproj">
       <Project>{b036d209-461f-4dee-ab4b-471de179abda}</Project>
       <Name>Cactus.Fileserver.ImageResizer</Name>

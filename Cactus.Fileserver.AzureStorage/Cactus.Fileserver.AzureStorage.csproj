@@ -66,12 +66,6 @@
     <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Cactus.Fileserver.Core\Cactus.Fileserver.Core.csproj">
-      <Project>{18b3320e-33fa-4295-80da-1e237a419e8f}</Project>
-      <Name>Cactus.Fileserver.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>

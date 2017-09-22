@@ -1,35 +1,31 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Tests", "Cactus.Fileserver.Tests\Cactus.Fileserver.Tests.csproj", "{E07BBF57-711F-4F38-B283-79D86C81FB3C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{405B81EC-3E5E-4260-A3AC-824C4BF98991}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Core", "Cactus.Fileserver.Core\Cactus.Fileserver.Core.csproj", "{18B3320E-33FA-4295-80DA-1E237A419E8F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Tests", "Cactus.Fileserver.Tests\Cactus.Fileserver.Tests.csproj", "{E07BBF57-711F-4F38-B283-79D86C81FB3C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.AzureStorage", "Cactus.Fileserver.AzureStorage\Cactus.Fileserver.AzureStorage.csproj", "{10C97AF7-B74A-4D99-88DC-9130C1952FBF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Owin", "Cactus.Fileserver.Owin\Cactus.Fileserver.Owin.csproj", "{BDDA880E-2135-4CB9-A3E3-C2340A0F2246}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "LocalFileserverExample", "LocalFileserverExample\LocalFileserverExample.xproj", "{1ED97881-B624-4978-9EB1-469DD9E122B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalFileserverExample", "LocalFileserverExample\LocalFileserverExample.csproj", "{1ED97881-B624-4978-9EB1-469DD9E122B5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.AspNetCore", "Cactus.Fileserver.AspNetCore\Cactus.Fileserver.AspNetCore.csproj", "{3BBE085A-7B36-40FF-AB73-573133A94F21}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.ImageResizer", "Cactus.Fileserver.ImageResizer\Cactus.Fileserver.ImageResizer.csproj", "{B036D209-461F-4DEE-AB4B-471DE179ABDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.LocalStorage", "Cactus.Fileserver.LocalStorage\Cactus.Fileserver.LocalStorage.csproj", "{5174C316-76D4-4F0B-BEC9-887A06D98F8E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Core.Nuget", "Cactus.Fileserver.Core.Nuget\Cactus.Fileserver.Core.Nuget.csproj", "{0451BAEF-DF2E-4B98-8644-94EE9415E389}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.ImageResizer.Nuget", "Cactus.Fileserver.ImageResizer.Nuget\Cactus.Fileserver.ImageResizer.Nuget.csproj", "{DEFFD0DC-27B6-4601-8386-9F5E4CBC832D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.LocalStorage.Nuget", "Cactus.Fileserver.LocalStorage.Nuget\Cactus.Fileserver.LocalStorage.Nuget.csproj", "{7715793E-D47E-4C66-A59C-03C152E2A404}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Owin.Nuget", "Cactus.Fileserver.Owin.Nuget\Cactus.Fileserver.Owin.Nuget.csproj", "{45683811-DB79-40AF-BA34-5149BDD63DFD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.AspNetCore.Nuget", "Cactus.Fileserver.AspNetCore.Nuget\Cactus.Fileserver.AspNetCore.Nuget.csproj", "{46A34DA7-59DE-45BE-A992-0098BDD07D6C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{405B81EC-3E5E-4260-A3AC-824C4BF98991}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.Core", "Cactus.Fileserver.Core\Cactus.Fileserver.Core.csproj", "{E4DEDC1B-6C96-4793-BD45-30B550DD1BB5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.LocalStorage", "Cactus.Fileserver.LocalStorage\Cactus.Fileserver.LocalStorage.csproj", "{4AE0236F-EDE1-4A4E-A3E5-1EF2C524AB46}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +37,6 @@ Global
 		{E07BBF57-711F-4F38-B283-79D86C81FB3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E07BBF57-711F-4F38-B283-79D86C81FB3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E07BBF57-711F-4F38-B283-79D86C81FB3C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{18B3320E-33FA-4295-80DA-1E237A419E8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{18B3320E-33FA-4295-80DA-1E237A419E8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{18B3320E-33FA-4295-80DA-1E237A419E8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{18B3320E-33FA-4295-80DA-1E237A419E8F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{10C97AF7-B74A-4D99-88DC-9130C1952FBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{10C97AF7-B74A-4D99-88DC-9130C1952FBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{10C97AF7-B74A-4D99-88DC-9130C1952FBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -65,34 +57,33 @@ Global
 		{B036D209-461F-4DEE-AB4B-471DE179ABDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B036D209-461F-4DEE-AB4B-471DE179ABDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B036D209-461F-4DEE-AB4B-471DE179ABDA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5174C316-76D4-4F0B-BEC9-887A06D98F8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5174C316-76D4-4F0B-BEC9-887A06D98F8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5174C316-76D4-4F0B-BEC9-887A06D98F8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5174C316-76D4-4F0B-BEC9-887A06D98F8E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DEFFD0DC-27B6-4601-8386-9F5E4CBC832D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DEFFD0DC-27B6-4601-8386-9F5E4CBC832D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DEFFD0DC-27B6-4601-8386-9F5E4CBC832D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7715793E-D47E-4C66-A59C-03C152E2A404}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7715793E-D47E-4C66-A59C-03C152E2A404}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7715793E-D47E-4C66-A59C-03C152E2A404}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45683811-DB79-40AF-BA34-5149BDD63DFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{45683811-DB79-40AF-BA34-5149BDD63DFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45683811-DB79-40AF-BA34-5149BDD63DFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46A34DA7-59DE-45BE-A992-0098BDD07D6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{46A34DA7-59DE-45BE-A992-0098BDD07D6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46A34DA7-59DE-45BE-A992-0098BDD07D6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4DEDC1B-6C96-4793-BD45-30B550DD1BB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4DEDC1B-6C96-4793-BD45-30B550DD1BB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4DEDC1B-6C96-4793-BD45-30B550DD1BB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4DEDC1B-6C96-4793-BD45-30B550DD1BB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4AE0236F-EDE1-4A4E-A3E5-1EF2C524AB46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4AE0236F-EDE1-4A4E-A3E5-1EF2C524AB46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4AE0236F-EDE1-4A4E-A3E5-1EF2C524AB46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4AE0236F-EDE1-4A4E-A3E5-1EF2C524AB46}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{0451BAEF-DF2E-4B98-8644-94EE9415E389} = {405B81EC-3E5E-4260-A3AC-824C4BF98991}
 		{DEFFD0DC-27B6-4601-8386-9F5E4CBC832D} = {405B81EC-3E5E-4260-A3AC-824C4BF98991}
-		{7715793E-D47E-4C66-A59C-03C152E2A404} = {405B81EC-3E5E-4260-A3AC-824C4BF98991}
 		{45683811-DB79-40AF-BA34-5149BDD63DFD} = {405B81EC-3E5E-4260-A3AC-824C4BF98991}
 		{46A34DA7-59DE-45BE-A992-0098BDD07D6C} = {405B81EC-3E5E-4260-A3AC-824C4BF98991}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {650FD418-DEA3-4EA9-92A6-DBF5B0004916}
 	EndGlobalSection
 EndGlobal

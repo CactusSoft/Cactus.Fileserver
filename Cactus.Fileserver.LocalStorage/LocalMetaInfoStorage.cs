@@ -1,10 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Runtime.Serialization.Json;
 using Cactus.Fileserver.Core;
 using Cactus.Fileserver.Core.Logging;
 using Cactus.Fileserver.Core.Model;
 using Cactus.Fileserver.Core.Storage;
+using Newtonsoft.Json;
 
 namespace Cactus.Fileserver.LocalStorage
 {
@@ -41,12 +41,12 @@ namespace Cactus.Fileserver.LocalStorage
         public void Add(T info)
         {
             var fullFilename = GetFile(info.Uri);
-            using (var writer = File.Create(fullFilename))
+            using (var writer = new StreamWriter(File.Create(fullFilename)))
             {
                 // Damn XMLSerializer could not serialize Uri type, cause of it has no default constructor. What is the bullshit!!!!
                 // Use JSON and relax.
-                var ser = new DataContractJsonSerializer(typeof(T));
-                ser.WriteObject(writer, info);
+
+                writer.Write(JsonConvert.SerializeObject(info));
             }
         }
 
@@ -69,12 +69,9 @@ namespace Cactus.Fileserver.LocalStorage
 
         protected T GetMetadata(string metafile)
         {
-            using (var stream = new FileStream(metafile, FileMode.Open))
+            using (var reader = new StreamReader(new FileStream(metafile, FileMode.Open)))
             {
-                //var sr = new StreamReader(stream);
-                var ser = new DataContractJsonSerializer(typeof(T));
-                return (T)ser.ReadObject(stream);
-                //return JsonConvert.DeserializeObject<T>(sr.ReadToEnd());
+                return JsonConvert.DeserializeObject<T>(reader.ReadToEnd());
             }
         }
     }
