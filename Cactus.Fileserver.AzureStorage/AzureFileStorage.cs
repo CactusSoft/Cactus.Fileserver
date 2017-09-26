@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Cactus.Fileserver.Core;
@@ -27,19 +26,21 @@ namespace Cactus.Fileserver.AzureStorage
             this.connectionString = connectionString;
             try
             {
-                InitStorage();
+                InitStorage().Wait();
             }
             catch (Exception e)
             {
-                Trace.TraceError("Init failed {0}: {1}", e.GetType().Name, e.Message);
+                Console.WriteLine("Init failed {0}: {1}", e.GetType().Name, e.Message);
+                //Trace.TraceError("Init failed {0}: {1}", e.GetType().Name, e.Message);
             }
         }
 
         public async Task<Uri> Add(Stream stream, T info)
         {
-            InitStorage();
+            await InitStorage().ConfigureAwait(false);
             var targetFile = nameProvider.GetName(info);
-            Trace.WriteLine($"Writing {targetFile} azure");
+            Console.WriteLine($"Writing {targetFile} azure");
+            //Trace.WriteLine($"Writing {targetFile} azure");
             var blockBlob = cloudBlobContainer.GetBlockBlobReference(targetFile);
             blockBlob.Properties.ContentType = info.MimeType;
             blockBlob.Properties.CacheControl = cacheControl;
@@ -64,22 +65,23 @@ namespace Cactus.Fileserver.AzureStorage
 
         public async Task Delete(Uri uri)
         {
-            InitStorage();
+            await InitStorage().ConfigureAwait(false);
             var targetFile = uri.GetResource();
-            Trace.WriteLine($"Delete {targetFile} from azure");
+            Console.WriteLine($"Delete {targetFile} from azure");
+            //Trace.WriteLine($"Delete {targetFile} from azure");
             var blockBlob = cloudBlobContainer.GetBlockBlobReference(targetFile);
-            await blockBlob.DeleteIfExistsAsync();
+            await blockBlob.DeleteIfExistsAsync().ConfigureAwait(false);
         }
 
         public async Task<Stream> Get(Uri uri)
         {
-            InitStorage();
+            await InitStorage().ConfigureAwait(false);
             var targetFile = uri.GetResource();
             var blob = cloudBlobContainer.GetBlockBlobReference(targetFile);
-            return await blob.OpenReadAsync();
+            return await blob.OpenReadAsync().ConfigureAwait(false);
         }
 
-        private void InitStorage()
+        private async Task InitStorage()
         {
             if (cloudBlobContainer == null)
             {
@@ -89,17 +91,17 @@ namespace Cactus.Fileserver.AzureStorage
                     var blobClient = storageAccount.CreateCloudBlobClient();
 
                     ////Set up DefaultServiceVersion to support Content-Disposition header
-                    var serviceProperties = blobClient.GetServiceProperties();
+                    var serviceProperties = await blobClient.GetServicePropertiesAsync().ConfigureAwait(false);
                     serviceProperties.DefaultServiceVersion = "2013-08-15";
-                    blobClient.SetServiceProperties(serviceProperties);
+                    await blobClient.SetServicePropertiesAsync(serviceProperties).ConfigureAwait(false);
 
                     cloudBlobContainer = blobClient.GetContainerReference(containerName);
-                    cloudBlobContainer.CreateIfNotExists();
-                    cloudBlobContainer.SetPermissions(
+                    await cloudBlobContainer.CreateIfNotExistsAsync().ConfigureAwait(false);
+                    await cloudBlobContainer.SetPermissionsAsync(
                         new BlobContainerPermissions
                         {
                             PublicAccess = BlobContainerPublicAccessType.Blob
-                        });
+                        }).ConfigureAwait(false);
                 }
                 catch
                 {

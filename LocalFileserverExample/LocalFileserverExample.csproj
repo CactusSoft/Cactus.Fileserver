@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>net47</TargetFramework>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>LocalFileserverExample</AssemblyName>
     <OutputType>Exe</OutputType>
@@ -13,7 +13,6 @@
     <None Update="wwwroot\**\*">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </None>
-    <ProjectReference Include="..\Cactus.Fileserver.AspNetCore\Cactus.Fileserver.AspNetCore.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net461' ">
@@ -23,14 +22,21 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ImageResizer" Version="4.0.5" />
+    <PackageReference Include="ImageResizer" Version="4.1.10" />
     <PackageReference Include="Microsoft.AspNet.WebApi.Tracing" Version="5.2.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="1.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="1.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="1.0.2" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cactus.Fileserver.AspNetCore\Cactus.Fileserver.AspNetCore.csproj" />
+    <ProjectReference Include="..\Cactus.Fileserver.Core\Cactus.Fileserver.Core.csproj" />
+    <ProjectReference Include="..\Cactus.Fileserver.ImageResizer\Cactus.Fileserver.ImageResizer.csproj" />
+    <ProjectReference Include="..\Cactus.Fileserver.LocalStorage\Cactus.Fileserver.LocalStorage.csproj" />
   </ItemGroup>
 
 </Project>
