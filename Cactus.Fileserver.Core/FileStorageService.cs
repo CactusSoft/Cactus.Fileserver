@@ -11,11 +11,12 @@ namespace Cactus.Fileserver.Core
 {
     public class FileStorageService<T> : IFileStorageService where T : MetaInfo, new()
     {
-        private readonly IMetaInfoStorage<T> metaStorage;
         private readonly IFileStorage<T> fileStorage;
+        private readonly IMetaInfoStorage<T> metaStorage;
         private readonly ISecurityManager securityManager;
 
-        public FileStorageService(IMetaInfoStorage<T> metaStorage, IFileStorage<T> fileStorage, ISecurityManager securityManager)
+        public FileStorageService(IMetaInfoStorage<T> metaStorage, IFileStorage<T> fileStorage,
+            ISecurityManager securityManager)
         {
             this.metaStorage = metaStorage;
             this.fileStorage = fileStorage;
@@ -26,18 +27,14 @@ namespace Cactus.Fileserver.Core
         {
             var info = metaStorage.Get(uri);
             if (!securityManager.MayRead(info))
-            {
                 throw new SecurityException("No access to read");
-            }
             return await fileStorage.Get(uri);
         }
 
         public async Task<MetaInfo> Create(Stream stream, IFileInfo fileInfo)
         {
             if (!securityManager.MayCreate(fileInfo))
-            {
                 throw new SecurityException("No access to create");
-            }
 
             var meta = new T
             {
@@ -58,9 +55,7 @@ namespace Cactus.Fileserver.Core
         {
             var info = metaStorage.Get(uri);
             if (!securityManager.MayDelete(info))
-            {
                 throw new SecurityException("No access to delete");
-            }
 
             await fileStorage.Delete(uri);
             metaStorage.Delete(uri);
@@ -70,9 +65,7 @@ namespace Cactus.Fileserver.Core
         {
             var res = metaStorage.Get(uri);
             if (!securityManager.MayRead(res))
-            {
                 throw new SecurityException("No access to read");
-            }
 
             return res;
         }

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Cactus.Fileserver.AspNetCore.Middleware
 {
-    class DeleteFileHandler
+    internal class DeleteFileHandler
     {
         private readonly ILogger log;
         protected readonly IFileStorageService StorageService;
@@ -22,7 +22,7 @@ namespace Cactus.Fileserver.AspNetCore.Middleware
         public async Task Invoke(HttpContext context)
         {
             await StorageService.Delete(context.Request.GetAbsoluteUri());
-            context.Response.StatusCode = (int)HttpStatusCode.NoContent;
+            context.Response.StatusCode = (int) HttpStatusCode.NoContent;
             log?.LogInformation("Served by DeleteFileMiddleware");
         }
     }

@@ -10,11 +10,14 @@ namespace Cactus.Fileserver.LocalStorage
 {
     public class LocalFileStorage<T> : IFileStorage<T> where T : MetaInfo, new()
     {
+        private const int MaxTriesCount = 10;
+
+        private static readonly ILog Log =
+            LogProvider.GetLogger(typeof(LocalFileStorage<>).Namespace + '.' + nameof(LocalFileStorage<T>));
+
+        private readonly string baseFolder;
         private readonly Uri baseUri;
         private readonly IStoredNameProvider<T> nameProvider;
-        private static readonly ILog Log = LogProvider.GetLogger(typeof(LocalFileStorage<>).Namespace + '.' + nameof(LocalFileStorage<T>));
-        private readonly string baseFolder;
-        private const int MaxTriesCount = 10;
 
         public LocalFileStorage(Uri baseUri, IStoredNameProvider<T> nameProvider, string storeFolder = null)
         {
@@ -22,22 +25,20 @@ namespace Cactus.Fileserver.LocalStorage
             this.nameProvider = nameProvider;
             baseFolder = Path.GetTempPath();
             if (!string.IsNullOrEmpty(storeFolder))
-            {
                 try
                 {
                     if (!Directory.Exists(storeFolder))
-                    {
                         Directory.CreateDirectory(storeFolder);
-                    }
 
                     baseFolder = storeFolder;
                     Log.Info("Storage folder is configured successfully");
                 }
                 catch (Exception)
                 {
-                    Log.ErrorFormat("Configuration error. StorageFolder {0} is unaccesable, temporary folder {1} will be used instead", storeFolder, baseFolder);
+                    Log.ErrorFormat(
+                        "Configuration error. StorageFolder {0} is unaccesable, temporary folder {1} will be used instead",
+                        storeFolder, baseFolder);
                 }
-            }
         }
 
         public async Task<Uri> Add(Stream stream, T info)
@@ -52,9 +53,7 @@ namespace Cactus.Fileserver.LocalStorage
             }
 
             if (triesCount > MaxTriesCount)
-            {
                 throw new IOException("Could not generate unique file name");
-            }
 
             using (var dest = new FileStream(fullFilePath, FileMode.CreateNew))
             {

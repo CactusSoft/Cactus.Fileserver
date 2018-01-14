@@ -1,4 +1,4 @@
-﻿using Cactus.Fileserver.Core.Model;
+using Cactus.Fileserver.Core.Model;
 
 namespace Cactus.Fileserver.Core.Security
 {

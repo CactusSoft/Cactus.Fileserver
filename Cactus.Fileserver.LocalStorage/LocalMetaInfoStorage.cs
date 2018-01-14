@@ -10,9 +10,11 @@ namespace Cactus.Fileserver.LocalStorage
 {
     public class LocalMetaInfoStorage<T> : IMetaInfoStorage<T> where T : MetaInfo, new()
     {
+        private static readonly ILog Log =
+            LogProvider.GetLogger(typeof(LocalMetaInfoStorage<>).Namespace + '.' + nameof(LocalMetaInfoStorage<T>));
+
         private readonly string baseFolder;
         private readonly string metafileExt;
-        private static readonly ILog Log = LogProvider.GetLogger(typeof(LocalMetaInfoStorage<>).Namespace + '.' + nameof(LocalMetaInfoStorage<T>));
 
         public LocalMetaInfoStorage(string folder, string fileExt = ".json")
         {
@@ -34,7 +36,9 @@ namespace Cactus.Fileserver.LocalStorage
             }
             catch (Exception)
             {
-                Log.ErrorFormat("Configuration error. StorageFolder {0} is unaccesable, temporary folder {1} will be used instead", folder, baseFolder);
+                Log.ErrorFormat(
+                    "Configuration error. StorageFolder {0} is unaccesable, temporary folder {1} will be used instead",
+                    folder, baseFolder);
             }
         }
 

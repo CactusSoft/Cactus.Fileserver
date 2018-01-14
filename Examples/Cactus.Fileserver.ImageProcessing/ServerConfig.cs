@@ -1,39 +1,32 @@
 ﻿using System;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Cactus.Fileserver.AspNetCore;
 using Cactus.Fileserver.Core.Model;
 using Cactus.Fileserver.ImageResizer;
 using Cactus.Fileserver.LocalStorage;
+using Cactus.Fileserver.Owin;
 using ImageResizer;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Owin;
 
-namespace LocalFileserver
+namespace Cactus.Fileserver.ImageProcessing
 {
-    public class ServerConfig : LocalFileserverConfig<HttpRequest>
+    public class ServerConfig : LocalFileserverConfig<IOwinRequest>
     {
-        private readonly Func<HttpRequest, HttpContent, IFileInfo, Task<MetaInfo>> newFilePipeline;
-
-        public ServerConfig(string fileStorageFolder, string metaStorageFolder, Uri baseUri) : base(fileStorageFolder, metaStorageFolder, baseUri, null)
+        public ServerConfig(string fileStorageFolder, string metaStorageFolder, Uri baseUri)
+            : base(fileStorageFolder, metaStorageFolder, baseUri, null)
         {
-            newFilePipeline = BuildPipeline();
+            var newFilePipeline = BuildPipeline();
             NewFilePipeline = () => newFilePipeline;
         }
 
-        private Func<HttpRequest, HttpContent, IFileInfo, Task<MetaInfo>> BuildPipeline()
+        private Func<IOwinRequest, HttpContent, IFileInfo, Task<MetaInfo>> BuildPipeline()
         {
             var defaultImageInstructions = new Instructions("autorotate=true");
             var mandatoryImageInstructions = new Instructions("maxwidth=300&maxheight=400");
             var defaultThumbnailInstructions = new Instructions("width=100&height=100");
             var mandatoryThumbnailInstructions = new Instructions("maxwidth=300&maxheight=400");
-            Func<ImageStorageService> imgStorageResolver = () =>
-            new ImageStorageService(
-                FileStorage(),
-                defaultImageInstructions,
-                mandatoryImageInstructions,
-                defaultThumbnailInstructions,
-                mandatoryThumbnailInstructions
-                );
+            ImageStorageService ImgStorageResolver() => new ImageStorageService(FileStorage(), defaultImageInstructions, mandatoryImageInstructions, defaultThumbnailInstructions, mandatoryThumbnailInstructions);
 
             return new PipelineBuilder()
                 .UseMultipartRequestParser()
@@ -43,8 +36,8 @@ namespace LocalFileserver
                     //Process image + thumbnail if requested or call next otherwise
                     if (content.Headers.ContentType.MediaType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
                     {
-                        var imgStorage = imgStorageResolver();
-                        if (request.QueryString.HasValue && request.Query.ContainsKey("thumbnail"))
+                        var imgStorage = ImgStorageResolver();
+                        if (request.QueryString.HasValue && request.Query.Any(x => x.Key.Equals("thumbnail", StringComparison.OrdinalIgnoreCase)))
                         {
                             var bytes = await content.ReadAsByteArrayAsync();
                             return await imgStorage.StoreWithThumbnail(info, bytes, request.QueryString.ToString());

@@ -1,15 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+VisualStudioVersion = 15.0.27130.2020
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{405B81EC-3E5E-4260-A3AC-824C4BF98991}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Tests", "Cactus.Fileserver.Tests\Cactus.Fileserver.Tests.csproj", "{E07BBF57-711F-4F38-B283-79D86C81FB3C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Owin", "Cactus.Fileserver.Owin\Cactus.Fileserver.Owin.csproj", "{BDDA880E-2135-4CB9-A3E3-C2340A0F2246}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LocalFileserverExample", "LocalFileserverExample\LocalFileserverExample.csproj", "{1ED97881-B624-4978-9EB1-469DD9E122B5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.ImageResizer", "Cactus.Fileserver.ImageResizer\Cactus.Fileserver.ImageResizer.csproj", "{B036D209-461F-4DEE-AB4B-471DE179ABDA}"
 EndProject
@@ -25,6 +23,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.AspNetCor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.AzureStorage", "Cactus.Fileserver.AzureStorage\Cactus.Fileserver.AzureStorage.csproj", "{B9AE74F7-36C9-4F1D-91BB-311443881AA5}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{41584938-146B-424F-8C10-374A64A01215}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.Simple", "Examples\Cactus.Fileserver.Simple\Cactus.Fileserver.Simple.csproj", "{63C09213-17DC-4095-BB5F-581CBA692C3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.ImageProcessing", "Examples\Cactus.Fileserver.ImageProcessing\Cactus.Fileserver.ImageProcessing.csproj", "{5AEADAC3-522D-4737-B3A2-8C47A743CE8D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,10 +43,6 @@ Global
 		{BDDA880E-2135-4CB9-A3E3-C2340A0F2246}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BDDA880E-2135-4CB9-A3E3-C2340A0F2246}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BDDA880E-2135-4CB9-A3E3-C2340A0F2246}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1ED97881-B624-4978-9EB1-469DD9E122B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1ED97881-B624-4978-9EB1-469DD9E122B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1ED97881-B624-4978-9EB1-469DD9E122B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1ED97881-B624-4978-9EB1-469DD9E122B5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B036D209-461F-4DEE-AB4B-471DE179ABDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B036D209-461F-4DEE-AB4B-471DE179ABDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B036D209-461F-4DEE-AB4B-471DE179ABDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -69,6 +69,14 @@ Global
 		{B9AE74F7-36C9-4F1D-91BB-311443881AA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9AE74F7-36C9-4F1D-91BB-311443881AA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9AE74F7-36C9-4F1D-91BB-311443881AA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{63C09213-17DC-4095-BB5F-581CBA692C3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{63C09213-17DC-4095-BB5F-581CBA692C3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{63C09213-17DC-4095-BB5F-581CBA692C3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{63C09213-17DC-4095-BB5F-581CBA692C3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AEADAC3-522D-4737-B3A2-8C47A743CE8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AEADAC3-522D-4737-B3A2-8C47A743CE8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AEADAC3-522D-4737-B3A2-8C47A743CE8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AEADAC3-522D-4737-B3A2-8C47A743CE8D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +84,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{DEFFD0DC-27B6-4601-8386-9F5E4CBC832D} = {405B81EC-3E5E-4260-A3AC-824C4BF98991}
 		{45683811-DB79-40AF-BA34-5149BDD63DFD} = {405B81EC-3E5E-4260-A3AC-824C4BF98991}
+		{63C09213-17DC-4095-BB5F-581CBA692C3E} = {41584938-146B-424F-8C10-374A64A01215}
+		{5AEADAC3-522D-4737-B3A2-8C47A743CE8D} = {41584938-146B-424F-8C10-374A64A01215}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {650FD418-DEA3-4EA9-92A6-DBF5B0004916}

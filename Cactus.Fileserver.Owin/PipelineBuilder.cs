@@ -55,6 +55,12 @@ namespace Cactus.Fileserver.Owin
                 }
             });
         }
+
+        public new PipelineBuilder Use(Func<Func<IOwinRequest, HttpContent, IFileInfo, Task<MetaInfo>>, Func<IOwinRequest, HttpContent, IFileInfo, Task<MetaInfo>>> processor)
+        {
+            base.Use(processor);
+            return this;
+        }
     }
 
     public static class PipelineBuilderExtensions
