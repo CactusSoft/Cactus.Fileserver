@@ -7,8 +7,8 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Cactus.Fileserver.Tests</RootNamespace>
-    <AssemblyName>Cactus.Fileserver.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <AssemblyName>xx</AssemblyName>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <IsCodedUITest>False</IsCodedUITest>
@@ -71,7 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cactus.Fileserver.Core\Cactus.Fileserver.Core.csproj">
-      <Project>{18b3320e-33fa-4295-80da-1e237a419e8f}</Project>
+      <Project>{e4dedc1b-6c96-4793-bd45-30b550dd1bb5}</Project>
       <Name>Cactus.Fileserver.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Cactus.Fileserver.ImageResizer\Cactus.Fileserver.ImageResizer.csproj">

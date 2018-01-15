@@ -9,15 +9,22 @@ namespace Cactus.Fileserver.Core
 {
     public class GenericPipelineBuilder<T>
     {
-        private readonly IList<Func<Func<T, HttpContent, IFileInfo, Task<MetaInfo>>, Func<T, HttpContent, IFileInfo, Task<MetaInfo>>>> processors = new List<Func<Func<T, HttpContent, IFileInfo, Task<MetaInfo>>, Func<T, HttpContent, IFileInfo, Task<MetaInfo>>>>();
+        private readonly
+            IList<Func<Func<T, HttpContent, IFileInfo, Task<MetaInfo>>, Func<T, HttpContent, IFileInfo, Task<MetaInfo>>>
+            > processors =
+                new List<Func<Func<T, HttpContent, IFileInfo, Task<MetaInfo>>,
+                    Func<T, HttpContent, IFileInfo, Task<MetaInfo>>>>();
 
-        public GenericPipelineBuilder<T> Use(Func<Func<T, HttpContent, IFileInfo, Task<MetaInfo>>, Func<T, HttpContent, IFileInfo, Task<MetaInfo>>> processor)
+        public GenericPipelineBuilder<T> Use(
+            Func<Func<T, HttpContent, IFileInfo, Task<MetaInfo>>, Func<T, HttpContent, IFileInfo, Task<MetaInfo>>>
+                processor)
         {
             processors.Add(processor);
             return this;
         }
 
-        public Func<T, HttpContent, IFileInfo, Task<MetaInfo>> Run(Func<T, HttpContent, IFileInfo, Task<MetaInfo>> finalizer)
+        public Func<T, HttpContent, IFileInfo, Task<MetaInfo>> Run(
+            Func<T, HttpContent, IFileInfo, Task<MetaInfo>> finalizer)
         {
             if (processors.Count == 0)
                 return finalizer;

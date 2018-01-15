@@ -24,11 +24,11 @@ namespace Cactus.Fileserver.LocalStorage
             SecurityManager = () => new NothingCheckSecurityManager();
         }
 
-        public string Path { get; }
-
         public Uri BaseUri { get; }
 
         public Func<ISecurityManager> SecurityManager { get; set; }
+
+        public string Path { get; }
 
         public Func<IFileStorageService> FileStorage
         {
@@ -36,10 +36,11 @@ namespace Cactus.Fileserver.LocalStorage
             {
                 return () =>
                 {
-                    var baseFilesUri = (string.IsNullOrEmpty(Path) || Path == "/")
+                    var baseFilesUri = string.IsNullOrEmpty(Path) || Path == "/"
                         ? BaseUri
                         : new Uri(BaseUri, Path + '/');
-                    var fileStorage = new LocalFileStorage<MetaInfo>(baseFilesUri, new RandomNameProvider<MetaInfo> { StoreExt = true }, fileStorageFolder);
+                    var fileStorage = new LocalFileStorage<MetaInfo>(baseFilesUri,
+                        new RandomNameProvider<MetaInfo> {StoreExt = true}, fileStorageFolder);
                     var metaStorage = new LocalMetaInfoStorage<MetaInfo>(metaStorageFolder);
                     return new FileStorageService<MetaInfo>(metaStorage, fileStorage, SecurityManager());
                 };
