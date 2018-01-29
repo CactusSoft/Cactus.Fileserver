@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Http;
 using Cactus.Fileserver.AspNetCore.Middleware;
 using Cactus.Fileserver.Core.Config;
@@ -20,13 +20,15 @@ namespace Cactus.Fileserver.AspNetCore.Config
                     {
                         builder
                             .MapDelFile(config)
-                            .MapAddFile(config);
+                            .MapAddFile(config)
+                            .MapGetFile(config);
                     });
             }
             else
             {
                 app.MapDelFile(config);
                 app.MapAddFile(config);
+                app.MapGetFile(config);
             }
 
             return app;
@@ -63,6 +65,25 @@ namespace Cactus.Fileserver.AspNetCore.Config
                             new AddFileHandler(
                                 builder.ApplicationServices.GetService(typeof(ILoggerFactory)) as ILoggerFactory,
                                 config.NewFilePipeline());
+                        await handler.Invoke(context);
+                    });
+                });
+            return app;
+        }
+
+
+
+        public static IApplicationBuilder MapGetFile(this IApplicationBuilder app,
+            IFileserverConfig<HttpRequest> config)
+        {
+            app.MapWhen(c => HttpMethod.Get.Method.Equals(c.Request.Method, StringComparison.OrdinalIgnoreCase),
+                builder =>
+                {
+                    builder.Run(async context =>
+                    {
+                        var handler = new GetFileHandler(
+                            builder.ApplicationServices.GetService(typeof(ILoggerFactory)) as ILoggerFactory,
+                            config.GetFilePipeline());
                         await handler.Invoke(context);
                     });
                 });

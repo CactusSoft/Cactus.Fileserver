@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Cactus.Fileserver.Core;
@@ -48,5 +49,6 @@ namespace Cactus.Fileserver.LocalStorage
         }
 
         public Func<Func<T, HttpContent, IFileInfo, Task<MetaInfo>>> NewFilePipeline { get; set; }
+        public Func<Func<T, Task<Stream>>> GetFilePipeline { get; set; }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Cactus.Fileserver.AspNetCore.Config;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,11 +19,11 @@ namespace Cactus.Fileserver.Simple
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseDeveloperExceptionPage()
-                .UseStaticFiles(new StaticFileOptions
+                /*.UseStaticFiles(new StaticFileOptions
                 {
                     DefaultContentType = "application/octet-stream",
                     ServeUnknownFileTypes = true
-                })
+                })*/
                 .UseFileserver(new ServerConfig(env.WebRootPath, env.WebRootPath, new Uri("http://localhost:18047")))
                 .Run(async context =>
                 {
