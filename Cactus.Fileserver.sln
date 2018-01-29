@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2020
+VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{405B81EC-3E5E-4260-A3AC-824C4BF98991}"
 EndProject
@@ -28,6 +28,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.Simple", "Examples\Cactus.Fileserver.Simple\Cactus.Fileserver.Simple.csproj", "{63C09213-17DC-4095-BB5F-581CBA692C3E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.ImageProcessing", "Examples\Cactus.Fileserver.ImageProcessing\Cactus.Fileserver.ImageProcessing.csproj", "{5AEADAC3-522D-4737-B3A2-8C47A743CE8D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.S3Storage", "Cactus.Fileserver.S3Storage\Cactus.Fileserver.S3Storage.csproj", "{1E2E479C-22EE-4777-9C25-55BB2A8F22A4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,6 +79,10 @@ Global
 		{5AEADAC3-522D-4737-B3A2-8C47A743CE8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5AEADAC3-522D-4737-B3A2-8C47A743CE8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5AEADAC3-522D-4737-B3A2-8C47A743CE8D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E2E479C-22EE-4777-9C25-55BB2A8F22A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E2E479C-22EE-4777-9C25-55BB2A8F22A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E2E479C-22EE-4777-9C25-55BB2A8F22A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E2E479C-22EE-4777-9C25-55BB2A8F22A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
