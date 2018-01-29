@@ -6,7 +6,6 @@ Look at LocalFileserverExample for details.
 Features:
 - HTTP POST (multipart & not) to upload a file
 - HTTP DELETE to drop a file
-- Supporting Azure BLOB storage & returns direct URL's
-- Flexible image pre-processing
+- Supporting S3 & Azure BLOB storages. Returns direct URL to stored file.
 - Flexible piplene for new adding files
-- Supports StaticFiles middleware for dev envirounment & simple cases
+- Supports local filesystem storage for simple projects & dev environment 
