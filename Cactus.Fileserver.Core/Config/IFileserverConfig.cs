@@ -14,7 +14,7 @@ namespace Cactus.Fileserver.Core.Config
 
         Func<Func<T, HttpContent, IFileInfo, Task<MetaInfo>>> NewFilePipeline { get; }
 
-        Func<Func<T, Task<Stream>>> GetFilePipeline { get; }
+        Func<Func<T, Stream, Task>> GetFilePipeline { get; }
 
     }
 }

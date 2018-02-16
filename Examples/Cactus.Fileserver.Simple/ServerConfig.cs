@@ -9,11 +9,20 @@ using Cactus.Fileserver.ImageResizer.Core;
 using Cactus.Fileserver.ImageResizer.Core.Utils;
 using Cactus.Fileserver.LocalStorage;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Win32.SafeHandles;
 
 namespace Cactus.Fileserver.Simple
 {
     public class ServerConfig : LocalFileserverConfig<HttpRequest>
     {
+        private readonly Instructions _defaultImageInstructions = new Instructions("");
+        private readonly Instructions _mandatoryImageInstructions = new Instructions("maxwidth=300&maxheight=400");
+        private readonly Instructions _defaultThumbnailInstructions = new Instructions("width=100&height=100");
+        private readonly Instructions _mandatoryThumbnailInstructions = new Instructions("maxwidth=300&maxheight=400");
+
+        private ImageStorageService ImgStorageResolver() => new ImageStorageService(FileStorage(), _defaultImageInstructions, _mandatoryImageInstructions, _defaultThumbnailInstructions, _mandatoryThumbnailInstructions);
+
+
         public ServerConfig(string fileStorageFolder, string metaStorageFolder, Uri baseUri)
             : base(fileStorageFolder, metaStorageFolder, baseUri, null)
         {
@@ -23,11 +32,7 @@ namespace Cactus.Fileserver.Simple
 
         private Func<HttpRequest, HttpContent, IFileInfo, Task<MetaInfo>> BuildPipeline()
         {
-            var defaultImageInstructions = new Instructions("");
-            var mandatoryImageInstructions = new Instructions("maxwidth=300&maxheight=400");
-            var defaultThumbnailInstructions = new Instructions("width=100&height=100");
-            var mandatoryThumbnailInstructions = new Instructions("maxwidth=300&maxheight=400");
-            ImageStorageService ImgStorageResolver() => new ImageStorageService(FileStorage(), defaultImageInstructions, mandatoryImageInstructions, defaultThumbnailInstructions, mandatoryThumbnailInstructions);
+
 
             return new PipelineBuilder()
                 .UseMultipartRequestParser()
@@ -53,9 +58,30 @@ namespace Cactus.Fileserver.Simple
                 .RunStoreFileAsIs(FileStorage);
         }
 
-        private Func<HttpRequest, Task<Stream>> BuildGetPipeline()
+        private Func<HttpRequest, Stream, Task> BuildGetPipeline()
         {
+
             return new PipelineBuilder()
+                .Use(next => async (requset, stream) =>
+                {
+                    if(requset.QueryString.HasValue)
+                    {
+                        var imgStorage = ImgStorageResolver();
+                        var fileStore = FileStorage();
+                        var metaData = fileStore.GetInfo(requset.GetAbsoluteUri());
+                        if (metaData.MimeType.StartsWith("image") && !metaData.MimeType.EndsWith("gif"))
+                        {
+                            var instructions = new Instructions(requset.QueryString.Value);
+                            instructions.Join(_mandatoryImageInstructions);
+                            using (var original = await fileStore.Get(requset.GetAbsoluteUri()))
+                            {
+                                imgStorage.ProcessImage(original, stream, instructions);
+                                original.Close();
+                            }
+                        }
+                    }
+                    await next(requset,stream);
+                })
                 .GetStoreFileAsIs(FileStorage);
         }
     }

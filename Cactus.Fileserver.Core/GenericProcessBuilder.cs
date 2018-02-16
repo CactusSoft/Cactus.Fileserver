@@ -16,7 +16,7 @@ namespace Cactus.Fileserver.Core
                 new List<Func<Func<T, HttpContent, IFileInfo, Task<MetaInfo>>,
                     Func<T, HttpContent, IFileInfo, Task<MetaInfo>>>>();
 
-        private readonly IList<Func<Func<T, Task<Stream>>, Func<T, Task<Stream>>>> getProcessors = new List<Func<Func<T, Task<Stream>>, Func<T, Task<Stream>>>>();
+        private readonly IList<Func<Func<T, Stream, Task>, Func<T, Stream, Task>>> getProcessors = new List<Func<Func<T, Stream, Task>, Func<T, Stream, Task>>>();
 
         public GenericPipelineBuilder<T> Use(
             Func<Func<T, HttpContent, IFileInfo, Task<MetaInfo>>, Func<T, HttpContent, IFileInfo, Task<MetaInfo>>>
@@ -26,7 +26,7 @@ namespace Cactus.Fileserver.Core
             return this;
         }
 
-        public GenericPipelineBuilder<T> Use(Func<Func<T, Task<Stream>>, Func<T, Task<Stream>>>
+        public GenericPipelineBuilder<T> Use(Func<Func<T, Stream, Task>, Func<T, Stream, Task>>
                 processor)
         {
             getProcessors.Add(processor);
@@ -42,8 +42,8 @@ namespace Cactus.Fileserver.Core
             return addProcessors.Reverse().Aggregate(finalizer, (current, processor) => processor(current));
         }
 
-        public Func<T, Task<Stream>> Run(
-            Func<T, Task<Stream>> finalizer)
+        public Func<T, Stream, Task> Run(
+            Func<T, Stream, Task> finalizer)
         {
             if (getProcessors.Count == 0)
                 return finalizer;

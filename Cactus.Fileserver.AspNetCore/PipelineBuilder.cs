@@ -61,13 +61,24 @@ namespace Cactus.Fileserver.AspNetCore
         }
 
 
-        public static Func<HttpRequest, Task<Stream>> GetStoreFileAsIs(
+        public static Func<HttpRequest, Stream, Task> GetStoreFileAsIs(
             this GenericPipelineBuilder<HttpRequest> builder, Func<IFileStorageService> storageServceResolverFunc)
         {
-            return builder.Run(request =>
+            return builder.Run( async (request, outStream) =>
             {
                 var fileStorage = storageServceResolverFunc();
-                return fileStorage.Get(request.GetAbsoluteUri());
+                var result = await fileStorage.Get(request.GetAbsoluteUri());
+                await result.CopyToAsync(outStream); 
+            });
+        }
+
+        public static Func<HttpRequest, Stream, Task> DisableGet(
+            this GenericPipelineBuilder<HttpRequest> builder)
+        {
+            return builder.Run((request, outStream) =>
+            {
+                outStream=Stream.Null;
+                return Task.CompletedTask;
             });
         }
     }

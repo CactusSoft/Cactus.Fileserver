@@ -49,6 +49,6 @@ namespace Cactus.Fileserver.LocalStorage
         }
 
         public Func<Func<T, HttpContent, IFileInfo, Task<MetaInfo>>> NewFilePipeline { get; set; }
-        public Func<Func<T, Task<Stream>>> GetFilePipeline { get; set; }
+        public Func<Func<T, Stream, Task>> GetFilePipeline { get; set; }
     }
 }

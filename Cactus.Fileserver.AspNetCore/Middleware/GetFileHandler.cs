@@ -6,7 +6,7 @@ using Cactus.Fileserver.Core;
 using Cactus.Fileserver.Core.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using ProcessFunc = System.Func<Microsoft.AspNetCore.Http.HttpRequest, System.Threading.Tasks.Task<System.IO.Stream>>;
+using ProcessFunc = System.Func<Microsoft.AspNetCore.Http.HttpRequest, System.IO.Stream, System.Threading.Tasks.Task>;
 
 namespace Cactus.Fileserver.AspNetCore.Middleware
 {
@@ -26,8 +26,10 @@ namespace Cactus.Fileserver.AspNetCore.Middleware
         {
             try
             {
-                 var result = await ProcessFunc.Invoke(context.Request);
-                 result.CopyTo(context.Response.Body);
+                using (var stream = context.Response.Body)
+                {
+                    await ProcessFunc.Invoke(context.Request, stream);
+                }
             }
             catch
             {
