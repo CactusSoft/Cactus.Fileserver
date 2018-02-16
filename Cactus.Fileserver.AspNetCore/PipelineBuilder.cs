@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -56,6 +57,28 @@ namespace Cactus.Fileserver.AspNetCore
                 {
                     return await fileStorage.Create(stream, info);
                 }
+            });
+        }
+
+
+        public static Func<HttpRequest, Stream, Task> GetStoreFileAsIs(
+            this GenericPipelineBuilder<HttpRequest> builder, Func<IFileStorageService> storageServceResolverFunc)
+        {
+            return builder.Run( async (request, outStream) =>
+            {
+                var fileStorage = storageServceResolverFunc();
+                var result = await fileStorage.Get(request.GetAbsoluteUri());
+                await result.CopyToAsync(outStream); 
+            });
+        }
+
+        public static Func<HttpRequest, Stream, Task> DisableGet(
+            this GenericPipelineBuilder<HttpRequest> builder)
+        {
+            return builder.Run((request, outStream) =>
+            {
+                outStream=Stream.Null;
+                return Task.CompletedTask;
             });
         }
     }
