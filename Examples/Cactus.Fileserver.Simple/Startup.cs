@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Cactus.Fileserver.AspNetCore.Config;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -19,18 +19,25 @@ namespace Cactus.Fileserver.Simple
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseDeveloperExceptionPage()
-                .UseStaticFiles(new StaticFileOptions
+                /*.UseStaticFiles(new StaticFileOptions
                 {
                     DefaultContentType = "application/octet-stream",
                     ServeUnknownFileTypes = true
-                })
+                })*/
                 .UseFileserver(new ServerConfig(env.WebRootPath, env.WebRootPath, new Uri("http://localhost:18047")))
                 .Run(async context =>
                 {
-                    // Strange request, let's just say "BAD REQUEST"
-                    // Instead, you could start your MVC handler here for instance  
-                    context.Response.StatusCode = 400;
-                    await context.Response.WriteAsync("Default handler. There's nothing here my little friend.");
+                    if (context.Request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase))
+                    {
+                        context.Response.StatusCode = 404;
+                        await context.Response.WriteAsync("There's nothing here my little friend.");
+                    }
+                    else
+                    {
+                        // Strange request.
+                        context.Response.StatusCode = 400;
+                        await context.Response.WriteAsync("You do something wrong. What are you awaited of? Christmas mystery?");
+                    }
                 });
         }
     }

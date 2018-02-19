@@ -4,7 +4,7 @@
     <TargetFramework>netstandard1.3</TargetFramework>
     <AssemblyName>Cactus.Fileserver.LocalStorage</AssemblyName>
     <RootNamespace>Cactus.Fileserver.LocalStorage</RootNamespace>
-    <Version>2.1.0</Version>
+    <Version>2.2.0</Version>
     <Company>CactusSoft LLC</Company>
     <Authors>YanO</Authors>
     <Copyright>Copyright CactusSoft 2016</Copyright>
@@ -12,6 +12,8 @@
     <PackageLicenseUrl>https://github.com/CactusSoft/Cactus.Fileserver/blob/master/LICENSE</PackageLicenseUrl>
     <Description>Local filesystem storage implementation for Cactus.Fileserver</Description>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <AssemblyVersion>2.2.0.0</AssemblyVersion>
+    <FileVersion>2.2.0.0</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Cactus.Fileserver.Core.Model;
@@ -12,5 +13,8 @@ namespace Cactus.Fileserver.Core.Config
         Func<IFileStorageService> FileStorage { get; }
 
         Func<Func<T, HttpContent, IFileInfo, Task<MetaInfo>>> NewFilePipeline { get; }
+
+        Func<Func<T, Stream, Task>> GetFilePipeline { get; }
+
     }
 }
