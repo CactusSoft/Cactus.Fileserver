@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.6</TargetFramework>
-    <Version>2.1.0</Version>
+    <Version>2.2.0</Version>
     <Company>CactusSoft LLC</Company>
     <Product>Cactus.Fileserver.S3Storage</Product>
     <Authors>Roman Barantsevich</Authors>
@@ -11,6 +11,7 @@
     <PackageLicenseUrl>https://github.com/CactusSoft/Cactus.Fileserver/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/CactusSoft/Cactus.Fileserver</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RepositoryUrl>https://github.com/CactusSoft/Cactus.Fileserver</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

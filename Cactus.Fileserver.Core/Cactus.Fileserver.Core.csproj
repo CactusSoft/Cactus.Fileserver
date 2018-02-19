@@ -4,7 +4,7 @@
     <TargetFramework>netstandard1.1</TargetFramework>
     <AssemblyName>Cactus.Fileserver.Core</AssemblyName>
     <RootNamespace>Cactus.Fileserver.Core</RootNamespace>
-    <Version>2.1.0</Version>
+    <Version>2.2.0</Version>
     <Description>Lightweight fileserver. Could be used to store any files and there metadata in local filesystem or cloud storages like Azure BLOB</Description>
     <Copyright>Copyright CactusSoft 2016</Copyright>
     <PackageLicenseUrl>https://github.com/CactusSoft/Cactus.Fileserver/blob/master/LICENSE</PackageLicenseUrl>
