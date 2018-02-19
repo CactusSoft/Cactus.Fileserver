@@ -128,18 +128,14 @@ namespace Cactus.Fileserver.ImageResizer.Core
             if (!outputStream.CanWrite)
                 throw new ArgumentException("outputStream is nor writable");
 
-            Image<Color> image = new Image(inputStream);
-            var imageRatio = image.InchWidth / image.InchHeight;
+            var image = new Image(inputStream);
+            var imageRatio = image.PixelRatio;
+            var resampler = new BicubicResampler();
             if (instructions.Width != null || instructions.Height != null || instructions["maxwidth"] != null || instructions["maxheight"] != null)
             {
                 GetActualSize(instructions,imageRatio);
-                image = image.Resize(new ResizeOptions
-                {
-                    Size = new Size(instructions.Width.Value, instructions.Height.Value),
-                    Mode = instructions.Mode??ResizeMode.Max
-                });
+                image.Resize(instructions.Width.Value, instructions.Height.Value, resampler, false);
             }
-
 
             return image.SaveAsJpeg(outputStream).CurrentImageFormat;
         }

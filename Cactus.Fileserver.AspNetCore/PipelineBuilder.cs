@@ -75,11 +75,7 @@ namespace Cactus.Fileserver.AspNetCore
         public static Func<HttpRequest, Stream, Task> DisableGet(
             this GenericPipelineBuilder<HttpRequest> builder)
         {
-            return builder.Run((request, outStream) =>
-            {
-                outStream=Stream.Null;
-                return Task.CompletedTask;
-            });
+            return builder.Run((request, outStream) => Task.CompletedTask);
         }
     }
 }
