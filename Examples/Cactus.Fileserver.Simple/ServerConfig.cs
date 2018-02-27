@@ -16,7 +16,7 @@ namespace Cactus.Fileserver.Simple
     public class ServerConfig : LocalFileserverConfig<HttpRequest>
     {
         private readonly Instructions _defaultImageInstructions = new Instructions("");
-        private readonly Instructions _mandatoryImageInstructions = new Instructions("maxwidth=300&maxheight=400");
+        private readonly Instructions _mandatoryImageInstructions = new Instructions("maxwidth=1440&maxheight=1440");
         private readonly Instructions _defaultThumbnailInstructions = new Instructions("width=100&height=100");
         private readonly Instructions _mandatoryThumbnailInstructions = new Instructions("maxwidth=300&maxheight=400");
 
@@ -78,6 +78,7 @@ namespace Cactus.Fileserver.Simple
                                 imgStorage.ProcessImage(original, stream, instructions);
                                 original.Close();
                             }
+                            return;
                         }
                     }
                     await next(requset,stream);
