@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using Cactus.Fileserver.Core;
@@ -34,6 +34,8 @@ namespace Cactus.Fileserver.AzureStorage
                 //Trace.TraceError("Init failed {0}: {1}", e.GetType().Name, e.Message);
             }
         }
+
+        public IUriResolver UriResolver { get; }
 
         public async Task<Uri> Add(Stream stream, T info)
         {

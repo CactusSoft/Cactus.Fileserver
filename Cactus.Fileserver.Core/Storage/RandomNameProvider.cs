@@ -3,7 +3,7 @@ using Cactus.Fileserver.Core.Model;
 
 namespace Cactus.Fileserver.Core.Storage
 {
-    public class RandomNameProvider<T> : IStoredNameProvider<T> where T : MetaInfo, new()
+    public class RandomNameProvider<T> : IStoredNameProvider<T> where T : IFileInfo
     {
         private readonly Random RandomNumberGenerator;
         private readonly byte[] buffer;

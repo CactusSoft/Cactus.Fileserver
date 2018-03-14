@@ -1,5 +1,6 @@
 using System;
 using Cactus.Fileserver.AspNetCore.Config;
+using Cactus.Fileserver.Core.Model;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -24,7 +25,7 @@ namespace Cactus.Fileserver.Simple
                     DefaultContentType = "application/octet-stream",
                     ServeUnknownFileTypes = true
                 })*/
-                .UseFileserver(new ServerConfig(env.WebRootPath, env.WebRootPath, new Uri("http://localhost:18047")))
+                .UseFileserver(new ServerConfig(env.WebRootPath, env.WebRootPath,  new Uri("http://localhost:18047")))
                 .Run(async context =>
                 {
                     if (context.Request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase))

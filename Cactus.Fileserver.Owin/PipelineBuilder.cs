@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -8,9 +8,9 @@ using Microsoft.Owin;
 
 namespace Cactus.Fileserver.Owin
 {
-    public class PipelineBuilder : GenericPipelineBuilder<IOwinRequest>
+    public class PipelineBuilder<TMeta> : GenericPipelineBuilder<IOwinRequest, TMeta> where TMeta : IFileInfo
     {
-        public PipelineBuilder UseMultipartRequestParser()
+        public PipelineBuilder<TMeta> UseMultipartRequestParser()
         {
             Use(next => async (request, content, info) =>
             {
@@ -32,7 +32,7 @@ namespace Cactus.Fileserver.Owin
             return this;
         }
 
-        public PipelineBuilder UseOriginalFileinfo()
+        public PipelineBuilder<TMeta> UseOriginalFileinfo()
         {
             Use(next => async (request, content, info) =>
             {
@@ -44,7 +44,7 @@ namespace Cactus.Fileserver.Owin
             return this;
         }
 
-        public Func<IOwinRequest, HttpContent, IFileInfo, Task<MetaInfo>> RunStoreFileAsIs(Func<IFileStorageService> storageServceResolverFunc)
+        public Func<IOwinRequest, HttpContent, TMeta, Task<TMeta>> RunStoreFileAsIs(Func<IFileStorageService<TMeta>> storageServceResolverFunc)
         {
             return Run(async (request, content, info) =>
             {
@@ -56,7 +56,7 @@ namespace Cactus.Fileserver.Owin
             });
         }
 
-        public new PipelineBuilder Use(Func<Func<IOwinRequest, HttpContent, IFileInfo, Task<MetaInfo>>, Func<IOwinRequest, HttpContent, IFileInfo, Task<MetaInfo>>> processor)
+        public new PipelineBuilder<TMeta> Use(Func<Func<IOwinRequest, HttpContent, TMeta, Task<TMeta>>, Func<IOwinRequest, HttpContent, TMeta, Task<TMeta>>> processor)
         {
             base.Use(processor);
             return this;

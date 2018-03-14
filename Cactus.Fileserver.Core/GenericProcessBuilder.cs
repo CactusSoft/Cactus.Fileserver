@@ -8,33 +8,34 @@ using Cactus.Fileserver.Core.Model;
 
 namespace Cactus.Fileserver.Core
 {
-    public class GenericPipelineBuilder<T>
+    public class GenericPipelineBuilder<TRequest,TMeta> where TMeta : IFileInfo
     {
         private readonly
-            IList<Func<Func<T, HttpContent, IFileInfo, Task<MetaInfo>>, Func<T, HttpContent, IFileInfo, Task<MetaInfo>>>
+            IList<Func<Func<TRequest, HttpContent, TMeta, Task<TMeta>>, Func<TRequest, HttpContent, TMeta, Task<TMeta>>>
             > addProcessors =
-                new List<Func<Func<T, HttpContent, IFileInfo, Task<MetaInfo>>,
-                    Func<T, HttpContent, IFileInfo, Task<MetaInfo>>>>();
+                new List<Func<Func<TRequest, HttpContent, TMeta, Task<TMeta>>,
+                    Func<TRequest, HttpContent, TMeta, Task<TMeta>>>>();
 
-        private readonly IList<Func<Func<T, Stream, Task>, Func<T, Stream, Task>>> getProcessors = new List<Func<Func<T, Stream, Task>, Func<T, Stream, Task>>>();
+        private readonly IList<Func<Func<TRequest, IFileGetContext<TMeta>, Task>, Func<TRequest, IFileGetContext<TMeta>, Task>>> getProcessors = new List<Func<Func<TRequest, IFileGetContext<TMeta>, Task>, Func<TRequest, IFileGetContext<TMeta>, Task>>>();
 
-        public GenericPipelineBuilder<T> Use(
-            Func<Func<T, HttpContent, IFileInfo, Task<MetaInfo>>, Func<T, HttpContent, IFileInfo, Task<MetaInfo>>>
+        public GenericPipelineBuilder<TRequest, TMeta> Use(
+            Func<Func<TRequest, HttpContent, TMeta, Task<TMeta>>, Func<TRequest, HttpContent, TMeta, Task<TMeta>>>
                 processor)
         {
             addProcessors.Add(processor);
             return this;
         }
 
-        public GenericPipelineBuilder<T> Use(Func<Func<T, Stream, Task>, Func<T, Stream, Task>>
+        public GenericPipelineBuilder<TRequest, TMeta> Use(Func<Func<TRequest, IFileGetContext<TMeta>, Task>, Func<TRequest, IFileGetContext<TMeta>, Task>>
                 processor)
         {
             getProcessors.Add(processor);
             return this;
         }
 
-        public Func<T, HttpContent, IFileInfo, Task<MetaInfo>> Run(
-            Func<T, HttpContent, IFileInfo, Task<MetaInfo>> finalizer)
+        //Run for "add" pipeline
+        public Func<TRequest, HttpContent, TMeta, Task<TMeta>> Run(
+            Func<TRequest, HttpContent, TMeta, Task<TMeta>> finalizer)
         {
             if (addProcessors.Count == 0)
                 return finalizer;
@@ -42,8 +43,8 @@ namespace Cactus.Fileserver.Core
             return addProcessors.Reverse().Aggregate(finalizer, (current, processor) => processor(current));
         }
 
-        public Func<T, Stream, Task> Run(
-            Func<T, Stream, Task> finalizer)
+        public Func<TRequest, IFileGetContext<TMeta>, Task> Run(
+            Func<TRequest, IFileGetContext<TMeta>, Task> finalizer)
         {
             if (getProcessors.Count == 0)
                 return finalizer;

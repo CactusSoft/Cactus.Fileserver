@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Cactus.Fileserver.Core;
 using Cactus.Fileserver.Core.Model;
@@ -12,7 +12,7 @@ namespace Cactus.Fileserver.Tests
         [TestMethod]
         public void AllHandlersAreCalledTest()
         {
-            var b = new GenericPipelineBuilder<object>();
+            var b = new GenericPipelineBuilder<object, MetaInfo>();
             b.Use(next => ((request, content, meta) =>
             {
                 meta.Extra.Add("handler1", "handler1");
@@ -41,7 +41,7 @@ namespace Cactus.Fileserver.Tests
         [TestMethod]
         public void FinallizerCalledTest()
         {
-            var b = new GenericPipelineBuilder<object>();
+            var b = new GenericPipelineBuilder<object, MetaInfo>();
             var res = b.Run((request, content, fileInfo) => { fileInfo.Extra.Add("finalizer", "FinallizerCalledTest"); return Task.FromResult(new MetaInfo(fileInfo)); })(null, null, new MetaInfo { Extra = new Dictionary<string, string>() }).Result;
 
             Assert.IsNotNull(res);

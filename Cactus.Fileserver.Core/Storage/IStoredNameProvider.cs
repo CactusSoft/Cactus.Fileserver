@@ -1,8 +1,8 @@
-﻿using Cactus.Fileserver.Core.Model;
+using Cactus.Fileserver.Core.Model;
 
 namespace Cactus.Fileserver.Core.Storage
 {
-    public interface IStoredNameProvider<T> where T : MetaInfo, new()
+    public interface IStoredNameProvider<T> where T : IFileInfo
     {
         /// <summary>
         ///     Returns generated anti name to store file in a storage.

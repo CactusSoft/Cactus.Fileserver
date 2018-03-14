@@ -8,7 +8,7 @@ using Cactus.Fileserver.Core.Storage;
 
 namespace Cactus.Fileserver.LocalStorage
 {
-    public class LocalFileStorage<T> : BaseFileStore<T> where T: MetaInfo, new()
+    public class LocalFileStorage<T> : BaseFileStore<T> where T: IFileInfo
     {
         private const int MaxTriesCount = 10;
 
@@ -89,6 +89,11 @@ namespace Cactus.Fileserver.LocalStorage
                             "Configuration error. StorageFolder {0} is unaccesable, temporary folder {1} will be used instead",
                             baseFolder, _baseFolder);
                     }
+            }
+
+            public Uri ResolveStaticUri(Uri currentUri)
+            {
+                throw new NotImplementedException("Not implemented in this store");
             }
 
             public Uri ResolveUri(string newFileName)

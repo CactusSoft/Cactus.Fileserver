@@ -1,5 +1,6 @@
-﻿using System.Linq;
+using System.Linq;
 using ImageResizer;
+using ImageResizer.ExtensionMethods;
 
 namespace Cactus.Fileserver.ImageResizer
 {
@@ -21,5 +22,6 @@ namespace Cactus.Fileserver.ImageResizer
                 }
             }
         }
+
     }
 }

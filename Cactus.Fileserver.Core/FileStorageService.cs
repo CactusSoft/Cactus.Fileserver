@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Linq;
 using System.Security;
@@ -9,7 +9,7 @@ using Cactus.Fileserver.Core.Storage;
 
 namespace Cactus.Fileserver.Core
 {
-    public class FileStorageService<T> : IFileStorageService where T : MetaInfo, new()
+    public class FileStorageService<T> : IFileStorageService<T> where T : IFileInfo
     {
         private readonly IFileStorage<T> fileStorage;
         private readonly IMetaInfoStorage<T> metaStorage;
@@ -31,24 +31,21 @@ namespace Cactus.Fileserver.Core
             return await fileStorage.Get(uri);
         }
 
-        public async Task<MetaInfo> Create(Stream stream, IFileInfo fileInfo)
+        public Uri GetRedirectUri(Uri uri)
+        {
+             return fileStorage.UriResolver.ResolveStaticUri(uri);
+        }
+
+        public async Task<T> Create(Stream stream, T fileInfo)
         {
             if (!securityManager.MayCreate(fileInfo))
                 throw new SecurityException("No access to create");
 
-            var meta = new T
-            {
-                MimeType = fileInfo.MimeType,
-                OriginalName = fileInfo.OriginalName,
-                Owner = fileInfo.Owner,
-                Icon = fileInfo.Icon,
-                Extra = fileInfo.Extra?.ToDictionary(e => e.Key, e => e.Value) // copy values
-            };
 
-            meta.Uri = await fileStorage.Add(stream, meta);
-            meta.StoragePath = meta.Uri.AbsolutePath;
-            metaStorage.Add(meta);
-            return meta;
+            fileInfo.Uri = await fileStorage.Add(stream, fileInfo);
+            fileInfo.StoragePath = fileInfo.Uri.AbsolutePath;
+            metaStorage.Add(fileInfo);
+            return fileInfo;
         }
 
         public async Task Delete(Uri uri)
@@ -61,13 +58,19 @@ namespace Cactus.Fileserver.Core
             metaStorage.Delete(uri);
         }
 
-        public IFileInfo GetInfo(Uri uri)
+        public T GetInfo(Uri uri)
         {
             var res = metaStorage.Get(uri);
             if (!securityManager.MayRead(res))
                 throw new SecurityException("No access to read");
 
             return res;
+        }
+
+        public Task UpdateMetadata(T fileInfo)
+        {
+            metaStorage.Add(fileInfo);
+            return Task.FromResult(0);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace Cactus.Fileserver.Core.Model
@@ -22,6 +22,8 @@ namespace Cactus.Fileserver.Core.Model
             }
         }
 
+        public Uri Uri { get; set; }
+        public string StoragePath { get; set; }
         public string MimeType { get; set; }
         public string OriginalName { get; set; }
         public string Owner { get; set; }
