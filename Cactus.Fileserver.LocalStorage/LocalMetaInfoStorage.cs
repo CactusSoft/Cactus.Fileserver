@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using Cactus.Fileserver.Core;
 using Cactus.Fileserver.Core.Logging;
@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace Cactus.Fileserver.LocalStorage
 {
-    public class LocalMetaInfoStorage<T> : IMetaInfoStorage<T> where T : MetaInfo, new()
+    public class LocalMetaInfoStorage<T> : IMetaInfoStorage<T> where T : IFileInfo
     {
         private static readonly ILog Log =
             LogProvider.GetLogger(typeof(LocalMetaInfoStorage<>).Namespace + '.' + nameof(LocalMetaInfoStorage<T>));
@@ -65,6 +65,7 @@ namespace Cactus.Fileserver.LocalStorage
             var metafile = GetFile(uri);
             return GetMetadata(metafile);
         }
+
 
         protected string GetFile(Uri uri)
         {

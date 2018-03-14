@@ -21,5 +21,13 @@ namespace Cactus.Fileserver.ImageResizer.Core
                 }
             }
         }
+
+
+        public static string GetSizeKey(this Instructions instructions)
+        {
+            return instructions?.Width != null && instructions.Height != null
+                ? instructions.Width + "x" + instructions.Height
+                : null;
+        }
     }
 }

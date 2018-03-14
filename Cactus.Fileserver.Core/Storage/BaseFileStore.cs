@@ -5,10 +5,10 @@ using Cactus.Fileserver.Core.Model;
 
 namespace Cactus.Fileserver.Core.Storage
 {
-    public abstract class BaseFileStore<T> : IFileStorage<T> where T : MetaInfo, new()
+    public abstract class BaseFileStore<T> : IFileStorage<T> where T : IFileInfo
     {
 
-        protected readonly IUriResolver UriResolver;
+        public IUriResolver UriResolver { get; protected set; }
 
         protected BaseFileStore(IUriResolver uriResolver)
         {
@@ -20,6 +20,12 @@ namespace Cactus.Fileserver.Core.Storage
             return UriResolver.ResolveUri(await ExecuteAdd(stream, info));
         }
 
+        /// <summary>
+        /// Executes actual add, must be overriden
+        /// </summary>
+        /// <param name="stream">Input stream</param>
+        /// <param name="info">Result filename</param>
+        /// <returns></returns>
         protected abstract Task<string> ExecuteAdd(Stream stream, T info);
 
 

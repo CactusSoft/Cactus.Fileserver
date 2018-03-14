@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -8,7 +8,7 @@ using Cactus.Fileserver.Core.Model;
 using Microsoft.Owin;
 using Microsoft.Owin.Logging;
 using Newtonsoft.Json;
-using ProcessFunc = System.Func<Microsoft.Owin.IOwinRequest, System.Net.Http.HttpContent, Cactus.Fileserver.Core.Model.IFileInfo, System.Threading.Tasks.Task<Cactus.Fileserver.Core.Model.MetaInfo>>;
+using ProcessFunc = System.Func<Microsoft.Owin.IOwinRequest, System.Net.Http.HttpContent, Cactus.Fileserver.Core.Model.IFileInfo, System.Threading.Tasks.Task<Cactus.Fileserver.Core.Model.IFileInfo>>;
 
 
 namespace Cactus.Fileserver.Owin.Middleware
@@ -40,12 +40,12 @@ namespace Cactus.Fileserver.Owin.Middleware
             else await Next.Invoke(context);
         }
 
-        protected virtual object BuldOkResponseObject(MetaInfo meta)
+        protected virtual object BuldOkResponseObject(IFileInfo meta)
         {
             return new { meta.Uri, meta.Icon, meta.MimeType, meta.Extra };
         }
 
-        protected virtual async Task<MetaInfo> AddFile(IOwinContext context, HttpContent newFileContent)
+        protected virtual async Task<IFileInfo> AddFile(IOwinContext context, HttpContent newFileContent)
         {
             return await processFunc(context.Request, newFileContent, new IncomeFileInfo { Owner = GetOwner(context.Authentication?.User?.Identity) });
         }

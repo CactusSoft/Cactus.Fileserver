@@ -2,20 +2,18 @@ using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
-using Cactus.Fileserver.Core;
 using Cactus.Fileserver.Core.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using ProcessFunc = System.Func<Microsoft.AspNetCore.Http.HttpRequest, System.IO.Stream, System.Threading.Tasks.Task>;
 
 namespace Cactus.Fileserver.AspNetCore.Middleware
 {
-    internal class GetFileHandler
+    internal class GetFileHandler<T> where T : class, IFileInfo, new()
     {
         private readonly ILogger log;
-        protected readonly ProcessFunc ProcessFunc;
+        protected readonly Func<HttpRequest, IFileGetContext<T>, Task> ProcessFunc;
 
-        public GetFileHandler(ILoggerFactory logFactory, ProcessFunc processFunc)
+        public GetFileHandler(ILoggerFactory logFactory, Func<HttpRequest, IFileGetContext<T>, Task> processFunc)
         {
             log = logFactory?.CreateLogger(GetType().Name);
             ProcessFunc = processFunc;
@@ -24,11 +22,28 @@ namespace Cactus.Fileserver.AspNetCore.Middleware
 
         public async Task Invoke(HttpContext context)
         {
+            var getContext = new FileGetContext<T>();
             try
             {
-                using (var stream = context.Response.Body)
+                using (var stream = new MemoryStream())
                 {
-                    await ProcessFunc.Invoke(context.Request, stream);
+                    getContext.ContextStream = stream;
+                    await ProcessFunc.Invoke(context.Request, getContext);
+                    if (getContext.RedirectUri != null && getContext.IsNeedToRedirect)
+                    {
+                        context.Response.StatusCode = (int)HttpStatusCode.MovedPermanently;
+                        context.Response.Headers.Append("Location", getContext.RedirectUri.ToString());
+                    }
+                    else if (getContext.ContextStream?.CanRead == true && getContext.IsNeedToPromoteStream)
+                    {
+                        context.Response.StatusCode = (int)HttpStatusCode.OK;
+                        getContext.ContextStream.Position = 0;
+                        await getContext.ContextStream.CopyToAsync(context.Response.Body);
+                    }
+                    else
+                    {
+                        context.Response.StatusCode = (int) HttpStatusCode.NotFound;
+                    }
                 }
             }
             catch

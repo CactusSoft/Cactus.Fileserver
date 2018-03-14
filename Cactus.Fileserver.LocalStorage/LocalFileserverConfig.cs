@@ -10,7 +10,7 @@ using Cactus.Fileserver.Core.Storage;
 
 namespace Cactus.Fileserver.LocalStorage
 {
-    public class LocalFileserverConfig<T> : IFileserverConfig<T>
+    public class LocalFileserverConfig<TRequest, TMeta> : IFileserverConfig<TRequest, TMeta> where TMeta : IFileInfo
     {
         private readonly string fileStorageFolder;
         private readonly string metaStorageFolder;
@@ -31,7 +31,7 @@ namespace Cactus.Fileserver.LocalStorage
 
         public string Path { get; }
 
-        public Func<IFileStorageService> FileStorage
+        public Func<IFileStorageService<TMeta>> FileStorage
         {
             get
             {
@@ -40,15 +40,15 @@ namespace Cactus.Fileserver.LocalStorage
                     var baseFilesUri = string.IsNullOrEmpty(Path) || Path == "/"
                         ? BaseUri
                         : new Uri(BaseUri, Path + '/');
-                    var fileStorage = new LocalFileStorage<MetaInfo>(baseFilesUri,
-                        new RandomNameProvider<MetaInfo> {StoreExt = true}, fileStorageFolder);
-                    var metaStorage = new LocalMetaInfoStorage<MetaInfo>(metaStorageFolder);
-                    return new FileStorageService<MetaInfo>(metaStorage, fileStorage, SecurityManager());
+                    var fileStorage = new LocalFileStorage<TMeta>(baseFilesUri,
+                        new RandomNameProvider<TMeta> {StoreExt = true}, fileStorageFolder);
+                    var metaStorage = new LocalMetaInfoStorage<TMeta>(metaStorageFolder);
+                    return new FileStorageService<TMeta>(metaStorage, fileStorage, SecurityManager());
                 };
             }
         }
 
-        public Func<Func<T, HttpContent, IFileInfo, Task<MetaInfo>>> NewFilePipeline { get; set; }
-        public Func<Func<T, Stream, Task>> GetFilePipeline { get; set; }
+        public Func<Func<TRequest, HttpContent, TMeta, Task<TMeta>>> NewFilePipeline { get; set; }
+        public Func<Func<TRequest, IFileGetContext<TMeta>, Task>> GetFilePipeline { get; set; }
     }
 }

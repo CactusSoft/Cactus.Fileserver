@@ -2,6 +2,7 @@ using System;
 using System.Net.Http;
 using Cactus.Fileserver.AspNetCore.Middleware;
 using Cactus.Fileserver.Core.Config;
+using Cactus.Fileserver.Core.Model;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -10,8 +11,8 @@ namespace Cactus.Fileserver.AspNetCore.Config
 {
     public static class AppBuilderExtension
     {
-        public static IApplicationBuilder UseFileserver(this IApplicationBuilder app,
-            IFileserverConfig<HttpRequest> config)
+        public static IApplicationBuilder UseFileserver<T>(this IApplicationBuilder app,
+            IFileserverConfig<HttpRequest, T> config) where T : class, IFileInfo, new()
         {
             if (!string.IsNullOrEmpty(config.Path) && config.Path != "/")
             {
@@ -34,8 +35,8 @@ namespace Cactus.Fileserver.AspNetCore.Config
             return app;
         }
 
-        public static IApplicationBuilder MapDelFile(this IApplicationBuilder app,
-            IFileserverConfig<HttpRequest> config)
+        public static IApplicationBuilder MapDelFile<T>(this IApplicationBuilder app,
+            IFileserverConfig<HttpRequest,T> config) where T : IFileInfo
         {
             // Branch requests to {path}/info or {path}?info - returns only file metadata
             app.MapWhen(c => HttpMethod.Delete.Method.Equals(c.Request.Method, StringComparison.OrdinalIgnoreCase) &&
@@ -44,7 +45,7 @@ namespace Cactus.Fileserver.AspNetCore.Config
                 {
                     builder.Run(async context =>
                     {
-                        var handler = new DeleteFileHandler(
+                        var handler = new DeleteFileHandler<T>(
                             builder.ApplicationServices.GetService(typeof(ILoggerFactory)) as ILoggerFactory,
                             config.FileStorage());
                         await handler.Invoke(context);
@@ -53,8 +54,8 @@ namespace Cactus.Fileserver.AspNetCore.Config
             return app;
         }
 
-        public static IApplicationBuilder MapAddFile(this IApplicationBuilder app,
-            IFileserverConfig<HttpRequest> config)
+        public static IApplicationBuilder MapAddFile<T>(this IApplicationBuilder app,
+            IFileserverConfig<HttpRequest, T> config) where T : class, IFileInfo, new()
         {
             app.MapWhen(c => HttpMethod.Post.Method.Equals(c.Request.Method, StringComparison.OrdinalIgnoreCase),
                 builder =>
@@ -62,7 +63,7 @@ namespace Cactus.Fileserver.AspNetCore.Config
                     builder.Run(async context =>
                     {
                         var handler =
-                            new AddFileHandler(
+                            new AddFileHandler<T>(
                                 builder.ApplicationServices.GetService(typeof(ILoggerFactory)) as ILoggerFactory,
                                 config.NewFilePipeline());
                         await handler.Invoke(context);
@@ -73,15 +74,15 @@ namespace Cactus.Fileserver.AspNetCore.Config
 
 
 
-        public static IApplicationBuilder MapGetFile(this IApplicationBuilder app,
-            IFileserverConfig<HttpRequest> config)
+        public static IApplicationBuilder MapGetFile<T>(this IApplicationBuilder app,
+            IFileserverConfig<HttpRequest, T> config) where T : class, IFileInfo, new()
         {
             app.MapWhen(c => HttpMethod.Get.Method.Equals(c.Request.Method, StringComparison.OrdinalIgnoreCase),
                 builder =>
                 {
                     builder.Run(async context =>
                     {
-                        var handler = new GetFileHandler(
+                        var handler = new GetFileHandler<T>(
                             builder.ApplicationServices.GetService(typeof(ILoggerFactory)) as ILoggerFactory,
                             config.GetFilePipeline());
                         await handler.Invoke(context);

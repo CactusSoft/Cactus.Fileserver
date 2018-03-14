@@ -1,4 +1,5 @@
-﻿using System.Net;
+using System;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Principal;
@@ -7,19 +8,16 @@ using Cactus.Fileserver.Core.Model;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using ProcessFunc =
-    System.Func<Microsoft.AspNetCore.Http.HttpRequest, System.Net.Http.HttpContent,
-        Cactus.Fileserver.Core.Model.IFileInfo, System.Threading.Tasks.Task<Cactus.Fileserver.Core.Model.MetaInfo>>;
 
 
 namespace Cactus.Fileserver.AspNetCore.Middleware
 {
-    public class AddFileHandler
+    public class AddFileHandler<T> where T : class,IFileInfo,new()
     {
         private readonly ILogger log;
-        private readonly ProcessFunc processFunc;
+        private readonly Func<HttpRequest, HttpContent, T, Task<T>> processFunc;
 
-        public AddFileHandler(ILoggerFactory logFactory, ProcessFunc processFunc)
+        public AddFileHandler(ILoggerFactory logFactory, Func<HttpRequest, HttpContent, T, Task<T>> processFunc)
         {
             this.processFunc = processFunc;
             log = logFactory?.CreateLogger(GetType().Name);
@@ -39,15 +37,15 @@ namespace Cactus.Fileserver.AspNetCore.Middleware
             log?.LogInformation("Served by AddFileMiddleware");
         }
 
-        protected virtual object BuldOkResponseObject(MetaInfo meta)
+        protected virtual object BuldOkResponseObject(IFileInfo meta)
         {
             return new {meta.Uri, meta.Icon, meta.MimeType, meta.Extra};
         }
 
-        protected virtual async Task<MetaInfo> AddFile(HttpContext context, HttpContent newFileContent)
+        protected virtual async Task<T> AddFile(HttpContext context, HttpContent newFileContent)
         {
             return await processFunc(context.Request, newFileContent,
-                new IncomeFileInfo {Owner = GetOwner(context.User?.Identity)});
+                new T {Owner = GetOwner(context.User?.Identity)});
         }
 
         /// <summary>

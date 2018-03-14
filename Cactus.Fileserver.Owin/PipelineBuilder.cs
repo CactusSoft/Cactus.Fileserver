@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -8,7 +8,7 @@ using Microsoft.Owin;
 
 namespace Cactus.Fileserver.Owin
 {
-    public class PipelineBuilder : GenericPipelineBuilder<IOwinRequest>
+    public class PipelineBuilder : GenericPipelineBuilder<IOwinRequest, MetaInfo>
     {
         public PipelineBuilder UseMultipartRequestParser()
         {
@@ -44,7 +44,7 @@ namespace Cactus.Fileserver.Owin
             return this;
         }
 
-        public Func<IOwinRequest, HttpContent, IFileInfo, Task<MetaInfo>> RunStoreFileAsIs(Func<IFileStorageService> storageServceResolverFunc)
+        public Func<IOwinRequest, HttpContent, IFileInfo, Task<IFileInfo>> RunStoreFileAsIs(Func<IFileStorageService<IFileInfo>> storageServceResolverFunc)
         {
             return Run(async (request, content, info) =>
             {
@@ -56,7 +56,7 @@ namespace Cactus.Fileserver.Owin
             });
         }
 
-        public new PipelineBuilder Use(Func<Func<IOwinRequest, HttpContent, IFileInfo, Task<MetaInfo>>, Func<IOwinRequest, HttpContent, IFileInfo, Task<MetaInfo>>> processor)
+        public new PipelineBuilder Use(Func<Func<IOwinRequest, HttpContent, IFileInfo, Task<IFileInfo>>, Func<IOwinRequest, HttpContent, IFileInfo, Task<IFileInfo>>> processor)
         {
             base.Use(processor);
             return this;

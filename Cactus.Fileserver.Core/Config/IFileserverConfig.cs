@@ -6,15 +6,15 @@ using Cactus.Fileserver.Core.Model;
 
 namespace Cactus.Fileserver.Core.Config
 {
-    public interface IFileserverConfig<T>
+    public interface IFileserverConfig<in TRequest, TMeta> where TMeta : IFileInfo
     {
         string Path { get; }
 
-        Func<IFileStorageService> FileStorage { get; }
+        Func<IFileStorageService<TMeta>> FileStorage { get; }
 
-        Func<Func<T, HttpContent, IFileInfo, Task<MetaInfo>>> NewFilePipeline { get; }
+        Func<Func<TRequest, HttpContent, TMeta, Task<TMeta>>> NewFilePipeline { get; }
 
-        Func<Func<T, Stream, Task>> GetFilePipeline { get; }
+        Func<Func<TRequest, IFileGetContext<TMeta>, Task>> GetFilePipeline { get; }
 
     }
 }

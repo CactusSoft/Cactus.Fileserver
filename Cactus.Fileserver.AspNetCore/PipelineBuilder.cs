@@ -9,14 +9,14 @@ using Microsoft.AspNetCore.Http;
 
 namespace Cactus.Fileserver.AspNetCore
 {
-    public class PipelineBuilder : GenericPipelineBuilder<HttpRequest>
+    public class PipelineBuilder<TMeta> : GenericPipelineBuilder<HttpRequest,TMeta> where TMeta : IFileInfo
     {
     }
 
     public static class PipelineBuilderExtensions
     {
-        public static GenericPipelineBuilder<HttpRequest> UseMultipartRequestParser(
-            this GenericPipelineBuilder<HttpRequest> builder)
+        public static GenericPipelineBuilder<HttpRequest, TMeta> UseMultipartRequestParser<TMeta>(
+            this GenericPipelineBuilder<HttpRequest, TMeta> builder) where TMeta : IFileInfo
         {
             return builder.Use(next => async (request, content, info) =>
             {
@@ -35,8 +35,8 @@ namespace Cactus.Fileserver.AspNetCore
             });
         }
 
-        public static GenericPipelineBuilder<HttpRequest> UseOriginalFileinfo(
-            this GenericPipelineBuilder<HttpRequest> builder)
+        public static GenericPipelineBuilder<HttpRequest, TMeta> UseOriginalFileinfo<TMeta>(
+            this GenericPipelineBuilder<HttpRequest, TMeta> builder) where TMeta : IFileInfo
         {
             return builder.Use(next => async (request, content, info) =>
             {
@@ -47,11 +47,15 @@ namespace Cactus.Fileserver.AspNetCore
             });
         }
 
-        public static Func<HttpRequest, HttpContent, IFileInfo, Task<MetaInfo>> RunStoreFileAsIs(
-            this GenericPipelineBuilder<HttpRequest> builder, Func<IFileStorageService> storageServceResolverFunc)
+        public static Func<HttpRequest, HttpContent, TMeta, Task<TMeta>> RunStoreFileAsIs<TMeta>(
+            this GenericPipelineBuilder<HttpRequest, TMeta> builder, Func<IFileStorageService<TMeta>> storageServceResolverFunc) where TMeta : IFileInfo 
         {
             return builder.Run(async (request, content, info) =>
             {
+                if (info is IExtendedFileInfo extendedMeta)
+                {
+                    extendedMeta.IsOriginal = true;
+                }
                 var fileStorage = storageServceResolverFunc();
                 using (var stream = await content.ReadAsStreamAsync())
                 {
@@ -60,20 +64,34 @@ namespace Cactus.Fileserver.AspNetCore
             });
         }
 
-
-        public static Func<HttpRequest, Stream, Task> GetStoreFileAsIs(
-            this GenericPipelineBuilder<HttpRequest> builder, Func<IFileStorageService> storageServceResolverFunc)
+        public static Func<HttpRequest, IFileGetContext<TMeta>, Task> GetStoreFileAsIs<TMeta>(
+            this GenericPipelineBuilder<HttpRequest, TMeta> builder, Func<IFileStorageService<TMeta>> storageServceResolverFunc) where TMeta : IFileInfo
         {
-            return builder.Run( async (request, outStream) =>
+            return builder.Run(async (request, getContext) =>
             {
-                var fileStorage = storageServceResolverFunc();
-                var result = await fileStorage.Get(request.GetAbsoluteUri());
-                await result.CopyToAsync(outStream); 
+                var storage = storageServceResolverFunc();
+                try
+                {
+                    getContext.RedirectUri = storage.GetRedirectUri(request.GetAbsoluteUri());
+                    getContext.IsNeedToRedirect = true;
+                    getContext.IsNeedToPromoteStream = false;
+                }
+                catch (NotImplementedException)
+                {
+                    var stream = await storage.Get(request.GetAbsoluteUri());
+                    if (getContext.ContextStream.CanWrite)
+                    {
+                        await stream.CopyToAsync(getContext.ContextStream);
+                        getContext.IsNeedToPromoteStream = true;
+                        getContext.IsNeedToRedirect = false;
+                    }
+                }
             });
         }
 
-        public static Func<HttpRequest, Stream, Task> DisableGet(
-            this GenericPipelineBuilder<HttpRequest> builder)
+
+        public static Func<HttpRequest, IFileGetContext<TMeta>, Task> DisableGet<TMeta>(
+            this GenericPipelineBuilder<HttpRequest, TMeta> builder) where TMeta : IFileInfo
         {
             return builder.Run((request, outStream) => Task.CompletedTask);
         }
