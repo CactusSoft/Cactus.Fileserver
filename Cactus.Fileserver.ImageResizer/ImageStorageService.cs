@@ -11,9 +11,9 @@ using ImageResizer;
 
 namespace Cactus.Fileserver.ImageResizer
 {
-    public class ImageStorageService
+    public class ImageStorageService<TMeta> where TMeta : IFileInfo
     {
-        private readonly IFileStorageService<IFileInfo> storageService;
+        private readonly IFileStorageService<TMeta> storageService;
         private readonly Instructions defaultInstructions;
         private readonly Instructions mandatoryInstructions;
         private readonly Instructions defaultThumbnailInstructions;
@@ -21,7 +21,7 @@ namespace Cactus.Fileserver.ImageResizer
         private readonly string paramsPrefix;
         protected readonly char IconDelimiter = '-';
 
-        public ImageStorageService(IFileStorageService<IFileInfo> storageService, Instructions defaultInstructions, Instructions mandatoryInstructions, Instructions defaultThumbnailInstructions,
+        public ImageStorageService(IFileStorageService<TMeta> storageService, Instructions defaultInstructions, Instructions mandatoryInstructions, Instructions defaultThumbnailInstructions,
             Instructions mandatoryThumbnailInstructions,
             string paramsPrefix = "thmb-")
         {
@@ -40,7 +40,7 @@ namespace Cactus.Fileserver.ImageResizer
         /// <param name="file"></param>
         /// <param name="queryString"></param>
         /// <returns></returns>
-        public virtual async Task<IFileInfo> StoreSingle(IFileInfo fileInfo, Stream file, string queryString)
+        public virtual async Task<TMeta> StoreSingle(TMeta fileInfo, Stream file, string queryString)
         {
             var instructions = BuildInstructions(queryString);
             using (var streamToStore = new MemoryStream())
@@ -59,7 +59,7 @@ namespace Cactus.Fileserver.ImageResizer
         /// <param name="file"></param>
         /// <param name="queryString">Query string will be used to get image & thubnail transformation parameters. The income params will be merged with default & mandatory</param>
         /// <returns>MetaInfo.Icon is thumbnail URI</returns>
-        public virtual async Task<IFileInfo> StoreWithThumbnail(IFileInfo fileInfo, byte[] file, string queryString)
+        public virtual async Task<TMeta> StoreWithThumbnail(TMeta fileInfo, byte[] file, string queryString)
         {
             var thumbnailInstructions = BuildThumbnailInstructions(queryString);
             var originalInstructions = BuildInstructions(queryString);
@@ -91,12 +91,12 @@ namespace Cactus.Fileserver.ImageResizer
         /// <param name="fileInfo">Income file info</param>
         /// <param name="job">Processing result</param>
         /// <returns></returns>
-        protected virtual IFileInfo BuildFileInfo(IFileInfo fileInfo, ImageJob job)
+        protected virtual TMeta BuildFileInfo(TMeta fileInfo, ImageJob job)
         {
             var fileExt = job.ResultFileExtension;
             var mediaType = job.ResultMimeType ?? fileInfo.MimeType;
 
-            var res = new IncomeFileInfo(fileInfo) { MimeType = mediaType };
+            var res = fileInfo;
             if (fileExt != null && !res.OriginalName.EndsWith(fileExt, StringComparison.OrdinalIgnoreCase))
             {
                 // Need to correct file ext
@@ -137,7 +137,7 @@ namespace Cactus.Fileserver.ImageResizer
             return ImageBuilder.Current.Build(inputStream, outputStream, instructions);
         }
 
-        protected virtual async Task<IFileInfo> ProcessImage(IFileInfo fileInfo, byte[] rawData, Instructions instructions)
+        protected virtual async Task<TMeta> ProcessImage(TMeta fileInfo, byte[] rawData, Instructions instructions)
         {
             using (var stream = new MemoryStream(rawData))
             using (var streamToStore = new MemoryStream())

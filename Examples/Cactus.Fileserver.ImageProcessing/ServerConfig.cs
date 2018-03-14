@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -11,7 +11,7 @@ using Microsoft.Owin;
 
 namespace Cactus.Fileserver.ImageProcessing
 {
-    public class ServerConfig : LocalFileserverConfig<IOwinRequest>
+    public class ServerConfig : LocalFileserverConfig<IOwinRequest, MetaInfo>
     {
         public ServerConfig(string fileStorageFolder, string metaStorageFolder, Uri baseUri)
             : base(fileStorageFolder, metaStorageFolder, baseUri, null)
@@ -20,15 +20,15 @@ namespace Cactus.Fileserver.ImageProcessing
             NewFilePipeline = () => newFilePipeline;
         }
 
-        private Func<IOwinRequest, HttpContent, IFileInfo, Task<MetaInfo>> BuildPipeline()
+        private Func<IOwinRequest, HttpContent, MetaInfo, Task<MetaInfo>> BuildPipeline()
         {
             var defaultImageInstructions = new Instructions("autorotate=true");
             var mandatoryImageInstructions = new Instructions("maxwidth=300&maxheight=400");
             var defaultThumbnailInstructions = new Instructions("width=100&height=100");
             var mandatoryThumbnailInstructions = new Instructions("maxwidth=300&maxheight=400");
-            ImageStorageService ImgStorageResolver() => new ImageStorageService(FileStorage(), defaultImageInstructions, mandatoryImageInstructions, defaultThumbnailInstructions, mandatoryThumbnailInstructions);
+            ImageStorageService<MetaInfo> ImgStorageResolver() => new ImageStorageService<MetaInfo>(FileStorage(), defaultImageInstructions, mandatoryImageInstructions, defaultThumbnailInstructions, mandatoryThumbnailInstructions);
 
-            return new PipelineBuilder()
+            return new PipelineBuilder<MetaInfo>()
                 .UseMultipartRequestParser()
                 .UseOriginalFileinfo()
                 .Use(next => (async (request, content, info) =>
