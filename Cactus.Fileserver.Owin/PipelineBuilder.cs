@@ -38,7 +38,7 @@ namespace Cactus.Fileserver.Owin
             {
                 //Set file info
                 info.MimeType = content.Headers.ContentType.ToString();
-                info.OriginalName = content.Headers.ContentDisposition.FileName?.Trim('"') ?? "noname";
+                info.OriginalName = content.Headers.ContentDisposition?.FileName?.Trim('"') ?? "noname";
                 return await next(request, content, info);
             });
             return this;
@@ -55,7 +55,7 @@ namespace Cactus.Fileserver.Owin
                 }
             });
         }
-
+        
         public new PipelineBuilder Use(Func<Func<IOwinRequest, HttpContent, IFileInfo, Task<MetaInfo>>, Func<IOwinRequest, HttpContent, IFileInfo, Task<MetaInfo>>> processor)
         {
             base.Use(processor);
