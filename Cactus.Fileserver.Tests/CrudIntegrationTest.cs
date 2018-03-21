@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -11,7 +11,7 @@ namespace Cactus.Fileserver.Tests
     [TestClass]
     public class CrudIntegrationTest
     {
-        protected const string baseFileserverUrl = "http://localhost:38420";
+        protected const string baseFileserverUrl = "http://localhost:18047";
         [TestMethod]
         public void CrudTest()
         {

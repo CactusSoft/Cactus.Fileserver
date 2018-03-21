@@ -197,3 +197,5 @@ $RECYCLE.BIN/
 # End of core ignore list, below put you custom 'per project' settings (patterns or path)
 #####
 Sommelier.Api/Sommelier.Api/UploadFiles/
+Cactus.Fileserver.ImageResizer.Nuget/
+Cactus.Fileserver.Owin.Nuget/
