@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>Cactus.Fileserver.Owin</id>
-    <version>2.1.0</version>
+    <version>2.1.1</version>
     <title>Cactus.Fileserver.Owin</title>
     <authors>yan.oreshchenkov</authors>
     <owners>CactusSoft LLC</owners>
@@ -20,7 +20,7 @@
     <licenseUrl>https://github.com/CactusSoft/Cactus.Fileserver/blob/master/LICENSE</licenseUrl>
     <copyright>Copyright CactusSoft 2016</copyright>
     <dependencies>
-        <group targetFramework="net452">
+        <group targetFramework="net45">
           <dependency id="Cactus.Fileserver.Core" version="2.1.0" />
           <dependency id="Microsoft.Owin" version="3.0.1"/>
           <dependency id="Newtonsoft.Json" version="9.0.1"/>

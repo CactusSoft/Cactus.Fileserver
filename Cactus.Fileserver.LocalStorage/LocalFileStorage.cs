@@ -54,7 +54,7 @@ namespace Cactus.Fileserver.LocalStorage
         {
             var file = UriResolver.ResolveFilename(uri);
             File.Delete(file);
-            return Task.CompletedTask;
+            return Task.FromResult(0);
         }
 
         protected override Task<Stream> ExecuteGet(string filename)
