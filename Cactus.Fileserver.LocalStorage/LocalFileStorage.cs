@@ -67,7 +67,7 @@ namespace Cactus.Fileserver.LocalStorage
         {
             var file = GetFile(uri);
             File.Delete(file);
-            return Task.CompletedTask;
+            return Task.FromResult(0);
         }
 
         public Task<Stream> Get(Uri uri)
