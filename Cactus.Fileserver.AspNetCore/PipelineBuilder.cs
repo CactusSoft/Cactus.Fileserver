@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -9,14 +8,14 @@ using Microsoft.AspNetCore.Http;
 
 namespace Cactus.Fileserver.AspNetCore
 {
-    public class PipelineBuilder<TMeta> : GenericPipelineBuilder<HttpRequest,TMeta> where TMeta : IFileInfo
+    public class PipelineBuilder<TMeta> : GenericPipelineBuilder<TMeta> where TMeta : IFileInfo
     {
     }
 
     public static class PipelineBuilderExtensions
     {
-        public static GenericPipelineBuilder<HttpRequest, TMeta> UseMultipartRequestParser<TMeta>(
-            this GenericPipelineBuilder<HttpRequest, TMeta> builder) where TMeta : IFileInfo
+        public static GenericPipelineBuilder<TMeta> UseMultipartRequestParser<TMeta>(
+            this GenericPipelineBuilder<TMeta> builder) where TMeta : IFileInfo
         {
             return builder.Use(next => async (request, content, info) =>
             {
@@ -35,8 +34,8 @@ namespace Cactus.Fileserver.AspNetCore
             });
         }
 
-        public static GenericPipelineBuilder<HttpRequest, TMeta> UseOriginalFileinfo<TMeta>(
-            this GenericPipelineBuilder<HttpRequest, TMeta> builder) where TMeta : IFileInfo
+        public static GenericPipelineBuilder<TMeta> UseOriginalFileinfo<TMeta>(
+            this GenericPipelineBuilder<TMeta> builder) where TMeta : IFileInfo
         {
             return builder.Use(next => async (request, content, info) =>
             {
@@ -48,7 +47,7 @@ namespace Cactus.Fileserver.AspNetCore
         }
 
         public static Func<HttpRequest, HttpContent, TMeta, Task<TMeta>> RunStoreFileAsIs<TMeta>(
-            this GenericPipelineBuilder<HttpRequest, TMeta> builder, Func<IFileStorageService<TMeta>> storageServceResolverFunc) where TMeta : IFileInfo 
+            this GenericPipelineBuilder<TMeta> builder, Func<IFileStorageService<TMeta>> storageServceResolverFunc) where TMeta : IFileInfo 
         {
             return builder.Run(async (request, content, info) =>
             {
@@ -63,37 +62,6 @@ namespace Cactus.Fileserver.AspNetCore
                 }
             });
         }
-
-        public static Func<HttpRequest, IFileGetContext<TMeta>, Task> GetStoreFileAsIs<TMeta>(
-            this GenericPipelineBuilder<HttpRequest, TMeta> builder, Func<IFileStorageService<TMeta>> storageServceResolverFunc) where TMeta : IFileInfo
-        {
-            return builder.Run(async (request, getContext) =>
-            {
-                var storage = storageServceResolverFunc();
-                try
-                {
-                    getContext.RedirectUri = storage.GetRedirectUri(request.GetAbsoluteUri());
-                    getContext.IsNeedToRedirect = true;
-                    getContext.IsNeedToPromoteStream = false;
-                }
-                catch (NotImplementedException)
-                {
-                    var stream = await storage.Get(request.GetAbsoluteUri());
-                    if (getContext.ContextStream.CanWrite)
-                    {
-                        await stream.CopyToAsync(getContext.ContextStream);
-                        getContext.IsNeedToPromoteStream = true;
-                        getContext.IsNeedToRedirect = false;
-                    }
-                }
-            });
-        }
-
-
-        public static Func<HttpRequest, IFileGetContext<TMeta>, Task> DisableGet<TMeta>(
-            this GenericPipelineBuilder<HttpRequest, TMeta> builder) where TMeta : IFileInfo
-        {
-            return builder.Run((request, outStream) => Task.CompletedTask);
-        }
+        
     }
 }

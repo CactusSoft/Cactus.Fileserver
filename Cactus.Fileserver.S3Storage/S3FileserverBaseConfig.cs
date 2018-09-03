@@ -8,10 +8,12 @@ using Cactus.Fileserver.Core.Model;
 using Cactus.Fileserver.Core.Security;
 using Cactus.Fileserver.Core.Storage;
 using Cactus.Fileserver.LocalStorage;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 
 namespace Cactus.Fileserver.S3Storage
 {
-    public class S3FileserverBaseConfig<TRequest, TMeta> : IFileserverConfig<TRequest, TMeta> where TMeta : IFileInfo
+    public class S3FileserverBaseConfig<TMeta> : IFileserverConfig<TMeta> where TMeta : IFileInfo
     {
         private readonly Uri _baseFileserverUri;
         private readonly string _bucketName;
@@ -40,15 +42,27 @@ namespace Cactus.Fileserver.S3Storage
             {
                 return () =>
                 {
-                    var fileStorage = new S3FileStorage<TMeta>(_bucketName,_regionEndpoint,_awsAccessKey,_awsSecretKey,_baseFileserverUri,
+                    var fileStorage = new S3FileStorage<TMeta>(_bucketName, _regionEndpoint, _awsAccessKey, _awsSecretKey, _baseFileserverUri,
                         new RandomNameProvider<TMeta> { StoreExt = true });
                     var metaStorage = new LocalMetaInfoStorage<TMeta>(_metaStorageFolder);
                     return new FileStorageService<TMeta>(metaStorage, fileStorage, new DummySecurityManager());
                 };
             }
         }
-        public Func<Func<TRequest, HttpContent, TMeta, Task<TMeta>>> NewFilePipeline { get; protected set; }
-        public Func<Func<TRequest, IFileGetContext<TMeta>, Task>> GetFilePipeline { get; protected set; }
+        public Func<Func<HttpRequest, HttpContent, TMeta, Task<TMeta>>> NewFilePipeline { get; protected set; }
+        public Func<Func<HttpRequest, IFileGetContext<TMeta>, Task>> GetFilePipeline { get; protected set; }
+
+        public IApplicationBuilder GetPipeline(IApplicationBuilder app)
+        {
+            app.Run(async context =>
+            {
+                // S3 storage means that you will get your files right from the S3.
+                // Maybe later it make sense to implement redirection here.
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsync("S3 is the way of jedi");
+            });
+            return app;
+        }
 
         protected class DummySecurityManager : ISecurityManager
         {

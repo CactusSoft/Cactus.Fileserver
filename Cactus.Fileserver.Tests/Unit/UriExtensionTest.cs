@@ -2,7 +2,7 @@
 using Cactus.Fileserver.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Cactus.Fileserver.Tests
+namespace Cactus.Fileserver.Tests.Unit
 {
     [TestClass]
     public class UriExtensionTest

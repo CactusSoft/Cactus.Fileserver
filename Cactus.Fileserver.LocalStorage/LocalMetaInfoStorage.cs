@@ -66,7 +66,6 @@ namespace Cactus.Fileserver.LocalStorage
             return GetMetadata(metafile);
         }
 
-
         protected string GetFile(Uri uri)
         {
             return Path.Combine(baseFolder, uri.GetResource() + metafileExt);

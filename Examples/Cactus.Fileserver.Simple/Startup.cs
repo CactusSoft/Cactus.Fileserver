@@ -1,10 +1,10 @@
 using System;
 using Cactus.Fileserver.AspNetCore.Config;
-using Cactus.Fileserver.Core.Model;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace Cactus.Fileserver.Simple
 {
@@ -17,15 +17,23 @@ namespace Cactus.Fileserver.Simple
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
+            var url = Environment.GetEnvironmentVariable("ASPNETCORE_URLS");
+            if (string.IsNullOrEmpty(url))
+            {
+                url= "http://localhost:18047";
+            }
+
+            loggerFactory.AddLog4Net();
             app.UseDeveloperExceptionPage()
-                /*.UseStaticFiles(new StaticFileOptions
-                {
-                    DefaultContentType = "application/octet-stream",
-                    ServeUnknownFileTypes = true
-                })*/
-                .UseFileserver(new ServerConfig(env.WebRootPath, env.WebRootPath,  new Uri("http://localhost:18047")))
+                //.UseMiddleware<DynamicResizeMiddleware<ExtendedMetaInfo>>()
+                //.UseStaticFiles(new StaticFileOptions
+                //{
+                //    DefaultContentType = "application/octet-stream",
+                //    ServeUnknownFileTypes = true
+                //})
+                .UseFileserver(new ServerConfig(env.WebRootPath, env.WebRootPath, new Uri(url)))
                 .Run(async context =>
                 {
                     if (context.Request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase))

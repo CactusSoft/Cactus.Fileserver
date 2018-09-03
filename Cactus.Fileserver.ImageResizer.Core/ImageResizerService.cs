@@ -1,15 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using Cactus.Fileserver.Core;
-using Cactus.Fileserver.Core.Model;
 using Cactus.Fileserver.ImageResizer.Core.Utils;
 using ImageSharp;
-using ImageSharp.Formats;
 using ImageSharp.Processing;
 
 namespace Cactus.Fileserver.ImageResizer.Core

@@ -1,16 +1,18 @@
 using System;
-using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Cactus.Fileserver.Core;
 using Cactus.Fileserver.Core.Config;
-using Cactus.Fileserver.Core.Model;
 using Cactus.Fileserver.Core.Security;
 using Cactus.Fileserver.Core.Storage;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.FileProviders;
+using IFileInfo = Cactus.Fileserver.Core.Model.IFileInfo;
 
 namespace Cactus.Fileserver.LocalStorage
 {
-    public class LocalFileserverConfig<TRequest, TMeta> : IFileserverConfig<TRequest, TMeta> where TMeta : IFileInfo
+    public class LocalFileserverConfig<TMeta> : IFileserverConfig<TMeta> where TMeta : IFileInfo
     {
         private readonly string fileStorageFolder;
         private readonly string metaStorageFolder;
@@ -48,7 +50,16 @@ namespace Cactus.Fileserver.LocalStorage
             }
         }
 
-        public Func<Func<TRequest, HttpContent, TMeta, Task<TMeta>>> NewFilePipeline { get; set; }
-        public Func<Func<TRequest, IFileGetContext<TMeta>, Task>> GetFilePipeline { get; set; }
+        public Func<Func<HttpRequest, HttpContent, TMeta, Task<TMeta>>> NewFilePipeline { get; set; }
+
+        public virtual IApplicationBuilder GetPipeline(IApplicationBuilder app)
+        {
+            return app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(fileStorageFolder),
+                DefaultContentType = "application/octet-stream",
+                ServeUnknownFileTypes = true
+            });
+        }
     }
 }
