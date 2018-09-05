@@ -1,4 +1,3 @@
-using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -9,8 +8,7 @@ using Cactus.Fileserver.Core.Model;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
-
-namespace Cactus.Fileserver.AspNetCore.Middleware
+namespace Cactus.Fileserver.Core.Middleware
 {
     public class AddFileHandler
     {

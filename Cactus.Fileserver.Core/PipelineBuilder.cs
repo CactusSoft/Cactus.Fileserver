@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Cactus.Fileserver.Core;
 using Cactus.Fileserver.Core.Model;
 using Microsoft.AspNetCore.Http;
 
-namespace Cactus.Fileserver.AspNetCore
+namespace Cactus.Fileserver.Core
 {
     public delegate Task<MetaInfo> FileProcessorDelegate(HttpRequest request, HttpContent content, IFileInfo info);
 

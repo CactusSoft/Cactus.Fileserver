@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Cactus.Fileserver.AspNetCore;
 using Cactus.Fileserver.Core;
 using Cactus.Fileserver.Core.Logging;
 using Cactus.Fileserver.Core.Model;

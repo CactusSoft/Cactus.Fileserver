@@ -1,5 +1,4 @@
 using System;
-using Cactus.Fileserver.AspNetCore;
 using Cactus.Fileserver.Core;
 using Cactus.Fileserver.Core.Config;
 using Cactus.Fileserver.Core.Security;

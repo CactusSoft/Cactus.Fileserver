@@ -12,17 +12,18 @@ namespace Cactus.Fileserver.Core.Storage
         Uri ResolveStaticUri(Uri currentUri);
 
         /// <summary>
-        /// Resolve fileserver HTTP request uri
+        /// Returns full URI to a file by a file name.
+        /// The URI could be used to get, delete the file itself or its metadata.
         /// </summary>
         /// <param name="newFileName">New file name</param>
-        /// <returns></returns>
+        /// <returns>Full URI to a file</returns>
         Uri ResolveUri(string newFileName);
 
         /// <summary>
-        /// Resolve filename
+        /// Extracts a filename from the full URI. 
         /// </summary>
-        /// <param name="fileUri"></param>
-        /// <returns></returns>
+        /// <param name="fileUri">File URI</param>
+        /// <returns>File name</returns>
         string ResolveFilename(Uri fileUri);
 
         /// <summary>

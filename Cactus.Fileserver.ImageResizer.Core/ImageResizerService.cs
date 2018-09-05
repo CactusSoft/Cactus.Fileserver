@@ -35,7 +35,6 @@ namespace Cactus.Fileserver.ImageResizer.Core
 
             var image = new Image(inputStream);
             var imageRatio = image.PixelRatio;
-            var resampler = new BicubicResampler();
             instructions.Join(defaultInstructions);
             instructions.Join(mandatoryInstructions, true);
             if (instructions.Width != null || instructions.Height != null || instructions["maxwidth"] != null || instructions["maxheight"] != null)
@@ -79,6 +78,5 @@ namespace Cactus.Fileserver.ImageResizer.Core
             instructions.Width = (int)Math.Round(width);
             instructions.Height = (int)Math.Round(height);
         }
-
     }
 }

@@ -3,9 +3,9 @@ using Cactus.Fileserver.ImageResizer.Core.Utils;
 
 namespace Cactus.Fileserver.ImageResizer.Core
 {
-    public static class InstructionsExtensions
+    internal static class InstructionsExtensions
     {
-        public static void Join(this Instructions instructions, Instructions join, bool overwrite = false)
+        internal static void Join(this Instructions instructions, Instructions join, bool overwrite = false)
         {
             foreach (var key in join.AllKeys)
             {
@@ -22,8 +22,7 @@ namespace Cactus.Fileserver.ImageResizer.Core
             }
         }
 
-
-        public static string GetSizeKey(this Instructions instructions)
+        internal static string GetSizeKey(this Instructions instructions)
         {
             return instructions?.Width != null && instructions.Height != null
                 ? "alt-size-" + instructions.Width + "x" + instructions.Height

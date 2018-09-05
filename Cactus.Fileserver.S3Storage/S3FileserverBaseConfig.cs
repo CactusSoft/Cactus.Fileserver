@@ -2,7 +2,6 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Amazon;
-using Cactus.Fileserver.AspNetCore;
 using Cactus.Fileserver.Core;
 using Cactus.Fileserver.Core.Config;
 using Cactus.Fileserver.Core.Model;

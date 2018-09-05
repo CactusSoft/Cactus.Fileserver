@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
 
-namespace Cactus.Fileserver.AspNetCore
+namespace Cactus.Fileserver.Core
 {
     public static class HttpRequestExtension
     {

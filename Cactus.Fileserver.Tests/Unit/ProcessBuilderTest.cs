@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Cactus.Fileserver.AspNetCore;
 using Cactus.Fileserver.Core;
 using Cactus.Fileserver.Core.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

@@ -1,10 +1,9 @@
 using System.Net;
 using System.Threading.Tasks;
-using Cactus.Fileserver.Core;
 using Cactus.Fileserver.Core.Logging;
 using Microsoft.AspNetCore.Http;
 
-namespace Cactus.Fileserver.AspNetCore.Middleware
+namespace Cactus.Fileserver.Core.Middleware
 {
     internal class DeleteFileHandler
     {

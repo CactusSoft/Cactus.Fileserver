@@ -1,5 +1,4 @@
 using System;
-using Cactus.Fileserver.AspNetCore;
 using Cactus.Fileserver.Core.Model;
 using Microsoft.AspNetCore.Builder;
 
