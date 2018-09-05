@@ -19,7 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Cactus.Fileserver.AspNetCore\Cactus.Fileserver.AspNetCore.csproj" />
     <ProjectReference Include="..\Cactus.Fileserver.Core\Cactus.Fileserver.Core.csproj" />
   </ItemGroup>
 

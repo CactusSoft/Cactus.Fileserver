@@ -8,13 +8,12 @@ using Newtonsoft.Json;
 
 namespace Cactus.Fileserver.LocalStorage
 {
-    public class LocalMetaInfoStorage<T> : IMetaInfoStorage<T> where T : IFileInfo
+    public class LocalMetaInfoStorage : IMetaInfoStorage
     {
-        private static readonly ILog Log =
-            LogProvider.GetLogger(typeof(LocalMetaInfoStorage<>).Namespace + '.' + nameof(LocalMetaInfoStorage<T>));
+        private static readonly ILog Log = LogProvider.GetLogger(typeof(LocalMetaInfoStorage));
 
-        private readonly string baseFolder;
-        private readonly string metafileExt;
+        private readonly string _baseFolder;
+        private readonly string _metafileExt;
 
         public LocalMetaInfoStorage(string folder, string fileExt = ".json")
         {
@@ -25,24 +24,24 @@ namespace Cactus.Fileserver.LocalStorage
             if (string.IsNullOrEmpty(folder))
                 throw new ArgumentNullException(nameof(folder));
 
-            metafileExt = fileExt;
+            _metafileExt = fileExt;
             try
             {
                 if (!Directory.Exists(folder))
                     Directory.CreateDirectory(folder);
 
-                baseFolder = folder;
+                _baseFolder = folder;
                 Log.Info("Storage folder is configured successfully");
             }
             catch (Exception)
             {
                 Log.ErrorFormat(
                     "Configuration error. StorageFolder {0} is unaccesable, temporary folder {1} will be used instead",
-                    folder, baseFolder);
+                    folder, _baseFolder);
             }
         }
 
-        public void Add(T info)
+        public void Add(MetaInfo info)
         {
             var fullFilename = GetFile(info.Uri);
             using (var writer = new StreamWriter(File.Create(fullFilename)))
@@ -60,23 +59,18 @@ namespace Cactus.Fileserver.LocalStorage
             File.Delete(fullFilename);
         }
 
-        public T Get(Uri uri)
+        public T Get<T>(Uri uri) where T : MetaInfo
         {
             var metafile = GetFile(uri);
-            return GetMetadata(metafile);
-        }
-
-        protected string GetFile(Uri uri)
-        {
-            return Path.Combine(baseFolder, uri.GetResource() + metafileExt);
-        }
-
-        protected T GetMetadata(string metafile)
-        {
             using (var reader = new StreamReader(new FileStream(metafile, FileMode.Open)))
             {
                 return JsonConvert.DeserializeObject<T>(reader.ReadToEnd());
             }
+        }
+
+        protected string GetFile(Uri uri)
+        {
+            return Path.Combine(_baseFolder, uri.GetResource() + _metafileExt);
         }
     }
 }

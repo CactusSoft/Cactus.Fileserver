@@ -10,7 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Cactus.Fileserver.AspNetCore\Cactus.Fileserver.AspNetCore.csproj" />
     <ProjectReference Include="..\..\Cactus.Fileserver.Core\Cactus.Fileserver.Core.csproj" />
     <ProjectReference Include="..\..\Cactus.Fileserver.ImageResizer.Core\Cactus.Fileserver.ImageResizer.Core.csproj" />
     <ProjectReference Include="..\..\Cactus.Fileserver.LocalStorage\Cactus.Fileserver.LocalStorage.csproj" />

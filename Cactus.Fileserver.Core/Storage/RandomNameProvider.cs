@@ -3,10 +3,10 @@ using Cactus.Fileserver.Core.Model;
 
 namespace Cactus.Fileserver.Core.Storage
 {
-    public class RandomNameProvider<T> : IStoredNameProvider<T> where T : IFileInfo
+    public class RandomNameProvider : IStoredNameProvider
     {
-        private readonly Random RandomNumberGenerator;
-        private readonly byte[] buffer;
+        private readonly Random _randomNumberGenerator;
+        private readonly byte[] _buffer;
 
         public RandomNameProvider() : this(12)
         {
@@ -14,16 +14,16 @@ namespace Cactus.Fileserver.Core.Storage
 
         public RandomNameProvider(int bytesCount)
         {
-            buffer = new byte[bytesCount];
-            RandomNumberGenerator = new Random(DateTime.UtcNow.Millisecond);
+            _buffer = new byte[bytesCount];
+            _randomNumberGenerator = new Random(DateTime.UtcNow.Millisecond);
         }
 
         public bool StoreExt { get; set; }
 
-        public string GetName(T info)
+        public string GetName(IFileInfo info)
         {
-            RandomNumberGenerator.NextBytes(buffer);
-            var res = Convert.ToBase64String(buffer).Replace('+', '-').Replace('/', '_');
+            _randomNumberGenerator.NextBytes(_buffer);
+            var res = Convert.ToBase64String(_buffer).Replace('+', '-').Replace('/', '_');
             if (info.OriginalName != null && StoreExt)
             {
                 var lastDot = info.OriginalName.LastIndexOf('.');
@@ -34,7 +34,7 @@ namespace Cactus.Fileserver.Core.Storage
             return res;
         }
 
-        public string Regenerate(T info, string duplicatedName)
+        public string Regenerate(IFileInfo info, string duplicatedName)
         {
             return GetName(info);
         }

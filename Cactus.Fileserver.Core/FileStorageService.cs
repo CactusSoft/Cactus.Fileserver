@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Linq;
 using System.Security;
 using System.Threading.Tasks;
 using Cactus.Fileserver.Core.Model;
@@ -9,68 +8,80 @@ using Cactus.Fileserver.Core.Storage;
 
 namespace Cactus.Fileserver.Core
 {
-    public class FileStorageService<T> : IFileStorageService<T> where T : IFileInfo
+    public class FileStorageService : IFileStorageService
     {
-        private readonly IFileStorage<T> fileStorage;
-        private readonly IMetaInfoStorage<T> metaStorage;
-        private readonly ISecurityManager securityManager;
+        private readonly IFileStorage _fileStorage;
+        private readonly IMetaInfoStorage _metaStorage;
+        private readonly ISecurityManager _securityManager;
 
-        public FileStorageService(IMetaInfoStorage<T> metaStorage, IFileStorage<T> fileStorage,
+        public FileStorageService(IMetaInfoStorage metaStorage, IFileStorage fileStorage,
             ISecurityManager securityManager)
         {
-            this.metaStorage = metaStorage;
-            this.fileStorage = fileStorage;
-            this.securityManager = securityManager;
+            _metaStorage = metaStorage;
+            _fileStorage = fileStorage;
+            _securityManager = securityManager;
         }
 
         public async Task<Stream> Get(Uri uri)
         {
-            var info = metaStorage.Get(uri);
-            if (!securityManager.MayRead(info))
+            var info = _metaStorage.Get<MetaInfo>(uri);
+            if (!_securityManager.MayRead(info))
                 throw new SecurityException("No access to read");
-            return await fileStorage.Get(uri);
+            return await _fileStorage.Get(uri);
         }
 
         public Uri GetRedirectUri(Uri uri)
         {
-             return fileStorage.UriResolver.ResolveStaticUri(uri);
+            return _fileStorage.UriResolver.ResolveStaticUri(uri);
         }
 
-        public async Task<T> Create(Stream stream, T fileInfo)
+        public async Task<MetaInfo> Create(Stream stream, IFileInfo fileInfo)
         {
-            if (!securityManager.MayCreate(fileInfo))
+            if (!_securityManager.MayCreate(fileInfo))
                 throw new SecurityException("No access to create");
-
-
-            fileInfo.Uri = await fileStorage.Add(stream, fileInfo);
-            fileInfo.StoragePath = fileInfo.Uri.AbsolutePath;
-            metaStorage.Add(fileInfo);
-            return fileInfo;
+            fileInfo.Uri = await _fileStorage.Add(stream, fileInfo);
+            var metaInfo = BuildMetadata(fileInfo);
+            _metaStorage.Add(metaInfo);
+            return metaInfo;
         }
 
         public async Task Delete(Uri uri)
         {
-            var info = metaStorage.Get(uri);
-            if (!securityManager.MayDelete(info))
+            var info = _metaStorage.Get<MetaInfo>(uri);
+            if (!_securityManager.MayDelete(info))
                 throw new SecurityException("No access to delete");
 
-            await fileStorage.Delete(uri);
-            metaStorage.Delete(uri);
+            await _fileStorage.Delete(uri);
+            _metaStorage.Delete(uri);
         }
 
-        public T GetInfo(Uri uri)
+        public T GetInfo<T>(Uri uri) where T : MetaInfo
         {
-            var res = metaStorage.Get(uri);
-            if (!securityManager.MayRead(res))
+            var res = _metaStorage.Get<T>(uri);
+            if (!_securityManager.MayRead(res))
                 throw new SecurityException("No access to read");
 
             return res;
         }
 
-        public Task UpdateMetadata(T fileInfo)
+        public Task UpdateMetadata(MetaInfo fileInfo)
         {
-            metaStorage.Add(fileInfo);
+            _metaStorage.Add(fileInfo);
             return Task.FromResult(0);
+        }
+
+        /// <summary>
+        /// Override to build & store your own MetaInfo format
+        /// </summary>
+        /// <param name="uri">URI of stored file</param>
+        /// <param name="fileInfo">Income file info</param>
+        /// <returns></returns>
+        protected virtual MetaInfo BuildMetadata(IFileInfo fileInfo)
+        {
+            return new MetaInfo(fileInfo)
+            {
+                StoragePath = fileInfo.Uri.AbsolutePath
+            };
         }
     }
 }

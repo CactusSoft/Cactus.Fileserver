@@ -1,20 +1,19 @@
 using System;
-using System.IO;
-using System.Net.Http;
-using System.Threading.Tasks;
+using Cactus.Fileserver.AspNetCore;
 using Cactus.Fileserver.Core.Model;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 
 namespace Cactus.Fileserver.Core.Config
 {
-    public interface IFileserverConfig<TMeta> where TMeta : IFileInfo
+    public interface IFileserverConfig
     {
         string Path { get; }
 
-        Func<IFileStorageService<TMeta>> FileStorage { get; }
+        Func<IFileStorageService> FileStorage { get; }
 
-        Func<Func<HttpRequest, HttpContent, TMeta, Task<TMeta>>> NewFilePipeline { get; }
+        Func<FileProcessorDelegate> NewFilePipeline { get; }
+
+        //IApplicationBuilder PostPipeline(IApplicationBuilder app);
 
         IApplicationBuilder GetPipeline(IApplicationBuilder app);
     }

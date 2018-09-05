@@ -2,6 +2,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Amazon;
+using Cactus.Fileserver.AspNetCore;
 using Cactus.Fileserver.Core;
 using Cactus.Fileserver.Core.Config;
 using Cactus.Fileserver.Core.Model;
@@ -13,7 +14,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Cactus.Fileserver.S3Storage
 {
-    public class S3FileserverBaseConfig<TMeta> : IFileserverConfig<TMeta> where TMeta : IFileInfo
+    public class S3FileserverBaseConfig : IFileserverConfig
     {
         private readonly Uri _baseFileserverUri;
         private readonly string _bucketName;
@@ -36,21 +37,20 @@ namespace Cactus.Fileserver.S3Storage
 
         public string Path { get; }
 
-        public Func<IFileStorageService<TMeta>> FileStorage
+        public Func<IFileStorageService> FileStorage
         {
             get
             {
                 return () =>
                 {
-                    var fileStorage = new S3FileStorage<TMeta>(_bucketName, _regionEndpoint, _awsAccessKey, _awsSecretKey, _baseFileserverUri,
-                        new RandomNameProvider<TMeta> { StoreExt = true });
-                    var metaStorage = new LocalMetaInfoStorage<TMeta>(_metaStorageFolder);
-                    return new FileStorageService<TMeta>(metaStorage, fileStorage, new DummySecurityManager());
+                    var fileStorage = new S3FileStorage(_bucketName, _regionEndpoint, _awsAccessKey, _awsSecretKey, _baseFileserverUri,
+                        new RandomNameProvider { StoreExt = true });
+                    var metaStorage = new LocalMetaInfoStorage(_metaStorageFolder);
+                    return new FileStorageService(metaStorage, fileStorage, new DummySecurityManager());
                 };
             }
         }
-        public Func<Func<HttpRequest, HttpContent, TMeta, Task<TMeta>>> NewFilePipeline { get; protected set; }
-        public Func<Func<HttpRequest, IFileGetContext<TMeta>, Task>> GetFilePipeline { get; protected set; }
+        public Func<FileProcessorDelegate> NewFilePipeline { get; protected set; }
 
         public IApplicationBuilder GetPipeline(IApplicationBuilder app)
         {

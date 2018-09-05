@@ -10,30 +10,30 @@ using Cactus.Fileserver.Core.Storage;
 
 namespace Cactus.Fileserver.S3Storage
 {
-    public class S3FileStorage<T> : BaseFileStore<T> where T : IFileInfo
+    public class S3FileStorage : BaseFileStore
     {
         public const string AwsUrlFormat = "https://s3.{0}.amazonaws.com/{1}/{2}";
         public const string AwsUrlReplace = "https://s3.{0}.amazonaws.com/{1}/";
         private readonly string _bucketName;
-        private readonly IStoredNameProvider<T> _nameProvider;
+        private readonly IStoredNameProvider _nameProvider;
         private readonly Func<AmazonS3Client> _amazonClientFactory;
 
 
-        public S3FileStorage(string bucketName, RegionEndpoint regionEndpoint, string accessKey, string secretKey, Uri fileserverBaseUri, IStoredNameProvider<T> nameProvider) : base(new DefaultUriResolver(bucketName, regionEndpoint, fileserverBaseUri))
+        public S3FileStorage(string bucketName, RegionEndpoint regionEndpoint, string accessKey, string secretKey, Uri fileserverBaseUri, IStoredNameProvider nameProvider) : base(new DefaultUriResolver(bucketName, regionEndpoint, fileserverBaseUri))
         {
             _bucketName = bucketName;
             _nameProvider = nameProvider;
             _amazonClientFactory = () => new AmazonS3Client(accessKey, secretKey, regionEndpoint);
         }
 
-        public S3FileStorage(string bucketName, Uri fileserverBaseUri, IStoredNameProvider<T> nameProvider) : base(new DefaultUriResolver(bucketName, new AmazonS3Client().Config.RegionEndpoint, fileserverBaseUri))
+        public S3FileStorage(string bucketName, Uri fileserverBaseUri, IStoredNameProvider nameProvider) : base(new DefaultUriResolver(bucketName, new AmazonS3Client().Config.RegionEndpoint, fileserverBaseUri))
         {
             _bucketName = bucketName;
             _nameProvider = nameProvider;
             _amazonClientFactory = () => new AmazonS3Client();
         }
 
-        protected override async Task<string> ExecuteAdd(Stream stream, T info)
+        protected override async Task<string> ExecuteAdd(Stream stream, IFileInfo info)
         {
             var key = _nameProvider.GetName(info);
             using (var client = _amazonClientFactory.Invoke())
@@ -80,12 +80,11 @@ namespace Cactus.Fileserver.S3Storage
                     Key = filename
                 };
 
-                var responce = await client.GetObjectAsync(getRequest);
-                return responce.ResponseStream;
+                var response = await client.GetObjectAsync(getRequest);
+                return response.ResponseStream;
             }
         }
-
-
+        
         protected class DefaultUriResolver : IUriResolver
         {
 

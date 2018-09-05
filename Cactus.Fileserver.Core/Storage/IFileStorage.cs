@@ -5,11 +5,11 @@ using Cactus.Fileserver.Core.Model;
 
 namespace Cactus.Fileserver.Core.Storage
 {
-    public interface IFileStorage<in T> where T : IFileInfo
+    public interface IFileStorage
     { 
         IUriResolver UriResolver { get; }
 
-        Task<Uri> Add(Stream stream, T info);
+        Task<Uri> Add(Stream stream, IFileInfo info);
 
         Task Delete(Uri uri);
 

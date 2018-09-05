@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Cactus.Fileserver.AspNetCore;
 using Cactus.Fileserver.Core;
 using Cactus.Fileserver.Core.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -12,7 +13,7 @@ namespace Cactus.Fileserver.Tests
         [TestMethod]
         public void AllHandlersAreCalledTest()
         {
-            var b = new GenericPipelineBuilder<MetaInfo>();
+            var b = new PipelineBuilder();
             b.Use(next => ((request, content, meta) =>
             {
                 meta.Extra.Add("handler1", "handler1");
@@ -28,7 +29,7 @@ namespace Cactus.Fileserver.Tests
                 meta.Extra.Add("handler3", "handler3");
                 return next(request, content, meta);
             }));
-            var res = b.Run((x, y, z) => Task.FromResult(new MetaInfo(z)))(null, null, new MetaInfo { Extra = new Dictionary<string, string>() }).Result;
+            var res = b.Run((x, y, z) => Task.FromResult(z as MetaInfo))(null, null, new MetaInfo()).Result;
 
             Assert.IsNotNull(res);
             Assert.IsNotNull(res.Extra);
@@ -41,8 +42,8 @@ namespace Cactus.Fileserver.Tests
         [TestMethod]
         public void FinallizerCalledTest()
         {
-            var b = new GenericPipelineBuilder<MetaInfo>();
-            var res = b.Run((request, content, fileInfo) => { fileInfo.Extra.Add("finalizer", "FinallizerCalledTest"); return Task.FromResult(new MetaInfo(fileInfo)); })(null, null, new MetaInfo { Extra = new Dictionary<string, string>() }).Result;
+            var b = new PipelineBuilder();
+            var res = b.Run((request, content, fileInfo) => { fileInfo.Extra.Add("finalizer", "FinallizerCalledTest"); return Task.FromResult(fileInfo as MetaInfo); })(null, null, new MetaInfo { Extra = new Dictionary<string, string>() }).Result;
 
             Assert.IsNotNull(res);
             Assert.IsNotNull(res.Extra);

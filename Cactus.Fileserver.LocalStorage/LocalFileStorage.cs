@@ -8,27 +8,25 @@ using Cactus.Fileserver.Core.Storage;
 
 namespace Cactus.Fileserver.LocalStorage
 {
-    public class LocalFileStorage<T> : BaseFileStore<T> where T: IFileInfo
+    public class LocalFileStorage : BaseFileStore
     {
         private const int MaxTriesCount = 10;
 
-        private static readonly ILog Log =
-            LogProvider.GetLogger(typeof(LocalFileStorage<>).Namespace + '.' + nameof(LocalFileStorage<T>));
+        private static readonly ILog Log = LogProvider.GetLogger(typeof(LocalFileStorage));
+        private readonly IStoredNameProvider _nameProvider;
 
-        private readonly IStoredNameProvider<T> _nameProvider;
-
-        public LocalFileStorage(Uri baseUri, IStoredNameProvider<T> nameProvider, string storeFolder = null):base(new DefaultUriResolver(baseUri, storeFolder))
+        public LocalFileStorage(Uri baseUri, IStoredNameProvider nameProvider, string storeFolder = null) : base(new DefaultUriResolver(baseUri, storeFolder))
         {
             _nameProvider = nameProvider;
         }
 
-        public LocalFileStorage(IStoredNameProvider<T> nameProvider, IUriResolver uriResolver) : base(uriResolver)
+        public LocalFileStorage(IStoredNameProvider nameProvider, IUriResolver uriResolver) : base(uriResolver)
         {
             _nameProvider = nameProvider;
         }
 
 
-        protected override async Task<string> ExecuteAdd(Stream stream, T info)
+        protected override async Task<string> ExecuteAdd(Stream stream, IFileInfo info)
         {
             var filename = _nameProvider.GetName(info);
             var fullFilePath = UriResolver.ResolvePath(filename);

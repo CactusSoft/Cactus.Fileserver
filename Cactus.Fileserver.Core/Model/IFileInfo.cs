@@ -7,8 +7,8 @@ namespace Cactus.Fileserver.Core.Model
     {
         Uri Uri { get; set; }
 
-        string StoragePath { get; set; }
-
+        Uri Origin { get; set; }
+        
         string MimeType { get; set; }
 
         string OriginalName { get; set; }

@@ -1,18 +1,15 @@
 using System;
-using System.Net.Http;
-using System.Threading.Tasks;
+using Cactus.Fileserver.AspNetCore;
 using Cactus.Fileserver.Core;
 using Cactus.Fileserver.Core.Config;
 using Cactus.Fileserver.Core.Security;
 using Cactus.Fileserver.Core.Storage;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.FileProviders;
-using IFileInfo = Cactus.Fileserver.Core.Model.IFileInfo;
 
 namespace Cactus.Fileserver.LocalStorage
 {
-    public class LocalFileserverConfig<TMeta> : IFileserverConfig<TMeta> where TMeta : IFileInfo
+    public class LocalFileserverConfig : IFileserverConfig
     {
         private readonly string fileStorageFolder;
         private readonly string metaStorageFolder;
@@ -33,7 +30,7 @@ namespace Cactus.Fileserver.LocalStorage
 
         public string Path { get; }
 
-        public Func<IFileStorageService<TMeta>> FileStorage
+        public virtual Func<IFileStorageService> FileStorage
         {
             get
             {
@@ -42,15 +39,28 @@ namespace Cactus.Fileserver.LocalStorage
                     var baseFilesUri = string.IsNullOrEmpty(Path) || Path == "/"
                         ? BaseUri
                         : new Uri(BaseUri, Path + '/');
-                    var fileStorage = new LocalFileStorage<TMeta>(baseFilesUri,
-                        new RandomNameProvider<TMeta> {StoreExt = true}, fileStorageFolder);
-                    var metaStorage = new LocalMetaInfoStorage<TMeta>(metaStorageFolder);
-                    return new FileStorageService<TMeta>(metaStorage, fileStorage, SecurityManager());
+                    var fileStorage = new LocalFileStorage(baseFilesUri,
+                        new RandomNameProvider {StoreExt = true}, fileStorageFolder);
+                    var metaStorage = new LocalMetaInfoStorage(metaStorageFolder);
+                    return new FileStorageService(metaStorage, fileStorage, SecurityManager());
                 };
             }
         }
 
-        public Func<Func<HttpRequest, HttpContent, TMeta, Task<TMeta>>> NewFilePipeline { get; set; }
+        public Func<FileProcessorDelegate> NewFilePipeline { get; set; }
+
+        //public virtual IApplicationBuilder PostPipeline(IApplicationBuilder app)
+        //{
+        //    //app.UseMiddleware<AddFileHandler>()
+        //    //builder.Run(async context =>
+        //    //{
+        //    //    var handler =
+        //    //        new AddFileHandler<T>(
+        //    //            builder.ApplicationServices.GetService(typeof(ILoggerFactory)) as ILoggerFactory,
+        //    //            config.NewFilePipeline());
+        //    //    await handler.Invoke(context);
+        //    //});
+        //}
 
         public virtual IApplicationBuilder GetPipeline(IApplicationBuilder app)
         {

@@ -5,7 +5,7 @@ using Cactus.Fileserver.Core.Model;
 
 namespace Cactus.Fileserver.Core
 {
-    public interface IFileStorageService<T> where T : IFileInfo
+    public interface IFileStorageService
     {
         /// <summary>
         ///     Get file content by URI
@@ -28,7 +28,7 @@ namespace Cactus.Fileserver.Core
         /// <param name="stream"></param>
         /// <param name="fileInfo"></param>
         /// <returns></returns>
-        Task<T> Create(Stream stream, T fileInfo);
+        Task<MetaInfo> Create(Stream stream, IFileInfo fileInfo);
 
         /// <summary>
         ///     Delete file by URI
@@ -42,14 +42,14 @@ namespace Cactus.Fileserver.Core
         /// </summary>
         /// <param name="uri"></param>
         /// <returns></returns>
-        T GetInfo(Uri uri);
+        T GetInfo<T>(Uri uri) where T : MetaInfo;
 
         /// <summary>
         ///  Update metadata
         /// </summary>
         /// <param name="fileInfo">Meta</param>
         /// <returns></returns>
-        Task UpdateMetadata(T fileInfo);
+        Task UpdateMetadata(MetaInfo fileInfo);
 
     }
 }

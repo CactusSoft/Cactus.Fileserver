@@ -11,14 +11,16 @@ namespace Cactus.Fileserver.Core.Model
     {
         public MetaInfo()
         {
+            Extra = new Dictionary<string, string>();
         }
 
-        public MetaInfo(IFileInfo copyFrom)
+        public MetaInfo(IFileInfo copyFrom):this()
         {
             if (copyFrom != null)
             {
+                Uri = copyFrom.Uri;
+                Origin = copyFrom.Origin;
                 MimeType = copyFrom.MimeType;
-                Extra = copyFrom.Extra;
                 OriginalName = copyFrom.OriginalName;
                 Owner = copyFrom.Owner;
                 Icon = copyFrom.Icon;
@@ -29,6 +31,11 @@ namespace Cactus.Fileserver.Core.Model
         ///     Full URL for getting the file. http://cdn.texas.srv.com/debug-folder/abcdf.png?x=y  in our case
         /// </summary>
         public Uri Uri { get; set; }
+
+        /// <summary>
+        /// Origin URI.
+        /// </summary>
+        public Uri Origin { get; set; }
 
         /// <summary>
         ///     Server-independent path to the file. In our case "/debug-folder/abcdf.png".
@@ -57,7 +64,7 @@ namespace Cactus.Fileserver.Core.Model
         public Uri Icon { get; set; }
 
         /// <summary>
-        ///     Any extra parameters. The poit for lightweight extensions.
+        ///     Any extra parameters. The point for lightweight extensions.
         /// </summary>
         public IDictionary<string, string> Extra { get; set; }
     }

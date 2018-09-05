@@ -11,7 +11,7 @@ namespace Cactus.Fileserver.Tests
         public void TestUnique()
         {
             var file = new MetaInfo();
-            var p = new RandomNameProvider<MetaInfo>();
+            var p = new RandomNameProvider();
             var name1 = p.GetName(file);
             var name2 = p.GetName(file);
             var name3 = p.Regenerate(file, name2);
@@ -27,7 +27,7 @@ namespace Cactus.Fileserver.Tests
         [TestMethod]
         public void ExtensionStoredTest()
         {
-            var p = new RandomNameProvider<MetaInfo>() { StoreExt = true };
+            var p = new RandomNameProvider { StoreExt = true };
             var name1 = p.GetName(new MetaInfo { OriginalName = "test.com" });
             var name2 = p.GetName(new MetaInfo { OriginalName = "test." });
             var name3 = p.GetName(new MetaInfo { OriginalName = "test" });

@@ -14,7 +14,8 @@ namespace Cactus.Fileserver.Core.Model
         {
             if (copyFrom != null)
             {
-                Extra = copyFrom.Extra;
+                Uri = copyFrom.Uri;
+                Origin = copyFrom.Origin;
                 MimeType = copyFrom.MimeType;
                 OriginalName = copyFrom.OriginalName;
                 Owner = copyFrom.Owner;
@@ -23,7 +24,7 @@ namespace Cactus.Fileserver.Core.Model
         }
 
         public Uri Uri { get; set; }
-        public string StoragePath { get; set; }
+        public Uri Origin { get; set; }
         public string MimeType { get; set; }
         public string OriginalName { get; set; }
         public string Owner { get; set; }

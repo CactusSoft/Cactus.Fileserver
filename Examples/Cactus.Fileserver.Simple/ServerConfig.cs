@@ -1,17 +1,15 @@
 using System;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Cactus.Fileserver.AspNetCore;
-using Cactus.Fileserver.Core.Model;
+using Cactus.Fileserver.Core;
+using Cactus.Fileserver.Core.Storage;
 using Cactus.Fileserver.ImageResizer.Core;
 using Cactus.Fileserver.ImageResizer.Core.Utils;
 using Cactus.Fileserver.LocalStorage;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 
 namespace Cactus.Fileserver.Simple
 {
-    public class ServerConfig : LocalFileserverConfig<ExtendedMetaInfo>
+    public class ServerConfig : LocalFileserverConfig
     {
         private readonly Instructions _defaultImageInstructions = new Instructions("");
         private readonly Instructions _mandatoryImageInstructions = new Instructions("maxwidth=1440&maxheight=1440");
@@ -24,9 +22,9 @@ namespace Cactus.Fileserver.Simple
             NewFilePipeline = BuildPipeline;
         }
 
-        private Func<HttpRequest, HttpContent, ExtendedMetaInfo, Task<ExtendedMetaInfo>> BuildPipeline()
+        private FileProcessorDelegate BuildPipeline()
         {
-            return new PipelineBuilder<ExtendedMetaInfo>()
+            return new PipelineBuilder()
                 .UseMultipartRequestParser()
                 .UseOriginalFileinfo()
                 .RunStoreFileAsIs(FileStorage);
@@ -34,8 +32,7 @@ namespace Cactus.Fileserver.Simple
 
         public override IApplicationBuilder GetPipeline(IApplicationBuilder app)
         {
-            var resizer = new ImageResizerService(_defaultImageInstructions, _mandatoryImageInstructions);
-            return base.GetPipeline(app.UseMiddleware<DynamicResizeMiddleware<ExtendedMetaInfo>>(ImgResizerResolver(), FileStorage()));
+            return base.GetPipeline(app.UseMiddleware<DynamicResizeMiddleware>(ImgResizerResolver(), FileStorage()));
         }
     }
 }

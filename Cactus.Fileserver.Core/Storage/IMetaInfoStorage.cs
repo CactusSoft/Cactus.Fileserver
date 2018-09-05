@@ -3,13 +3,12 @@ using Cactus.Fileserver.Core.Model;
 
 namespace Cactus.Fileserver.Core.Storage
 {
-    public interface IMetaInfoStorage<T> where T : IFileInfo
+    public interface IMetaInfoStorage
     {
-        void Add(T info);
+        void Add(MetaInfo info);
 
         void Delete(Uri uri);
 
-        T Get(Uri uri);
-
+        T Get<T>(Uri uri) where T : MetaInfo;
     }
 }

@@ -5,7 +5,7 @@ using Cactus.Fileserver.Core.Model;
 
 namespace Cactus.Fileserver.Core.Storage
 {
-    public abstract class BaseFileStore<T> : IFileStorage<T> where T : IFileInfo
+    public abstract class BaseFileStore : IFileStorage
     {
 
         public IUriResolver UriResolver { get; protected set; }
@@ -15,7 +15,7 @@ namespace Cactus.Fileserver.Core.Storage
             UriResolver = uriResolver;
         }
 
-        public async Task<Uri> Add(Stream stream, T info)
+        public async Task<Uri> Add(Stream stream, IFileInfo info)
         {
             return UriResolver.ResolveUri(await ExecuteAdd(stream, info));
         }
@@ -26,7 +26,7 @@ namespace Cactus.Fileserver.Core.Storage
         /// <param name="stream">Input stream</param>
         /// <param name="info">Result filename</param>
         /// <returns></returns>
-        protected abstract Task<string> ExecuteAdd(Stream stream, T info);
+        protected abstract Task<string> ExecuteAdd(Stream stream, IFileInfo info);
 
 
         public abstract Task Delete(Uri uri);

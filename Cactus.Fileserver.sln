@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.Core", "C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.LocalStorage", "Cactus.Fileserver.LocalStorage\Cactus.Fileserver.LocalStorage.csproj", "{4AE0236F-EDE1-4A4E-A3E5-1EF2C524AB46}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.AspNetCore", "Cactus.Fileserver.AspNetCore\Cactus.Fileserver.AspNetCore.csproj", "{428CD8FA-1502-45D1-9949-B4AA90F43698}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.AzureStorage", "Cactus.Fileserver.AzureStorage\Cactus.Fileserver.AzureStorage.csproj", "{B9AE74F7-36C9-4F1D-91BB-311443881AA5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{41584938-146B-424F-8C10-374A64A01215}"
@@ -19,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.S3Storage
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.ImageResizer.Core", "Cactus.Fileserver.ImageResizer.Core\Cactus.Fileserver.ImageResizer.Core.csproj", "{CF1D7D06-FCE8-49E0-9D0C-9B58664018CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Tests", "Cactus.Fileserver.Tests\Cactus.Fileserver.Tests.csproj", "{B0FB8D6F-7D3E-48E7-88F5-76253A016981}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.Tests", "Cactus.Fileserver.Tests\Cactus.Fileserver.Tests.csproj", "{B0FB8D6F-7D3E-48E7-88F5-76253A016981}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +33,6 @@ Global
 		{4AE0236F-EDE1-4A4E-A3E5-1EF2C524AB46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4AE0236F-EDE1-4A4E-A3E5-1EF2C524AB46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4AE0236F-EDE1-4A4E-A3E5-1EF2C524AB46}.Release|Any CPU.Build.0 = Release|Any CPU
-		{428CD8FA-1502-45D1-9949-B4AA90F43698}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{428CD8FA-1502-45D1-9949-B4AA90F43698}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{428CD8FA-1502-45D1-9949-B4AA90F43698}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{428CD8FA-1502-45D1-9949-B4AA90F43698}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B9AE74F7-36C9-4F1D-91BB-311443881AA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B9AE74F7-36C9-4F1D-91BB-311443881AA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9AE74F7-36C9-4F1D-91BB-311443881AA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
