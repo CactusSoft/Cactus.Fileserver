@@ -1,10 +1,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Cactus.Fileserver.Core;
-using Cactus.Fileserver.Core.Model;
+using Cactus.Fileserver.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Cactus.Fileserver.Tests
+namespace Cactus.Fileserver.Tests.Unit
 {
     [TestClass]
     public class ProcessBuilderTest

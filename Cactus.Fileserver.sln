@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.15
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.Core", "Cactus.Fileserver.Core\Cactus.Fileserver.Core.csproj", "{E4DEDC1B-6C96-4793-BD45-30B550DD1BB5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver", "Cactus.Fileserver\Cactus.Fileserver.csproj", "{E4DEDC1B-6C96-4793-BD45-30B550DD1BB5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.LocalStorage", "Cactus.Fileserver.LocalStorage\Cactus.Fileserver.LocalStorage.csproj", "{4AE0236F-EDE1-4A4E-A3E5-1EF2C524AB46}"
 EndProject
@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.Simple", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.S3Storage", "Cactus.Fileserver.S3Storage\Cactus.Fileserver.S3Storage.csproj", "{1E2E479C-22EE-4777-9C25-55BB2A8F22A4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.ImageResizer.Core", "Cactus.Fileserver.ImageResizer.Core\Cactus.Fileserver.ImageResizer.Core.csproj", "{CF1D7D06-FCE8-49E0-9D0C-9B58664018CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.ImageResizer", "Cactus.Fileserver.ImageResizer\Cactus.Fileserver.ImageResizer.csproj", "{CF1D7D06-FCE8-49E0-9D0C-9B58664018CE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.Tests", "Cactus.Fileserver.Tests\Cactus.Fileserver.Tests.csproj", "{B0FB8D6F-7D3E-48E7-88F5-76253A016981}"
 EndProject

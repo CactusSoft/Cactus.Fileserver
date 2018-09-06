@@ -4,9 +4,8 @@ using System.Threading.Tasks;
 using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
-using Cactus.Fileserver.Core;
-using Cactus.Fileserver.Core.Model;
-using Cactus.Fileserver.Core.Storage;
+using Cactus.Fileserver.Model;
+using Cactus.Fileserver.Storage;
 
 namespace Cactus.Fileserver.S3Storage
 {

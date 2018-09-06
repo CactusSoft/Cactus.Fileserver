@@ -1,9 +1,8 @@
 using System;
 using System.IO;
-using Cactus.Fileserver.Core;
-using Cactus.Fileserver.Core.Logging;
-using Cactus.Fileserver.Core.Model;
-using Cactus.Fileserver.Core.Storage;
+using Cactus.Fileserver.Logging;
+using Cactus.Fileserver.Model;
+using Cactus.Fileserver.Storage;
 using Newtonsoft.Json;
 
 namespace Cactus.Fileserver.LocalStorage

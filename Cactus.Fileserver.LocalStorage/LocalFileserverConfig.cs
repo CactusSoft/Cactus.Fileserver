@@ -1,8 +1,7 @@
 using System;
-using Cactus.Fileserver.Core;
-using Cactus.Fileserver.Core.Config;
-using Cactus.Fileserver.Core.Security;
-using Cactus.Fileserver.Core.Storage;
+using Cactus.Fileserver.Config;
+using Cactus.Fileserver.Security;
+using Cactus.Fileserver.Storage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.FileProviders;
 

@@ -2,21 +2,20 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyName>Cactus.Fileserver.AzureStorage</AssemblyName>
-    <RootNamespace>Cactus.Fileserver.AzureStorage</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>3.0</Version>
-    <Authors>yan.oreshchenkov</Authors>
+    <Authors>Roman Barantsevich</Authors>
     <Company>CactusSoft LLC</Company>
-    <Description>Azure storage for Cactus.Fileserver</Description>
+    <Description>Image resizing module for Cactus.Fileserver</Description>
     <Copyright>CactusSoft LLC</Copyright>
     <PackageLicenseUrl>https://github.com/CactusSoft/Cactus.Fileserver/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/CactusSoft/Cactus.Fileserver</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CactusSoft/Cactus.Fileserver</RepositoryUrl>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="WindowsAzure.Storage" Version="8.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.1" />
+    <PackageReference Include="RevStackCore-ImageSharp" Version="0.9.0" />
   </ItemGroup>
 
   <ItemGroup>

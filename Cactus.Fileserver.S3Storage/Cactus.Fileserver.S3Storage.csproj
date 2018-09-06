@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>2.2.0</Version>
+    <Version>3.0</Version>
     <Company>CactusSoft LLC</Company>
     <Product>Cactus.Fileserver.S3Storage</Product>
     <Authors>Roman Barantsevich</Authors>
@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Cactus.Fileserver.Core\Cactus.Fileserver.Core.csproj" />
+    <ProjectReference Include="..\Cactus.Fileserver\Cactus.Fileserver.csproj" />
     <ProjectReference Include="..\Cactus.Fileserver.LocalStorage\Cactus.Fileserver.LocalStorage.csproj" />
   </ItemGroup>
 

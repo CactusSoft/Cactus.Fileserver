@@ -1,10 +1,9 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Cactus.Fileserver.Core;
-using Cactus.Fileserver.Core.Logging;
-using Cactus.Fileserver.Core.Model;
-using Cactus.Fileserver.Core.Storage;
+using Cactus.Fileserver.Logging;
+using Cactus.Fileserver.Model;
+using Cactus.Fileserver.Storage;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 

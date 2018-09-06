@@ -1,8 +1,8 @@
-﻿using Cactus.Fileserver.Core.Model;
-using Cactus.Fileserver.Core.Storage;
+﻿using Cactus.Fileserver.Model;
+using Cactus.Fileserver.Storage;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Cactus.Fileserver.Tests
+namespace Cactus.Fileserver.Tests.Unit
 {
     [TestClass]
     public class RandomNameProviderTest

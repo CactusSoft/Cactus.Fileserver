@@ -32,8 +32,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Cactus.Fileserver.Core\Cactus.Fileserver.Core.csproj" />
-    <ProjectReference Include="..\Cactus.Fileserver.ImageResizer.Core\Cactus.Fileserver.ImageResizer.Core.csproj" />
+    <ProjectReference Include="..\Cactus.Fileserver\Cactus.Fileserver.csproj" />
+    <ProjectReference Include="..\Cactus.Fileserver.ImageResizer\Cactus.Fileserver.ImageResizer.csproj" />
     <ProjectReference Include="..\Examples\Cactus.Fileserver.Simple\Cactus.Fileserver.Simple.csproj" />
   </ItemGroup>
 

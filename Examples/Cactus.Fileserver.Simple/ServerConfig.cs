@@ -1,8 +1,6 @@
 using System;
-using Cactus.Fileserver.Core;
-using Cactus.Fileserver.Core.Storage;
-using Cactus.Fileserver.ImageResizer.Core;
-using Cactus.Fileserver.ImageResizer.Core.Utils;
+using Cactus.Fileserver.ImageResizer;
+using Cactus.Fileserver.ImageResizer.Utils;
 using Cactus.Fileserver.LocalStorage;
 using Microsoft.AspNetCore.Builder;
 

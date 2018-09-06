@@ -1,5 +1,5 @@
 using System;
-using Cactus.Fileserver.Core.Config;
+using Cactus.Fileserver.Config;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
