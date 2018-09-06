@@ -1,4 +1,7 @@
 language: csharp
+mono: none
+dotnet: 2.1
 solution: Cactus.Fileserver.sln
 script:
- - dotnet restore
+  - dotnet restore
+  - dotnet build
