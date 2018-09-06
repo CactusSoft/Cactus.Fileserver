@@ -5,3 +5,4 @@ solution: Cactus.Fileserver.sln
 script:
   - dotnet restore
   - dotnet build
+  - dotnet test Cactus.Fileserver.Tests/Cactus.Fileserver.Tests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
