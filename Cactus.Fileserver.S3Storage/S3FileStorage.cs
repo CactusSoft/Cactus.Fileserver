@@ -17,8 +17,7 @@ namespace Cactus.Fileserver.S3Storage
         private readonly string _bucketName;
         private readonly IStoredNameProvider _nameProvider;
         private readonly Func<AmazonS3Client> _amazonClientFactory;
-
-
+        
         public S3FileStorage(string bucketName, RegionEndpoint regionEndpoint, string accessKey, string secretKey, Uri fileserverBaseUri, IStoredNameProvider nameProvider) : base(new DefaultUriResolver(bucketName, regionEndpoint, fileserverBaseUri))
         {
             _bucketName = bucketName;
@@ -87,7 +86,6 @@ namespace Cactus.Fileserver.S3Storage
         
         protected class DefaultUriResolver : IUriResolver
         {
-
             private readonly string _bucketName;
             private readonly RegionEndpoint _regionEndpoint;
             private readonly Uri _fileserverBaseUri;
