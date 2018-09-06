@@ -1,0 +1,4 @@
+language: csharp
+solution: Cactus.Fileserver.sln
+script:
+ - dotnet restore
