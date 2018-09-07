@@ -49,7 +49,7 @@ namespace Cactus.Fileserver.ImageResizer
                 if (metaData.Extra.TryGetValue(sizeKey, out var redirectUri))
                 {
                     Log.Debug("{0} size found, do redirect", sizeKey);
-                    context.Response.Redirect(redirectUri.ToString(), true);
+                    context.Response.Redirect(redirectUri, true);
                     return;
                 }
 
