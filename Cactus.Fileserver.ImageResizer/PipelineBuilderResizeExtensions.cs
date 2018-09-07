@@ -11,11 +11,11 @@ namespace Cactus.Fileserver.ImageResizer
     public class DynamicResizeMiddleware
     {
         private readonly IFileStorageService _storage;
-        private readonly ImageResizerService _resizer;
+        private readonly IImageResizerService _resizer;
         private readonly RequestDelegate _next;
         private static readonly ILog Log = LogProvider.GetLogger(typeof(DynamicResizeMiddleware));
 
-        public DynamicResizeMiddleware(RequestDelegate next, ImageResizerService resizer, IFileStorageService storage)
+        public DynamicResizeMiddleware(RequestDelegate next, IImageResizerService resizer, IFileStorageService storage)
         {
             Log.Debug(".ctor");
             _next = next;

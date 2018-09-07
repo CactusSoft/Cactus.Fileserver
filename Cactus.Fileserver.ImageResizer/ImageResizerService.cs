@@ -6,18 +6,8 @@ using ImageSharp.Processing;
 
 namespace Cactus.Fileserver.ImageResizer
 {
-    public class ImageResizerService
+    public interface IImageResizerService
     {
-        private readonly Instructions defaultInstructions;
-        private readonly Instructions mandatoryInstructions;
-
-        public ImageResizerService(Instructions defaultInstructions, Instructions mandatoryInstructions)
-        {
-            this.defaultInstructions = defaultInstructions;
-            this.mandatoryInstructions = mandatoryInstructions;
-        }
-
-
         /// <summary>
         /// Apply instructions to an image.
         /// A good point to extra configuration of Image Resizer
@@ -26,6 +16,20 @@ namespace Cactus.Fileserver.ImageResizer
         /// <param name="outputStream">Output stream to write the result</param>
         /// <param name="instructions">Instructions to apply</param>
         /// <returns>Result image as a stream. Caller have to care about the stream disposing.</returns>
+        void ProcessImage(Stream inputStream, Stream outputStream, Instructions instructions);
+    }
+
+    public class ImageResizerService : IImageResizerService
+    {
+        private readonly Instructions _defaultInstructions;
+        private readonly Instructions _mandatoryInstructions;
+
+        public ImageResizerService(Instructions defaultInstructions, Instructions mandatoryInstructions)
+        {
+            _defaultInstructions = defaultInstructions;
+            _mandatoryInstructions = mandatoryInstructions;
+        }
+       
         public virtual void ProcessImage(Stream inputStream, Stream outputStream, Instructions instructions)
         {
             if (!inputStream.CanRead)
@@ -35,8 +39,8 @@ namespace Cactus.Fileserver.ImageResizer
 
             var image = new Image(inputStream);
             var imageRatio = image.PixelRatio;
-            instructions.Join(defaultInstructions);
-            instructions.Join(mandatoryInstructions, true);
+            instructions.Join(_defaultInstructions);
+            instructions.Join(_mandatoryInstructions, true);
             if (instructions.Width != null || instructions.Height != null || instructions["maxwidth"] != null || instructions["maxheight"] != null)
             {
                 GetActualSize(instructions,imageRatio);

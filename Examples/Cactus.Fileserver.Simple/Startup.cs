@@ -31,11 +31,11 @@ namespace Cactus.Fileserver.Simple
             //url += url.EndsWith('/') ? "files/" : "/files/";
 
             services.AddSingleton<ISecurityManager, NothingCheckSecurityManager>();
-            services.AddSingleton<IMetaInfoStorage>(c => new LocalMetaInfoStorage(c.GetService<IHostingEnvironment>().WebRootPath));
+            services.AddSingleton<IMetaInfoStorage>(c => new LocalMetaInfoStorage(c.GetRequiredService<IHostingEnvironment>().WebRootPath));
             services.AddSingleton<IStoredNameProvider, RandomNameProvider>();
-            services.AddSingleton<IFileStorage>(c => new LocalFileStorage(new Uri(url), c.GetService<IStoredNameProvider>(), c.GetService<IHostingEnvironment>().WebRootPath));
+            services.AddSingleton<IFileStorage>(c => new LocalFileStorage(new Uri(url), c.GetRequiredService<IStoredNameProvider>(), c.GetRequiredService<IHostingEnvironment>().WebRootPath));
             services.AddSingleton<IFileStorageService, FileStorageService>();
-            services.AddSingleton(c => new ImageResizerService(new Instructions(""), new Instructions("maxwidth=1440&maxheight=1440")));
+            services.AddSingleton<IImageResizerService>(c => new ImageResizerService(new Instructions(""), new Instructions("maxwidth=1440&maxheight=1440")));
             services.AddSingleton(c => new PipelineBuilder()
                                         .UseMultipartRequestParser()
                                         .UseOriginalFileinfo()
