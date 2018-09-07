@@ -15,13 +15,13 @@ namespace Cactus.Fileserver.Middleware
         private static readonly ILog Log = LogProvider.GetLogger(typeof(AddFileHandler));
         private readonly FileProcessorDelegate _processPipelineEntry;
 
-        public AddFileHandler(FileProcessorDelegate processFunc)
+        public AddFileHandler(RequestDelegate next, FileProcessorDelegate processFunc)
         {
             _processPipelineEntry = processFunc;
             Log.Debug(".ctor");
         }
 
-        public async Task Invoke(HttpContext context)
+        public async Task InvokeAsync(HttpContext context)
         {
             var streamContent = new StreamContent(context.Request.Body);
             streamContent.Headers.ContentType = MediaTypeHeaderValue.Parse(context.Request.ContentType);
@@ -36,7 +36,7 @@ namespace Cactus.Fileserver.Middleware
 
         protected virtual object BuldOkResponseObject(IFileInfo meta)
         {
-            var metaCopy = new MetaInfo(meta) {StoragePath = null};
+            var metaCopy = new MetaInfo(meta) { StoragePath = null };
             return metaCopy;
         }
 

@@ -16,6 +16,7 @@ namespace Cactus.Fileserver.Storage
         {
             _buffer = new byte[bytesCount];
             _randomNumberGenerator = new Random(DateTime.UtcNow.Millisecond);
+            StoreExt = true;
         }
 
         public bool StoreExt { get; set; }

@@ -6,6 +6,7 @@ using Cactus.Fileserver.ImageResizer;
 using Cactus.Fileserver.ImageResizer.Utils;
 using Cactus.Fileserver.Model;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using RestSharp;
 using RestSharp.Serializers.Newtonsoft.Json;
 using RestRequest = RestSharp.RestRequest;
@@ -21,7 +22,7 @@ namespace Cactus.Fileserver.Tests.Integration
             var filename = "kartman.png";
             var bytes = File.ReadAllBytes(filename);
             var mimetype = "image/png";
-            var restClient = new RestClient(BaseUrl);
+            var restClient = new RestClient(BaseUrl + "/files");
             var post = new RestRequest(Method.POST);
             post.AddFileBytes(filename, bytes, filename, mimetype);
             var postRes = restClient.Execute(post);
@@ -53,7 +54,7 @@ namespace Cactus.Fileserver.Tests.Integration
             var filename = "kartman.png";
             var bytes = File.ReadAllBytes(filename);
             var mimetype = "image/png";
-            var restClient = new RestClient(BaseUrl);
+            var restClient = new RestClient(BaseUrl + "/files");
             var post = new RestRequest(Method.POST);
             post.AddFileBytes(filename, bytes, filename, mimetype);
             var postRes = restClient.Execute(post);
@@ -87,7 +88,7 @@ namespace Cactus.Fileserver.Tests.Integration
             var filename = "kartman.png";
             var bytes = File.ReadAllBytes(filename);
             var mimetype = "image/png";
-            var restClient = new RestClient(BaseUrl);
+            var restClient = new RestClient(BaseUrl + "/files");
             restClient.AddHandler("application/json", NewtonsoftJsonSerializer.Default);
             var post = new RestRequest(Method.POST);
             post.AddFileBytes(filename, bytes, filename, mimetype);
@@ -96,13 +97,14 @@ namespace Cactus.Fileserver.Tests.Integration
 
             Assert.AreEqual(ResponseStatus.Completed, postRes.ResponseStatus);
             Assert.AreEqual(HttpStatusCode.Created, postRes.StatusCode);
-            Assert.IsNotNull(postRes.Data);
+            Assert.IsNotNull(postRes.Content);
+            postRes.Data = JsonConvert.DeserializeObject<MetaInfo>(postRes.Content);
             Assert.AreEqual(filename, postRes.Data.OriginalName);
             var location = postRes.Headers.First(e => e.Name.Equals("Location")).Value.ToString();
             Assert.IsNotNull(location);
 
             // Get and check 200x200
-            var instructions200 = new Instructions {Width = 200, Height = 200};
+            var instructions200 = new Instructions { Width = 200, Height = 200 };
             var get = new RestRequest(location, Method.GET)
                 .AddParameter("width", instructions200.Width)
                 .AddParameter("Height", instructions200.Height);
@@ -112,9 +114,10 @@ namespace Cactus.Fileserver.Tests.Integration
             Assert.AreEqual(6830, getRes.RawBytes.Length);
             Assert.AreEqual(mimetype, getRes.ContentType);
 
-            var getMeta = new RestRequest(new Uri(location + ".json"), Method.GET);
+            var getMeta = new RestRequest(location + ".json", Method.GET);
             var meta = restClient.Execute<MetaInfo>(getMeta);
-            Assert.IsNotNull(meta.Data);
+            Assert.IsNotNull(meta.Content);
+            postRes.Data = JsonConvert.DeserializeObject<MetaInfo>(meta.Content);
             Assert.IsNotNull(meta.Data.Extra);
             Assert.IsNotNull(meta.Data.Extra[instructions200.GetSizeKey()]);
 
@@ -129,9 +132,12 @@ namespace Cactus.Fileserver.Tests.Integration
             Assert.AreEqual(11963, getRes.RawBytes.Length);
             Assert.AreEqual(mimetype, getRes.ContentType);
 
-            getMeta = new RestRequest(new Uri(location + ".json"), Method.GET);
+            getMeta = new RestRequest(location + ".json", Method.GET);
             meta = restClient.Execute<MetaInfo>(getMeta);
-            Assert.IsNotNull(meta.Data);
+            Assert.AreEqual(ResponseStatus.Completed, meta.ResponseStatus);
+            Assert.AreEqual(HttpStatusCode.OK, meta.StatusCode);
+            Assert.IsNotNull(meta.Content);
+            postRes.Data = JsonConvert.DeserializeObject<MetaInfo>(meta.Content);
             Assert.IsNotNull(meta.Data.Extra);
             Assert.IsNotNull(meta.Data.Extra[instructions200.GetSizeKey()]);
             Assert.IsNotNull(meta.Data.Extra[instructions300.GetSizeKey()]);

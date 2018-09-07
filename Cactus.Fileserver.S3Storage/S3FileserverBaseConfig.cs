@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Cactus.Fileserver.S3Storage
 {
-    public class S3FileserverBaseConfig : IFileserverConfig
+    public class S3FileserverBaseConfig 
     {
         private readonly Uri _baseFileserverUri;
         private readonly string _bucketName;

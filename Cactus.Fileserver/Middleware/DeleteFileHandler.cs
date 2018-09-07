@@ -10,13 +10,13 @@ namespace Cactus.Fileserver.Middleware
         private static readonly ILog Log = LogProvider.GetLogger(typeof(DeleteFileHandler));
         protected readonly IFileStorageService StorageService;
 
-        public DeleteFileHandler(IFileStorageService storageService)
+        public DeleteFileHandler(RequestDelegate next, IFileStorageService storageService)
         {
             StorageService = storageService;
             Log.Debug(".ctor");
         }
 
-        public async Task Invoke(HttpContext context)
+        public async Task InvokeAsync(HttpContext context)
         {
             await StorageService.Delete(context.Request.GetAbsoluteUri());
             context.Response.StatusCode = (int) HttpStatusCode.NoContent;

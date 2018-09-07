@@ -7,7 +7,7 @@ using Microsoft.Extensions.FileProviders;
 
 namespace Cactus.Fileserver.LocalStorage
 {
-    public class LocalFileserverConfig : IFileserverConfig
+    public class LocalFileserverConfig 
     {
         private readonly string fileStorageFolder;
         private readonly string metaStorageFolder;

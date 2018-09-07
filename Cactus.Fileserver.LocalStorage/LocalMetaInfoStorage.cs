@@ -19,7 +19,7 @@ namespace Cactus.Fileserver.LocalStorage
             if (string.IsNullOrEmpty(fileExt))
                 throw new ArgumentNullException(nameof(fileExt));
             if (fileExt[0] != '.')
-                throw new ArgumentException("File extension shild be started from dot symbol", nameof(fileExt));
+                throw new ArgumentException("File extension should be started from dot symbol", nameof(fileExt));
             if (string.IsNullOrEmpty(folder))
                 throw new ArgumentNullException(nameof(folder));
 

@@ -1,38 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Threading.Tasks;
-using Cactus.Fileserver.Model;
-using Microsoft.AspNetCore.Http;
 
 namespace Cactus.Fileserver
 {
-    public delegate Task<MetaInfo> FileProcessorDelegate(HttpRequest request, HttpContent content, IFileInfo info);
-
-    public delegate FileProcessorDelegate PipelineDelegate(FileProcessorDelegate next);
-
-    public class PipelineBuilder
-    {
-        private readonly IList<PipelineDelegate> _processors = new List<PipelineDelegate>();
-
-        public PipelineBuilder Use(PipelineDelegate processor)
-        {
-            _processors.Add(processor);
-            return this;
-        }
-
-        //Run for "add" pipeline
-        public FileProcessorDelegate Run(FileProcessorDelegate finalizer)
-        {
-            if (_processors.Count == 0)
-                return finalizer;
-
-            return _processors.Reverse().Aggregate(finalizer, (current, processor) => processor(current));
-        }
-    }
-
-
     public static class PipelineBuilderExtensions
     {
         public static PipelineBuilder UseMultipartRequestParser(
@@ -68,14 +39,14 @@ namespace Cactus.Fileserver
         }
 
         public static FileProcessorDelegate RunStoreFileAsIs(
-            this PipelineBuilder builder, Func<IFileStorageService> storageServceResolver)
+            this PipelineBuilder builder, IFileStorageService fileStorageService)
         {
             return builder.Run(async (request, content, info) =>
             {
-                var fileStorage = storageServceResolver();
+                
                 using (var stream = await content.ReadAsStreamAsync())
                 {
-                    return await fileStorage.Create(stream, info);
+                    return await fileStorageService.Create(stream, info);
                 }
             });
         }
