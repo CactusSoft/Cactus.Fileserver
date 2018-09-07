@@ -24,14 +24,13 @@ namespace Cactus.Fileserver.Simple
             {
                 url = "http://localhost:18047";
             }
-            // In case of using a sub-path:
-            //url += url.EndsWith('/') ? "files/" : "/files/";  
+            //url += url.EndsWith('/') ? "files/" : "/files/";     //<--- In case of using sub-path
 
             services
                 .AddSingleton<ISecurityManager, NothingCheckSecurityManager>()
                 .AddLocalFileserver(new Uri(url),
                     c => c.GetRequiredService<IHostingEnvironment>().WebRootPath,
-                    c=> new PipelineBuilder()
+                    c => new PipelineBuilder()
                             .UseMultipartContent()
                             .ExtractFileinfo()
                             .ReadContentStream()
@@ -46,8 +45,7 @@ namespace Cactus.Fileserver.Simple
             loggerFactory.AddLog4Net();
             app
                 .UseDeveloperExceptionPage()
-                // In case of using sub-path:
-                //.Map("/files", branch => branch
+              //.Map("/files", branch => branch   //<--- In case of using sub-path
                      .UseDynamicResizing()
                      .UseLocalFileserver(env.WebRootPath)
                 //)
