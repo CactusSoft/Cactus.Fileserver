@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Cactus.Fileserver.Model;
+using Cactus.Fileserver.Pipeline;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Cactus.Fileserver.Tests.Unit
@@ -12,22 +13,22 @@ namespace Cactus.Fileserver.Tests.Unit
         public void AllHandlersAreCalledTest()
         {
             var b = new PipelineBuilder();
-            b.Use(next => ((request, content, meta) =>
+            b.Use(next => ((request, content, stream, meta) =>
             {
                 meta.Extra.Add("handler1", "handler1");
-                return next(request, content, meta);
+                return next(request, content, stream, meta);
             }));
-            b.Use(next => ((request, content, meta) =>
+            b.Use(next => ((request, content, stream, meta) =>
             {
                 meta.Extra.Add("handler2", "handler2");
-                return next(request, content, meta);
+                return next(request, content, stream, meta);
             }));
-            b.Use(next => ((request, content, meta) =>
+            b.Use(next => ((request, content, stream, meta) =>
             {
                 meta.Extra.Add("handler3", "handler3");
-                return next(request, content, meta);
+                return next(request, content, stream, meta);
             }));
-            var res = b.Run((x, y, z) => Task.FromResult(z as MetaInfo))(null, null, new MetaInfo()).Result;
+            var res = b.Run((request, content, stream, meta) => Task.FromResult(meta as MetaInfo))(null, null, null, new MetaInfo()).Result;
 
             Assert.IsNotNull(res);
             Assert.IsNotNull(res.Extra);
@@ -41,7 +42,7 @@ namespace Cactus.Fileserver.Tests.Unit
         public void FinallizerCalledTest()
         {
             var b = new PipelineBuilder();
-            var res = b.Run((request, content, fileInfo) => { fileInfo.Extra.Add("finalizer", "FinallizerCalledTest"); return Task.FromResult(fileInfo as MetaInfo); })(null, null, new MetaInfo { Extra = new Dictionary<string, string>() }).Result;
+            var res = b.Run((request, content, stream, meta) => { meta.Extra.Add("finalizer", "FinallizerCalledTest"); return Task.FromResult(meta as MetaInfo); })(null, null, null, new MetaInfo { Extra = new Dictionary<string, string>() }).Result;
 
             Assert.IsNotNull(res);
             Assert.IsNotNull(res.Extra);

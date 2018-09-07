@@ -1,14 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Cactus.Fileserver.Model;
 using Microsoft.AspNetCore.Http;
 
-namespace Cactus.Fileserver
+namespace Cactus.Fileserver.Pipeline
 {
-    public delegate Task<MetaInfo> FileProcessorDelegate(HttpRequest request, HttpContent content, IFileInfo info);
+    public delegate Task<MetaInfo> FileProcessorDelegate(HttpRequest request, HttpContent content, Stream stream, IFileInfo info);
 
     public delegate FileProcessorDelegate PipelineDelegate(FileProcessorDelegate next);
 

@@ -1,5 +1,6 @@
 using System;
 using Cactus.Fileserver.Config;
+using Cactus.Fileserver.Pipeline;
 using Cactus.Fileserver.Security;
 using Cactus.Fileserver.Storage;
 using Microsoft.AspNetCore.Builder;

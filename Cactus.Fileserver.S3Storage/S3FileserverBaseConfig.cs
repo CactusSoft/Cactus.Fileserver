@@ -5,6 +5,7 @@ using Amazon;
 using Cactus.Fileserver.Config;
 using Cactus.Fileserver.LocalStorage;
 using Cactus.Fileserver.Model;
+using Cactus.Fileserver.Pipeline;
 using Cactus.Fileserver.Security;
 using Cactus.Fileserver.Storage;
 using Microsoft.AspNetCore.Builder;

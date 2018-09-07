@@ -8,14 +8,14 @@ using Microsoft.AspNetCore.Http;
 
 namespace Cactus.Fileserver.ImageResizer
 {
-    public class DynamicResizeMiddleware
+    public class DynamicResizingMiddleware
     {
         private readonly IFileStorageService _storage;
         private readonly IImageResizerService _resizer;
         private readonly RequestDelegate _next;
-        private static readonly ILog Log = LogProvider.GetLogger(typeof(DynamicResizeMiddleware));
+        private static readonly ILog Log = LogProvider.GetLogger(typeof(DynamicResizingMiddleware));
 
-        public DynamicResizeMiddleware(RequestDelegate next, IImageResizerService resizer, IFileStorageService storage)
+        public DynamicResizingMiddleware(RequestDelegate next, IImageResizerService resizer, IFileStorageService storage)
         {
             Log.Debug(".ctor");
             _next = next;

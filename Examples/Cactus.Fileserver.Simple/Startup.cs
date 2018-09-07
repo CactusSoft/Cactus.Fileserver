@@ -2,6 +2,7 @@ using System;
 using Cactus.Fileserver.ImageResizer;
 using Cactus.Fileserver.ImageResizer.Utils;
 using Cactus.Fileserver.LocalStorage;
+using Cactus.Fileserver.Pipeline;
 using Cactus.Fileserver.Security;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -28,8 +29,15 @@ namespace Cactus.Fileserver.Simple
 
             services
                 .AddSingleton<ISecurityManager, NothingCheckSecurityManager>()
-                .AddLocalFileserver(new Uri(url), c => c.GetRequiredService<IHostingEnvironment>().WebRootPath)
-                .AddDynamicResizing(mandatory: new Instructions("maxwidth=1440&maxheight=1440"));
+                .AddLocalFileserver(new Uri(url),
+                    c => c.GetRequiredService<IHostingEnvironment>().WebRootPath,
+                    c=> new PipelineBuilder()
+                            .UseMultipartContent()
+                            .ExtractFileinfo()
+                            .ReadContentStream()
+                            //.ApplyResizing(c.GetRequiredService<IImageResizerService>()) // <-- BE CAREFUL, IT DOES RESIZING ALL THE TIME
+                            .Store(c.GetRequiredService<IFileStorageService>()))
+                .AddDynamicResizing(mandatory: new Instructions("maxwidth=1000&maxheight=1000"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

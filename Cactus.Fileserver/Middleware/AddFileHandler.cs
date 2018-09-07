@@ -5,6 +5,7 @@ using System.Security.Principal;
 using System.Threading.Tasks;
 using Cactus.Fileserver.Logging;
 using Cactus.Fileserver.Model;
+using Cactus.Fileserver.Pipeline;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
@@ -42,7 +43,7 @@ namespace Cactus.Fileserver.Middleware
 
         protected virtual async Task<MetaInfo> AddFile(HttpContext context, HttpContent newFileContent)
         {
-            return await _processPipelineEntry(context.Request, newFileContent,
+            return await _processPipelineEntry(context.Request, newFileContent, null,
                 new MetaInfo { Owner = GetOwner(context.User?.Identity) });
         }
 
