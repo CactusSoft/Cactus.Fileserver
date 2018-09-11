@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;net45</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Cactus.Fileserver.LocalStorage</AssemblyName>
     <RootNamespace>Cactus.Fileserver.LocalStorage</RootNamespace>
-    <Version>2.2.1</Version>
+    <Version>3.0</Version>
     <Company>CactusSoft LLC</Company>
     <Authors>YanO</Authors>
     <Copyright>Copyright CactusSoft 2016</Copyright>
@@ -17,11 +17,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.0" />
+    <PackageReference Include="Microsoft.Extensions.FileProviders.Physical" Version="2.1.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Cactus.Fileserver.Core\Cactus.Fileserver.Core.csproj" />
+    <ProjectReference Include="..\Cactus.Fileserver\Cactus.Fileserver.csproj" />
   </ItemGroup>
 
 </Project>

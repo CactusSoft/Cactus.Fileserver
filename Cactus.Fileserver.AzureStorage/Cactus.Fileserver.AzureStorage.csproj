@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.3</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Cactus.Fileserver.AzureStorage</AssemblyName>
     <RootNamespace>Cactus.Fileserver.AzureStorage</RootNamespace>
-    <Version>2.2.0</Version>
+    <Version>3.0</Version>
     <Authors>yan.oreshchenkov</Authors>
     <Company>CactusSoft LLC</Company>
     <Description>Azure storage for Cactus.Fileserver</Description>
@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Cactus.Fileserver.Core\Cactus.Fileserver.Core.csproj" />
+    <ProjectReference Include="..\Cactus.Fileserver\Cactus.Fileserver.csproj" />
   </ItemGroup>
 
 </Project>

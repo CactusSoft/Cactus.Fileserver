@@ -4,33 +4,37 @@ using System.Threading.Tasks;
 using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
-using Cactus.Fileserver.Core.Model;
-using Cactus.Fileserver.Core.Storage;
+using Cactus.Fileserver.Model;
+using Cactus.Fileserver.Storage;
 
 namespace Cactus.Fileserver.S3Storage
 {
-    public class S3FileStorage<T> : IFileStorage<T> where T : MetaInfo, new()
+    public class S3FileStorage : BaseFileStore
     {
-        private const string _awsUrlFormat = "https://s3.{0}.amazonaws.com/{1}/{2}";
-        private const string _awsUrlReplace = "https://s3.{0}.amazonaws.com/{1}/";
-        private readonly string _accessKey;
+        public const string AwsUrlFormat = "https://s3.{0}.amazonaws.com/{1}/{2}";
+        public const string AwsUrlReplace = "https://s3.{0}.amazonaws.com/{1}/";
         private readonly string _bucketName;
-        private readonly IStoredNameProvider<T> _nameProvider;
-        private readonly string _secretKey;
-
-
-        public S3FileStorage(string bucketName, string accessKey, string secretKey, IStoredNameProvider<T> nameProvider)
+        private readonly IStoredNameProvider _nameProvider;
+        private readonly Func<AmazonS3Client> _amazonClientFactory;
+        
+        public S3FileStorage(string bucketName, RegionEndpoint regionEndpoint, string accessKey, string secretKey, Uri fileserverBaseUri, IStoredNameProvider nameProvider) : base(new DefaultUriResolver(bucketName, regionEndpoint, fileserverBaseUri))
         {
             _bucketName = bucketName;
-            _accessKey = accessKey;
-            _secretKey = secretKey;
             _nameProvider = nameProvider;
+            _amazonClientFactory = () => new AmazonS3Client(accessKey, secretKey, regionEndpoint);
         }
 
-        public async Task<Uri> Add(Stream stream, T info)
+        public S3FileStorage(string bucketName, Uri fileserverBaseUri, IStoredNameProvider nameProvider) : base(new DefaultUriResolver(bucketName, new AmazonS3Client().Config.RegionEndpoint, fileserverBaseUri))
+        {
+            _bucketName = bucketName;
+            _nameProvider = nameProvider;
+            _amazonClientFactory = () => new AmazonS3Client();
+        }
+
+        protected override async Task<string> ExecuteAdd(Stream stream, IFileInfo info)
         {
             var key = _nameProvider.GetName(info);
-            using (var client = new AmazonS3Client(_accessKey, _secretKey, RegionEndpoint.EUCentral1))
+            using (var client = _amazonClientFactory.Invoke())
             {
                 var putRequest = new PutObjectRequest
                 {
@@ -45,14 +49,14 @@ namespace Cactus.Fileserver.S3Storage
                 putRequest.Metadata.Add(nameof(info.Owner), info.Owner);
 
                 await client.PutObjectAsync(putRequest);
-                return new Uri(string.Format(_awsUrlFormat, RegionEndpoint.EUCentral1.SystemName, _bucketName, key));
+                return key;
             }
         }
 
-        public async Task Delete(Uri uri)
+        public override async Task Delete(Uri uri)
         {
             var key = uri.Segments[1];
-            using (var client = new AmazonS3Client(_accessKey, _secretKey, RegionEndpoint.EUCentral1))
+            using (var client = _amazonClientFactory.Invoke())
             {
                 var deleteRequest = new DeleteObjectRequest
                 {
@@ -64,20 +68,57 @@ namespace Cactus.Fileserver.S3Storage
             }
         }
 
-        public async Task<Stream> Get(Uri uri)
+        protected override async Task<Stream> ExecuteGet(string filename)
         {
-            var key = uri.AbsoluteUri.Replace(
-                string.Format(_awsUrlReplace, RegionEndpoint.EUCentral1.SystemName, _bucketName), "");
-            using (var client = new AmazonS3Client(_accessKey, _secretKey, RegionEndpoint.EUCentral1))
+            using (var client = _amazonClientFactory.Invoke())
             {
                 var getRequest = new GetObjectRequest
                 {
                     BucketName = _bucketName,
-                    Key = key
+                    Key = filename
                 };
 
-                var responce = await client.GetObjectAsync(getRequest);
-                return responce.ResponseStream;
+                var response = await client.GetObjectAsync(getRequest);
+                return response.ResponseStream;
+            }
+        }
+        
+        protected class DefaultUriResolver : IUriResolver
+        {
+            private readonly string _bucketName;
+            private readonly RegionEndpoint _regionEndpoint;
+            private readonly Uri _fileserverBaseUri;
+
+            public DefaultUriResolver(string bucketName, RegionEndpoint regionEndpoint, Uri fileserverBaseUri)
+            {
+                _bucketName = bucketName;
+                _regionEndpoint = regionEndpoint;
+                _fileserverBaseUri = fileserverBaseUri;
+            }
+
+            public Uri ResolveStaticUri(Uri currentUri)
+            {
+                return new Uri(string.Format(AwsUrlFormat, _regionEndpoint.SystemName, _bucketName, ResolveFilename(currentUri)));;
+            }
+
+            public Uri ResolveUri(string newFileName)
+            {
+                return new Uri(_fileserverBaseUri, newFileName);
+            }
+
+            public string ResolveFilename(Uri fileUri)
+            {
+                return fileUri.GetResource();
+            }
+
+            public string ResolvePath(Uri fileUri)
+            {
+                throw new NotImplementedException("Not implemented for this store");
+            }
+
+            public string ResolvePath(string fileName)
+            {
+                throw new NotImplementedException("Not implemented for this store");
             }
         }
     }

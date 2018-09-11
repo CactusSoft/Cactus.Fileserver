@@ -1,11 +1,11 @@
-﻿using System.Linq;
-using ImageResizer;
+using System.Linq;
+using Cactus.Fileserver.ImageResizer.Utils;
 
 namespace Cactus.Fileserver.ImageResizer
 {
-    public static class InstructionsExtensions
+    internal static class InstructionsExtensions
     {
-        public static void Join(this Instructions instructions, Instructions join, bool overwrite = false)
+        internal static void Join(this Instructions instructions, Instructions join, bool overwrite = false)
         {
             foreach (var key in join.AllKeys)
             {
@@ -20,6 +20,13 @@ namespace Cactus.Fileserver.ImageResizer
                     instructions.Add(key, join[key]);
                 }
             }
+        }
+
+        internal static string GetSizeKey(this Instructions instructions)
+        {
+            return instructions?.Width != null && instructions.Height != null
+                ? "alt-size-" + instructions.Width + "x" + instructions.Height
+                : null;
         }
     }
 }

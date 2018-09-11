@@ -3,23 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2027
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nuget", "Nuget", "{405B81EC-3E5E-4260-A3AC-824C4BF98991}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Tests", "Cactus.Fileserver.Tests\Cactus.Fileserver.Tests.csproj", "{E07BBF57-711F-4F38-B283-79D86C81FB3C}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Owin", "Cactus.Fileserver.Owin\Cactus.Fileserver.Owin.csproj", "{BDDA880E-2135-4CB9-A3E3-C2340A0F2246}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.ImageResizer", "Cactus.Fileserver.ImageResizer\Cactus.Fileserver.ImageResizer.csproj", "{B036D209-461F-4DEE-AB4B-471DE179ABDA}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.ImageResizer.Nuget", "Cactus.Fileserver.ImageResizer.Nuget\Cactus.Fileserver.ImageResizer.Nuget.csproj", "{DEFFD0DC-27B6-4601-8386-9F5E4CBC832D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.Owin.Nuget", "Cactus.Fileserver.Owin.Nuget\Cactus.Fileserver.Owin.Nuget.csproj", "{45683811-DB79-40AF-BA34-5149BDD63DFD}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.Core", "Cactus.Fileserver.Core\Cactus.Fileserver.Core.csproj", "{E4DEDC1B-6C96-4793-BD45-30B550DD1BB5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver", "Cactus.Fileserver\Cactus.Fileserver.csproj", "{E4DEDC1B-6C96-4793-BD45-30B550DD1BB5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.LocalStorage", "Cactus.Fileserver.LocalStorage\Cactus.Fileserver.LocalStorage.csproj", "{4AE0236F-EDE1-4A4E-A3E5-1EF2C524AB46}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.AspNetCore", "Cactus.Fileserver.AspNetCore\Cactus.Fileserver.AspNetCore.csproj", "{428CD8FA-1502-45D1-9949-B4AA90F43698}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.AzureStorage", "Cactus.Fileserver.AzureStorage\Cactus.Fileserver.AzureStorage.csproj", "{B9AE74F7-36C9-4F1D-91BB-311443881AA5}"
 EndProject
@@ -27,11 +13,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{41
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.Simple", "Examples\Cactus.Fileserver.Simple\Cactus.Fileserver.Simple.csproj", "{63C09213-17DC-4095-BB5F-581CBA692C3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cactus.Fileserver.ImageProcessing", "Examples\Cactus.Fileserver.ImageProcessing\Cactus.Fileserver.ImageProcessing.csproj", "{5AEADAC3-522D-4737-B3A2-8C47A743CE8D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.S3Storage", "Cactus.Fileserver.S3Storage\Cactus.Fileserver.S3Storage.csproj", "{1E2E479C-22EE-4777-9C25-55BB2A8F22A4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.ImageResizer.Core", "Cactus.Fileserver.ImageResizer.Core\Cactus.Fileserver.ImageResizer.Core.csproj", "{CF1D7D06-FCE8-49E0-9D0C-9B58664018CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.ImageResizer", "Cactus.Fileserver.ImageResizer\Cactus.Fileserver.ImageResizer.csproj", "{CF1D7D06-FCE8-49E0-9D0C-9B58664018CE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Cactus.Fileserver.Tests", "Cactus.Fileserver.Tests\Cactus.Fileserver.Tests.csproj", "{B0FB8D6F-7D3E-48E7-88F5-76253A016981}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,24 +25,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{E07BBF57-711F-4F38-B283-79D86C81FB3C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E07BBF57-711F-4F38-B283-79D86C81FB3C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E07BBF57-711F-4F38-B283-79D86C81FB3C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E07BBF57-711F-4F38-B283-79D86C81FB3C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BDDA880E-2135-4CB9-A3E3-C2340A0F2246}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BDDA880E-2135-4CB9-A3E3-C2340A0F2246}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BDDA880E-2135-4CB9-A3E3-C2340A0F2246}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BDDA880E-2135-4CB9-A3E3-C2340A0F2246}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B036D209-461F-4DEE-AB4B-471DE179ABDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B036D209-461F-4DEE-AB4B-471DE179ABDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B036D209-461F-4DEE-AB4B-471DE179ABDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B036D209-461F-4DEE-AB4B-471DE179ABDA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DEFFD0DC-27B6-4601-8386-9F5E4CBC832D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DEFFD0DC-27B6-4601-8386-9F5E4CBC832D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DEFFD0DC-27B6-4601-8386-9F5E4CBC832D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{45683811-DB79-40AF-BA34-5149BDD63DFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{45683811-DB79-40AF-BA34-5149BDD63DFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{45683811-DB79-40AF-BA34-5149BDD63DFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E4DEDC1B-6C96-4793-BD45-30B550DD1BB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{E4DEDC1B-6C96-4793-BD45-30B550DD1BB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E4DEDC1B-6C96-4793-BD45-30B550DD1BB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -65,10 +33,6 @@ Global
 		{4AE0236F-EDE1-4A4E-A3E5-1EF2C524AB46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4AE0236F-EDE1-4A4E-A3E5-1EF2C524AB46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4AE0236F-EDE1-4A4E-A3E5-1EF2C524AB46}.Release|Any CPU.Build.0 = Release|Any CPU
-		{428CD8FA-1502-45D1-9949-B4AA90F43698}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{428CD8FA-1502-45D1-9949-B4AA90F43698}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{428CD8FA-1502-45D1-9949-B4AA90F43698}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{428CD8FA-1502-45D1-9949-B4AA90F43698}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B9AE74F7-36C9-4F1D-91BB-311443881AA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B9AE74F7-36C9-4F1D-91BB-311443881AA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9AE74F7-36C9-4F1D-91BB-311443881AA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -77,10 +41,6 @@ Global
 		{63C09213-17DC-4095-BB5F-581CBA692C3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63C09213-17DC-4095-BB5F-581CBA692C3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63C09213-17DC-4095-BB5F-581CBA692C3E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5AEADAC3-522D-4737-B3A2-8C47A743CE8D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5AEADAC3-522D-4737-B3A2-8C47A743CE8D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5AEADAC3-522D-4737-B3A2-8C47A743CE8D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5AEADAC3-522D-4737-B3A2-8C47A743CE8D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1E2E479C-22EE-4777-9C25-55BB2A8F22A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1E2E479C-22EE-4777-9C25-55BB2A8F22A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E2E479C-22EE-4777-9C25-55BB2A8F22A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -89,15 +49,16 @@ Global
 		{CF1D7D06-FCE8-49E0-9D0C-9B58664018CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CF1D7D06-FCE8-49E0-9D0C-9B58664018CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CF1D7D06-FCE8-49E0-9D0C-9B58664018CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0FB8D6F-7D3E-48E7-88F5-76253A016981}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0FB8D6F-7D3E-48E7-88F5-76253A016981}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0FB8D6F-7D3E-48E7-88F5-76253A016981}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0FB8D6F-7D3E-48E7-88F5-76253A016981}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{DEFFD0DC-27B6-4601-8386-9F5E4CBC832D} = {405B81EC-3E5E-4260-A3AC-824C4BF98991}
-		{45683811-DB79-40AF-BA34-5149BDD63DFD} = {405B81EC-3E5E-4260-A3AC-824C4BF98991}
 		{63C09213-17DC-4095-BB5F-581CBA692C3E} = {41584938-146B-424F-8C10-374A64A01215}
-		{5AEADAC3-522D-4737-B3A2-8C47A743CE8D} = {41584938-146B-424F-8C10-374A64A01215}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {650FD418-DEA3-4EA9-92A6-DBF5B0004916}

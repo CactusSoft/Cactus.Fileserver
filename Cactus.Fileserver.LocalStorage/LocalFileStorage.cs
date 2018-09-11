@@ -1,34 +1,31 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Cactus.Fileserver.Core;
-using Cactus.Fileserver.Core.Logging;
-using Cactus.Fileserver.Core.Model;
-using Cactus.Fileserver.Core.Storage;
+using Cactus.Fileserver.Logging;
+using Cactus.Fileserver.Model;
+using Cactus.Fileserver.Storage;
 
 namespace Cactus.Fileserver.LocalStorage
 {
-    public class LocalFileStorage<T> : BaseFileStore<T> where T: MetaInfo, new()
+    public class LocalFileStorage : BaseFileStore
     {
         private const int MaxTriesCount = 10;
 
-        private static readonly ILog Log =
-            LogProvider.GetLogger(typeof(LocalFileStorage<>).Namespace + '.' + nameof(LocalFileStorage<T>));
+        private static readonly ILog Log = LogProvider.GetLogger(typeof(LocalFileStorage));
+        private readonly IStoredNameProvider _nameProvider;
 
-        private readonly IStoredNameProvider<T> _nameProvider;
-
-        public LocalFileStorage(Uri baseUri, IStoredNameProvider<T> nameProvider, string storeFolder = null):base(new DefaultUriResolver(baseUri, storeFolder))
+        public LocalFileStorage(Uri baseUri, IStoredNameProvider nameProvider, string storeFolder = null) : base(new DefaultUriResolver(baseUri, storeFolder))
         {
             _nameProvider = nameProvider;
         }
 
-        public LocalFileStorage(IStoredNameProvider<T> nameProvider, IUriResolver uriResolver) : base(uriResolver)
+        public LocalFileStorage(IStoredNameProvider nameProvider, IUriResolver uriResolver) : base(uriResolver)
         {
             _nameProvider = nameProvider;
         }
 
 
-        protected override async Task<string> ExecuteAdd(Stream stream, T info)
+        protected override async Task<string> ExecuteAdd(Stream stream, IFileInfo info)
         {
             var filename = _nameProvider.GetName(info);
             var fullFilePath = UriResolver.ResolvePath(filename);
@@ -89,6 +86,11 @@ namespace Cactus.Fileserver.LocalStorage
                             "Configuration error. StorageFolder {0} is unaccesable, temporary folder {1} will be used instead",
                             baseFolder, _baseFolder);
                     }
+            }
+
+            public Uri ResolveStaticUri(Uri currentUri)
+            {
+                throw new NotImplementedException("Not implemented in this store");
             }
 
             public Uri ResolveUri(string newFileName)
