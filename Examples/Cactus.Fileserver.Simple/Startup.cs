@@ -34,6 +34,7 @@ namespace Cactus.Fileserver.Simple
                             .UseMultipartContent()
                             .ExtractFileinfo()
                             .ReadContentStream()
+                            //.AcceptOnlyImageContent() //To accept only image content
                             //.ApplyResizing(c.GetRequiredService<IImageResizerService>()) // <-- BE CAREFUL, IT DOES RESIZING ALL THE TIME
                             .Store(c.GetRequiredService<IFileStorageService>()))
                 .AddDynamicResizing(mandatory: new Instructions("maxwidth=1000&maxheight=1000"));
@@ -45,7 +46,7 @@ namespace Cactus.Fileserver.Simple
             loggerFactory.AddLog4Net();
             app
                 .UseDeveloperExceptionPage()
-              //.Map("/files", branch => branch   //<--- In case of using sub-path
+                     //.Map("/files", branch => branch   //<--- In case of using sub-path
                      .UseDynamicResizing()
                      .UseLocalFileserver(env.WebRootPath)
                 //)
