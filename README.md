@@ -1,5 +1,6 @@
 # Cactus.Fileserver 
 [ ![Download](https://travis-ci.com/CactusSoft/Cactus.Fileserver.svg?branch=develop) ](https://travis-ci.com/CactusSoft/Cactus.Fileserver)
+[ ![Download](https://codecov.io/gh/CactusSoft/Cactus.Fileserver/branch/develop/graph/badge.svg) ](https://codecov.io/gh/CactusSoft/Cactus.Fileserver/branch/develop)
 
 Simple lib for fast building your own file storage microservice. Implemented as OWIN handler for Katana as welll as Asp.NetCore.
 
