@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Cactus.Fileserver.Config;
 using Cactus.Fileserver.Pipeline;
 using Cactus.Fileserver.Storage;
@@ -25,14 +26,15 @@ namespace Cactus.Fileserver.LocalStorage
             return services;
         }
 
-        public static IApplicationBuilder UseLocalFileserver(this IApplicationBuilder app, string storageFolder)
+        public static IApplicationBuilder UseLocalFileserver(this IApplicationBuilder app, DirectoryInfo storageFolder)
         {
+            if (!storageFolder.Exists)
+                storageFolder.Create();
             return app
                 .UseGetFile(b => b
-
                     .UseStaticFiles(new StaticFileOptions
                     {
-                        FileProvider = new PhysicalFileProvider(storageFolder, ExclusionFilters.None),
+                        FileProvider = new PhysicalFileProvider(storageFolder.FullName, ExclusionFilters.None),
                         DefaultContentType = "application/octet-stream",
                         ServeUnknownFileTypes = true
                     }))

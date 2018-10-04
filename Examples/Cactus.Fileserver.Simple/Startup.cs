@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Cactus.Fileserver.ImageResizer;
 using Cactus.Fileserver.ImageResizer.Utils;
 using Cactus.Fileserver.LocalStorage;
@@ -46,22 +47,22 @@ namespace Cactus.Fileserver.Simple
             loggerFactory.AddLog4Net();
             app
                 .UseDeveloperExceptionPage()
-                     //.Map("/files", branch => branch   //<--- In case of using sub-path
+                //.Map("/files", branch => branch       //<--- In case of using sub-path
                      .UseDynamicResizing()
-                     .UseLocalFileserver(env.WebRootPath)
+                     .UseLocalFileserver(new DirectoryInfo(env.WebRootPath))
                 //)
                 .Run(async context =>
                 {
                     if (context.Request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase))
                     {
                         context.Response.StatusCode = 404;
-                        await context.Response.WriteAsync("There's nothing here my little friend.");
+                        await context.Response.WriteAsync("There's nothing here, my little friend.");
                     }
                     else
                     {
                         // Strange request.
                         context.Response.StatusCode = 400;
-                        await context.Response.WriteAsync("You do something wrong. What are you awaited of? Christmas mystery?");
+                        await context.Response.WriteAsync("You do something wrong. What are you waiting for, a Christmas mystery?");
                     }
                 });
         }
