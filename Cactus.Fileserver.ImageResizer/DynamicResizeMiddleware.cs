@@ -25,59 +25,69 @@ namespace Cactus.Fileserver.ImageResizer
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var request = context.Request;
-            MetaInfo metaData;
+            //TODO: check for instuctions and apply only in case of need
             try
             {
-                metaData = _storage.GetInfo<MetaInfo>(request.GetAbsoluteUri());
-                if (metaData.Origin != null && !metaData.Uri.Equals(metaData.Origin))
+                var request = context.Request;
+                MetaInfo metaData;
+                try
                 {
-                    Log.Debug("{0} is not origin, getting the origin for transformation", metaData.Uri);
-                    metaData = _storage.GetInfo<MetaInfo>(metaData.Origin);
+                    metaData = _storage.GetInfo<MetaInfo>(request.GetAbsoluteUri());
+                    if (metaData.Origin != null && !metaData.Uri.Equals(metaData.Origin))
+                    {
+                        Log.Debug("{0} is not origin, getting the origin for transformation", metaData.Uri);
+                        metaData = _storage.GetInfo<MetaInfo>(metaData.Origin);
+                    }
                 }
-            }
-            catch (FileNotFoundException)
-            {
-                metaData = null;
-            }
-
-            if (metaData != null && request.QueryString.HasValue && metaData.MimeType.StartsWith("image") &&
-                !metaData.MimeType.EndsWith("gif"))
-            {
-                var instructions = new Instructions(request.QueryString.Value);
-                var sizeKey = instructions.GetSizeKey();
-                if (metaData.Extra.TryGetValue(sizeKey, out var redirectUri))
+                catch (FileNotFoundException)
                 {
-                    Log.Debug("{0} size found, do redirect", sizeKey);
-                    context.Response.Redirect(redirectUri, true);
-                    return;
+                    metaData = null;
                 }
 
-                using (var tempFile = new MemoryStream())
-                using (var original = await _storage.Get(request.GetAbsoluteUri()))
+                if (metaData != null && request.QueryString.HasValue && metaData.MimeType.StartsWith("image") &&
+                    !metaData.MimeType.EndsWith("gif"))
                 {
-                    _resizer.ProcessImage(original, tempFile, instructions);
-                    var newFileInfo = new IncomeFileInfo(metaData);
-                    tempFile.Position = 0;
-                    var result = await _storage.Create(tempFile, newFileInfo);
-                    Uri savedRedirectUri = null;
-                    try
+                    var instructions = new Instructions(request.QueryString.Value);
+                    var sizeKey = instructions.GetSizeKey();
+                    if (metaData.Extra.TryGetValue(sizeKey, out var redirectUri))
                     {
-                        savedRedirectUri = _storage.GetRedirectUri(result.Uri);
+                        Log.Debug("{0} size found, do redirect", sizeKey);
+                        context.Response.Redirect(redirectUri, true);
+                        return;
                     }
-                    catch (NotImplementedException)
+
+                    using (var tempFile = new MemoryStream())
+                    using (var original = await _storage.Get(request.GetAbsoluteUri()))
                     {
-                        savedRedirectUri = result.Uri;
+                        _resizer.ProcessImage(original, tempFile, instructions);
+                        var newFileInfo = new IncomeFileInfo(metaData);
+                        tempFile.Position = 0;
+                        var result = await _storage.Create(tempFile, newFileInfo);
+                        Uri savedRedirectUri = null;
+                        try
+                        {
+                            savedRedirectUri = _storage.GetRedirectUri(result.Uri);
+                        }
+                        catch (NotImplementedException)
+                        {
+                            savedRedirectUri = result.Uri;
+                        }
+                        finally
+                        {
+                            metaData.Extra.Add(sizeKey, savedRedirectUri.ToString());
+                            await _storage.UpdateMetadata(metaData);
+                            context.Response.Redirect(savedRedirectUri.ToString(), true);
+                        }
+
+                        return;
                     }
-                    finally
-                    {
-                        metaData.Extra.Add(sizeKey, savedRedirectUri.ToString());
-                        await _storage.UpdateMetadata(metaData);
-                        context.Response.Redirect(savedRedirectUri.ToString(), true);
-                    }
-                    return;
                 }
             }
+            catch (Exception ex)
+            {
+                Log.Error("Exception during dynamic resizing, skip middleware and continue with regular pipeline", ex);
+            }
+
             await _next(context);
         }
     }
