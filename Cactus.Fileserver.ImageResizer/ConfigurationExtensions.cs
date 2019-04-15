@@ -26,10 +26,9 @@ namespace Cactus.Fileserver.ImageResizer
         public static readonly string NotAnImageExceptionMessage = "Income stream doesn't look to be an image";
 
 
-        public static IServiceCollection AddDynamicResizing(this IServiceCollection services, Instructions def = null, Instructions mandatory = null)
+        public static IServiceCollection AddDynamicResizing(this IServiceCollection services)
         {
-            services.AddSingleton<IImageResizerService>(c => new ImageResizerService(
-                def ?? new Instructions(""), mandatory ?? new Instructions()));
+            services.AddSingleton<IImageResizerService, ImageResizerService>();
             return services;
         }
 
@@ -47,7 +46,8 @@ namespace Cactus.Fileserver.ImageResizer
                 // 2. Pass mandatory & default params here instead of ImageResizerService constructor.
                 // 3. Change the meaning of ImageResizerService constructor parameters. It should be a maximum operable size of image (in order to avoid OutOfMemory)
                 if (info.MimeType.StartsWith("image", StringComparison.OrdinalIgnoreCase) &&
-                    !info.MimeType.EndsWith("svg", StringComparison.OrdinalIgnoreCase))
+                    !info.MimeType.Contains("gif") &&
+                    !info.MimeType.Contains("svg"))
                 {
                     using (var output = new MemoryStream())
                     {

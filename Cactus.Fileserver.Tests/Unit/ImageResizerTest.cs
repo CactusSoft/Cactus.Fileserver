@@ -71,5 +71,21 @@ namespace Cactus.Fileserver.Tests.Unit
             Assert.AreEqual(500, res.Width);
             Assert.AreEqual(1000, res.Height);
         }
+
+        [TestMethod]
+        public void GetTargetSizeNotZeroTest()
+        {
+            var nv = new NameValueCollection();
+            nv.Add("maxwidth", "1000");
+            nv.Add("maxheight", "1000");
+
+            var res = ImageResizerService.GetTargetSize(new Instructions(nv)
+            {
+                Width = 100,
+                Height = null,
+            }, 1);
+            Assert.AreEqual(100, res.Width);
+            Assert.AreEqual(100, res.Height);
+        }
     }
 }

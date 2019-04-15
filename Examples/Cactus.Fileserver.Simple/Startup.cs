@@ -19,7 +19,6 @@ namespace Cactus.Fileserver.Simple
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-
             var url = Environment.GetEnvironmentVariable("ASPNETCORE_URLS");
             if (string.IsNullOrEmpty(url))
             {
@@ -28,17 +27,22 @@ namespace Cactus.Fileserver.Simple
             //url += url.EndsWith('/') ? "files/" : "/files/";     //<--- In case of using sub-path
 
             services
+                .AddLogging()
                 .AddSingleton<ISecurityManager, NothingCheckSecurityManager>()
                 .AddLocalFileserver(new Uri(url),
                     c => c.GetRequiredService<IHostingEnvironment>().WebRootPath,
                     c => new PipelineBuilder()
-                            .UseMultipartContent()
-                            .ExtractFileinfo()
-                            .ReadContentStream()
-                            //.AcceptOnlyImageContent() //To accept only image content
-                            //.ApplyResizing(c.GetRequiredService<IImageResizerService>()) // <-- BE CAREFUL, IT DOES RESIZING ALL THE TIME
-                            .Store(c.GetRequiredService<IFileStorageService>()))
-                .AddDynamicResizing(mandatory: new Instructions("maxwidth=1000&maxheight=1000"));
+                        .UseMultipartContent()
+                        .ExtractFileinfo()
+                        .ReadContentStream()
+                        //.AcceptOnlyImageContent() //To accept only image content
+                        //.ApplyResizing(c.GetRequiredService<IImageResizerService>()) // <-- BE CAREFUL, IT DOES RESIZING ALL THE TIME
+                        .Store(c.GetRequiredService<IFileStorageService>()))
+                .AddSingleton<IImageResizerService, ImageResizerService>()
+                .Configure<ResizingOptions>(o =>
+                {
+                    o.MandatoryInstructions = new Instructions("maxwidth=1000&maxheight=1000");
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -47,7 +51,7 @@ namespace Cactus.Fileserver.Simple
             loggerFactory.AddLog4Net();
             app
                 .UseDeveloperExceptionPage()
-                //.Map("/files", branch => branch       //<--- In case of using sub-path
+                     //.Map("/files", branch => branch       //<--- In case of using sub-path
                      .UseDynamicResizing()
                      .UseLocalFileserver(new DirectoryInfo(env.WebRootPath))
                 //)

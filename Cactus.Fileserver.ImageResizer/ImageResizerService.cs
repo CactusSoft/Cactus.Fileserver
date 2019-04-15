@@ -1,6 +1,8 @@
 using System;
 using System.IO;
 using Cactus.Fileserver.ImageResizer.Utils;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using Image = SixLabors.ImageSharp.Image;
@@ -23,13 +25,13 @@ namespace Cactus.Fileserver.ImageResizer
 
     public class ImageResizerService : IImageResizerService
     {
-        private readonly Instructions _defaultInstructions;
-        private readonly Instructions _mandatoryInstructions;
+        private readonly IOptionsMonitor<ResizingOptions> _optionsMonitor;
+        private readonly ILogger<ImageResizerService> _log;
 
-        public ImageResizerService(Instructions defaultInstructions, Instructions mandatoryInstructions)
+        public ImageResizerService(IOptionsMonitor<ResizingOptions> optionsMonitor, ILogger<ImageResizerService> log)
         {
-            _defaultInstructions = defaultInstructions;
-            _mandatoryInstructions = mandatoryInstructions;
+            _optionsMonitor = optionsMonitor;
+            _log = log;
         }
 
         //public virtual void ProcessImage(Stream inputStream, Stream outputStream, Instructions instructions)
@@ -63,20 +65,22 @@ namespace Cactus.Fileserver.ImageResizer
                 throw new ArgumentException("inputStream is nor readable");
             if (!outputStream.CanWrite)
                 throw new ArgumentException("outputStream is nor writable");
+            var options = _optionsMonitor.CurrentValue;
+            instructions.Join(options.DefaultInstructions);
+            instructions.Join(options.MandatoryInstructions, true);
 
-            instructions.Join(_defaultInstructions);
-            instructions.Join(_mandatoryInstructions, true);
+            if (!(instructions.Width.HasValue || instructions.Height.HasValue) ||
+                !(instructions.MaxWidth.HasValue || instructions.MaxHeight.HasValue))
+                throw new InvalidOperationException("Resizing instructions are not complete, unable to resize");
 
-            if ((instructions.Width.HasValue || instructions.Height.HasValue) &&
-                (instructions.MaxWidth.HasValue || instructions.MaxHeight.HasValue))
+            _log.LogDebug("Start resizing...");
+            using (var image = Image.Load(inputStream, out var imageInfo))
             {
-                using (var image = Image.Load(inputStream, out var imageInfo))
-                {
-                    var targetSize = GetTargetSize(instructions, image.Width / (double)image.Height);
-                    image.Mutate(x => x
-                        .Resize(targetSize.Width, targetSize.Height));
-                    image.Save(outputStream, imageInfo); // Automatic encoder selected based on extension.
-                }
+                var targetSize = GetTargetSize(instructions, image.Width / (double)image.Height);
+                _log.LogDebug("Format {0}, original size {1}x{2}:{3} bytes, target size {4}x{5}", imageInfo.Name, image.Width, image.Height, inputStream.Length, targetSize.Width, targetSize.Height);
+                image.Mutate(x => x.Resize(targetSize.Width, targetSize.Height));
+                image.Save(outputStream, imageInfo); // Automatic encoder selected based on extension.
+                _log.LogDebug("Resizing complete, output image size: {0}x{1}:{2} bytes", targetSize.Width, targetSize.Height, outputStream.Length);
             }
         }
 
@@ -87,19 +91,45 @@ namespace Cactus.Fileserver.ImageResizer
             if (instructions.MaxHeight == null && instructions.Height == null)
                 throw new ArgumentException("Target height could not be determined");
 
-            double targetWidth = Math.Min(instructions.Width ?? 0, instructions.MaxWidth ?? 0);
-            double targetHeight = Math.Min(instructions.Height ?? 0, instructions.MaxHeight ?? 0);
+            var targetWidth = Math.Min(instructions.Width ?? int.MaxValue, instructions.MaxWidth ?? 0);
+            var targetHeight = Math.Min(instructions.Height ?? int.MaxValue, instructions.MaxHeight ?? 0);
 
+            if (targetHeight == 0 || targetHeight == int.MaxValue || targetWidth == 0 || targetWidth == int.MaxValue)
+                throw new ArgumentException("Invalid combination of height/with & maxheight/maxwidth");
 
             if (instructions.KeepRatio)
             {
-                if (imageRatio > 1)
-                    targetHeight = targetWidth / imageRatio;
-                else
-                    targetWidth = targetHeight * imageRatio;
-            }
+                var mayUseWidthBase = instructions.Width.HasValue && instructions.Width.Value <= targetWidth;
+                var mayUseHeightBase = instructions.Height.HasValue && instructions.Height.Value <= targetHeight;
 
-            return ((int)Math.Round(targetWidth), (int)Math.Round(targetHeight));
+                if (mayUseWidthBase && mayUseHeightBase)
+                {
+                    if (imageRatio > 1)
+                        targetHeight = (int)Math.Round(targetWidth / imageRatio);
+                    else
+                        targetWidth = (int)Math.Round(targetHeight * imageRatio);
+                }else if (mayUseHeightBase)
+                {
+                    targetWidth = (int)Math.Round(targetHeight * imageRatio);
+                }else if (mayUseWidthBase)
+                {
+                    targetHeight = (int)Math.Round(targetWidth / imageRatio);
+                }
+                else
+                {
+                    if (imageRatio > 1)
+                        targetHeight = (int)Math.Round(targetWidth / imageRatio);
+                    else
+                        targetWidth = (int)Math.Round(targetHeight * imageRatio);
+                }
+            }
+            return (targetWidth, targetHeight);
         }
+    }
+
+    public class ResizingOptions
+    {
+        public Instructions DefaultInstructions { get; set; }
+        public Instructions MandatoryInstructions { get; set; }
     }
 }

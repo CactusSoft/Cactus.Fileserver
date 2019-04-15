@@ -7,6 +7,7 @@ namespace Cactus.Fileserver.ImageResizer
     {
         internal static void Join(this Instructions instructions, Instructions join, bool overwrite = false)
         {
+            if (join == null) return;
             foreach (var key in join.AllKeys)
             {
                 var hasKey = instructions.AllKeys.Any(k => k == key);

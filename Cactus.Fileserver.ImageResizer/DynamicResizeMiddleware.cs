@@ -1,10 +1,10 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Cactus.Fileserver.Logging;
 using Cactus.Fileserver.ImageResizer.Utils;
 using Cactus.Fileserver.Model;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace Cactus.Fileserver.ImageResizer
 {
@@ -13,28 +13,28 @@ namespace Cactus.Fileserver.ImageResizer
         private readonly IFileStorageService _storage;
         private readonly IImageResizerService _resizer;
         private readonly RequestDelegate _next;
-        private static readonly ILog Log = LogProvider.GetLogger(typeof(DynamicResizingMiddleware));
+        private readonly ILogger<DynamicResizingMiddleware> _log;
 
-        public DynamicResizingMiddleware(RequestDelegate next, IImageResizerService resizer, IFileStorageService storage)
+        public DynamicResizingMiddleware(RequestDelegate next, IImageResizerService resizer, IFileStorageService storage, ILogger<DynamicResizingMiddleware> logger)
         {
-            Log.Debug(".ctor");
             _next = next;
             _resizer = resizer;
             _storage = storage;
+            _log = logger;
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
             if (!context.Request.QueryString.HasValue)
             {
-                Log.Debug("No query string, no dynamic resizing");
+                _log.LogDebug("No query string, no dynamic resizing");
                 await _next(context);
                 return;
             }
 
             if (!context.Request.Query.ContainsKey("height") && !context.Request.Query.ContainsKey("width"))
             {
-                Log.Debug("No resizing instructions found, no dynamic resizing");
+                _log.LogDebug("No resizing instructions found, no dynamic resizing");
                 await _next(context);
                 return;
             }
@@ -48,7 +48,7 @@ namespace Cactus.Fileserver.ImageResizer
                     metaData = _storage.GetInfo<MetaInfo>(request.GetAbsoluteUri());
                     if (metaData.Origin != null && !metaData.Uri.Equals(metaData.Origin))
                     {
-                        Log.Debug("{0} is not origin, getting the origin for transformation", metaData.Uri);
+                        _log.LogDebug("{0} is not origin, getting the origin for transformation", metaData.Uri);
                         metaData = _storage.GetInfo<MetaInfo>(metaData.Origin);
                     }
                 }
@@ -65,7 +65,7 @@ namespace Cactus.Fileserver.ImageResizer
                     var sizeKey = instructions.GetSizeKey();
                     if (metaData.Extra.TryGetValue(sizeKey, out var redirectUri))
                     {
-                        Log.Debug("{0} size found, do redirect", sizeKey);
+                        _log.LogDebug("{0} size found, do redirect", sizeKey);
                         context.Response.Redirect(redirectUri, true);
                         return;
                     }
@@ -99,7 +99,7 @@ namespace Cactus.Fileserver.ImageResizer
             }
             catch (Exception ex)
             {
-                Log.Error("Exception during dynamic resizing, skip middleware and continue with regular pipeline", ex);
+                _log.LogError("Exception during dynamic resizing, skip middleware and continue with regular pipeline: {0}", ex);
             }
 
             await _next(context);
