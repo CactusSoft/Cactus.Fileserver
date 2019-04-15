@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>3.1</Version>
-    <Authors>Roman Barantsevich</Authors>
+    <Version>3.1.1</Version>
+    <Authors>Yan O</Authors>
     <Company>CactusSoft LLC</Company>
     <Description>Image resizing module for Cactus.Fileserver</Description>
     <Copyright>CactusSoft LLC</Copyright>
@@ -16,6 +16,8 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Options" Version="2.1.1" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.0-beta0006" />
   </ItemGroup>
 
