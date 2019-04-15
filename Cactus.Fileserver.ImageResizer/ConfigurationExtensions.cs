@@ -47,9 +47,7 @@ namespace Cactus.Fileserver.ImageResizer
                 // 2. Pass mandatory & default params here instead of ImageResizerService constructor.
                 // 3. Change the meaning of ImageResizerService constructor parameters. It should be a maximum operable size of image (in order to avoid OutOfMemory)
                 if (info.MimeType.StartsWith("image", StringComparison.OrdinalIgnoreCase) &&
-                    !info.MimeType.EndsWith("svg", StringComparison.OrdinalIgnoreCase) &&
-                    request.QueryString.HasValue &&
-                    (request.Query.ContainsKey("maxheight") || request.Query.ContainsKey("maxwidth")))
+                    !info.MimeType.EndsWith("svg", StringComparison.OrdinalIgnoreCase))
                 {
                     using (var output = new MemoryStream())
                     {

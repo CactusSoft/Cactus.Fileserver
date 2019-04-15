@@ -25,7 +25,20 @@ namespace Cactus.Fileserver.ImageResizer
 
         public async Task InvokeAsync(HttpContext context)
         {
-            //TODO: check for instuctions and apply only in case of need
+            if (!context.Request.QueryString.HasValue)
+            {
+                Log.Debug("No query string, no dynamic resizing");
+                await _next(context);
+                return;
+            }
+
+            if (!context.Request.Query.ContainsKey("height") && !context.Request.Query.ContainsKey("width"))
+            {
+                Log.Debug("No resizing instructions found, no dynamic resizing");
+                await _next(context);
+                return;
+            }
+
             try
             {
                 var request = context.Request;
@@ -45,7 +58,8 @@ namespace Cactus.Fileserver.ImageResizer
                 }
 
                 if (metaData != null && request.QueryString.HasValue && metaData.MimeType.StartsWith("image") &&
-                    !metaData.MimeType.EndsWith("gif"))
+                    !metaData.MimeType.EndsWith("gif") &&
+                    !metaData.MimeType.EndsWith("svg"))
                 {
                     var instructions = new Instructions(request.QueryString.Value);
                     var sizeKey = instructions.GetSizeKey();

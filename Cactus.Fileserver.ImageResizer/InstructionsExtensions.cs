@@ -24,9 +24,11 @@ namespace Cactus.Fileserver.ImageResizer
 
         internal static string GetSizeKey(this Instructions instructions)
         {
-            return instructions?.Width != null && instructions.Height != null
-                ? "alt-size-" + instructions.Width + "x" + instructions.Height
-                : null;
+            if (instructions == null)
+                return null;
+            var width = instructions.Width.HasValue ? instructions.Width.ToString() : "NA";
+            var height = instructions.Height.HasValue ? instructions.Height.ToString() : "NA";
+            return "alt-size-" + width + "x" + height;
         }
     }
 }

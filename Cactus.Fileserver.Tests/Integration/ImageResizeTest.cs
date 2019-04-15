@@ -73,7 +73,7 @@ namespace Cactus.Fileserver.Tests.Integration
             var gerRes = filestorageClient.Execute(get);
             Assert.AreEqual(ResponseStatus.Completed, gerRes.ResponseStatus);
             Assert.AreEqual(HttpStatusCode.OK, gerRes.StatusCode);
-            Assert.AreEqual(6830, gerRes.RawBytes.Length);
+            Assert.AreEqual(49128, gerRes.RawBytes.Length, $"Original size is {new FileInfo(filename).Length}");
             Assert.AreEqual(mimetype, gerRes.ContentType);
 
             var del = new RestRequest(Method.DELETE);
@@ -111,7 +111,7 @@ namespace Cactus.Fileserver.Tests.Integration
             var getRes = restClient.Execute(get);
             Assert.AreEqual(ResponseStatus.Completed, getRes.ResponseStatus);
             Assert.AreEqual(HttpStatusCode.OK, getRes.StatusCode);
-            Assert.AreEqual(6830, getRes.RawBytes.Length);
+            Assert.AreEqual(49128, getRes.RawBytes.Length, $"Original size is {new FileInfo(filename).Length}");
             Assert.AreEqual(mimetype, getRes.ContentType);
 
             var getMeta = new RestRequest(location + ".json", Method.GET);
@@ -129,7 +129,7 @@ namespace Cactus.Fileserver.Tests.Integration
             getRes = restClient.Execute(get);
             Assert.AreEqual(ResponseStatus.Completed, getRes.ResponseStatus);
             Assert.AreEqual(HttpStatusCode.OK, getRes.StatusCode);
-            Assert.AreEqual(11963, getRes.RawBytes.Length);
+            Assert.AreEqual(98282, getRes.RawBytes.Length, $"Original size is {new FileInfo(filename).Length}");
             Assert.AreEqual(mimetype, getRes.ContentType);
 
             getMeta = new RestRequest(location + ".json", Method.GET);

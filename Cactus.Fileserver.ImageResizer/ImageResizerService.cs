@@ -1,8 +1,10 @@
 using System;
 using System.IO;
 using Cactus.Fileserver.ImageResizer.Utils;
-using ImageSharp;
-using ImageSharp.Processing;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using Image = SixLabors.ImageSharp.Image;
+
 
 namespace Cactus.Fileserver.ImageResizer
 {
@@ -29,7 +31,32 @@ namespace Cactus.Fileserver.ImageResizer
             _defaultInstructions = defaultInstructions;
             _mandatoryInstructions = mandatoryInstructions;
         }
-       
+
+        //public virtual void ProcessImage(Stream inputStream, Stream outputStream, Instructions instructions)
+        //{
+        //    if (!inputStream.CanRead)
+        //        throw new ArgumentException("inputStream is nor readable");
+        //    if (!outputStream.CanWrite)
+        //        throw new ArgumentException("outputStream is nor writable");
+
+        //    var image = new Image(inputStream); //<<<< DISPOSABLE!!!
+        //    var imageRatio = image.PixelRatio;
+        //    instructions.Join(_defaultInstructions);
+        //    instructions.Join(_mandatoryInstructions, true);
+        //    if (instructions.Width != null || instructions.Height != null || instructions["maxwidth"] != null || instructions["maxheight"] != null)
+        //    {
+        //        GetActualSize(instructions,imageRatio);
+        //        image.Resize(new ResizeOptions
+        //        {
+        //            Sampler = new BicubicResampler(),
+        //            Size = new Size(instructions.Width.Value, instructions.Height.Value),
+        //            Mode = instructions.Mode??ResizeMode.Max
+        //        });
+        //    }
+
+        //    image.SaveAsJpeg(outputStream);
+        //}
+
         public virtual void ProcessImage(Stream inputStream, Stream outputStream, Instructions instructions)
         {
             if (!inputStream.CanRead)
@@ -37,50 +64,42 @@ namespace Cactus.Fileserver.ImageResizer
             if (!outputStream.CanWrite)
                 throw new ArgumentException("outputStream is nor writable");
 
-            var image = new Image(inputStream);
-            var imageRatio = image.PixelRatio;
             instructions.Join(_defaultInstructions);
             instructions.Join(_mandatoryInstructions, true);
-            if (instructions.Width != null || instructions.Height != null || instructions["maxwidth"] != null || instructions["maxheight"] != null)
-            {
-                GetActualSize(instructions,imageRatio);
-                image.Resize(new ResizeOptions
-                {
-                    Sampler = new BicubicResampler(),
-                    Size = new Size(instructions.Width.Value, instructions.Height.Value),
-                    Mode = instructions.Mode??ResizeMode.Max
-                });
-            }
 
-            image.SaveAsJpeg(outputStream);
+            if ((instructions.Width.HasValue || instructions.Height.HasValue) &&
+                (instructions.MaxWidth.HasValue || instructions.MaxHeight.HasValue))
+            {
+                using (var image = Image.Load(inputStream, out var imageInfo))
+                {
+                    var targetSize = GetTargetSize(instructions, image.Width / (double)image.Height);
+                    image.Mutate(x => x
+                        .Resize(targetSize.Width, targetSize.Height));
+                    image.Save(outputStream, imageInfo); // Automatic encoder selected based on extension.
+                }
+            }
         }
 
-        protected virtual void  GetActualSize(Instructions instructions, double imageRatio)
+        internal static (int Width, int Height) GetTargetSize(Instructions instructions, double imageRatio)
         {
-            double width = instructions.Width??-1;
-            double height = instructions.Height??-1;
-            var maxwidth = double.TryParse(instructions["maxwidth"], out var resW) ? resW : -1;
-            var maxheight = double.TryParse(instructions["maxheight"], out var resH) ? resH : -1;
+            if (instructions.MaxWidth == null && instructions.Width == null)
+                throw new ArgumentException("Target width could not be determined");
+            if (instructions.MaxHeight == null && instructions.Height == null)
+                throw new ArgumentException("Target height could not be determined");
 
-            //Eliminate cases where both a value and a max value are specified: use the smaller value for the width/height 
-            if (maxwidth > 0 && width > 0) { width = Math.Min(maxwidth, width); maxwidth = -1; }
-            if (maxheight > 0 && height > 0) { height = Math.Min(maxheight, height); maxheight = -1; }
-
-            //Handle cases of width/maxheight and height/maxwidth as in legacy version 
-            if (width != -1 && maxheight != -1) maxheight = Math.Min(maxheight, (width / imageRatio));
-            if (height != -1 && maxwidth != -1) maxwidth = Math.Min(maxwidth, (height * imageRatio));
+            double targetWidth = Math.Min(instructions.Width ?? 0, instructions.MaxWidth ?? 0);
+            double targetHeight = Math.Min(instructions.Height ?? 0, instructions.MaxHeight ?? 0);
 
 
-            //Move max values to width/height. FitMode should already reflect the mode we are using, and we've already resolved mixed modes above.
-            width = Math.Max(width, maxwidth);
-            height = Math.Max(height, maxheight);
+            if (instructions.KeepRatio)
+            {
+                if (imageRatio > 1)
+                    targetHeight = targetWidth / imageRatio;
+                else
+                    targetWidth = targetHeight * imageRatio;
+            }
 
-            //Calculate missing value (a missing value is handled the same everywhere). 
-            if (width > 0 && height <= 0) height = width / imageRatio;
-            else if (height > 0 && width <= 0) width = height * imageRatio;
-
-            instructions.Width = (int)Math.Round(width);
-            instructions.Height = (int)Math.Round(height);
+            return ((int)Math.Round(targetWidth), (int)Math.Round(targetHeight));
         }
     }
 }

@@ -1,6 +1,5 @@
 using System.Collections.Specialized;
 using System.Web;
-using ImageSharp.Processing;
 
 namespace Cactus.Fileserver.ImageResizer.Utils
 {
@@ -19,6 +18,8 @@ namespace Cactus.Fileserver.ImageResizer.Utils
           : base(col)
         {
         }
+
+        public bool KeepRatio => true;
 
         /// <summary>
         /// Copies the specified collection into a new Instructions instance.
@@ -55,20 +56,23 @@ namespace Cactus.Fileserver.ImageResizer.Utils
             }
         }
 
+        public int? MaxWidth => Get<int>("maxwidth", null);
+        public int? MaxHeight => Get<int>("maxheight", null);
+
         /// <summary>
         /// The fit mode to use when both Width and Height are specified. Defaults to Pad.
         /// </summary>
-        public ResizeMode? Mode
-        {
-            get
-            {
-                return this.Get<ResizeMode>("mode");
-            }
-            set
-            {
-                this.Set<ResizeMode>("mode", value);
-            }
-        }
+        //public ResizeMode? Mode
+        //{
+        //    get
+        //    {
+        //        return this.Get<ResizeMode>("mode");
+        //    }
+        //    set
+        //    {
+        //        this.Set<ResizeMode>("mode", value);
+        //    }
+        //}
 
 
         /// <summary>The frame of the animated GIF to display. 1-based</summary>
@@ -267,11 +271,11 @@ namespace Cactus.Fileserver.ImageResizer.Utils
         /// <summary>
         /// Applies the specified kind of grayscale filter to the image. Requires the SimpleFilters plugin
         /// </summary>
-        public GrayscaleMode? Grayscale
-        {
-            get => this.Get<GrayscaleMode>("s.grayscale");
-            set => this.Set<GrayscaleMode>("s.grayscale", value);
-        }
+        //public GrayscaleMode? Grayscale
+        //{
+        //    get => this.Get<GrayscaleMode>("s.grayscale");
+        //    set => this.Set<GrayscaleMode>("s.grayscale", value);
+        //}
 
         /// <summary>
         /// Value between 0 and 1. Makes the rendered image transparent. Does not affect borders or background colors - those accept 4-byte colors with alpha channels, however.
