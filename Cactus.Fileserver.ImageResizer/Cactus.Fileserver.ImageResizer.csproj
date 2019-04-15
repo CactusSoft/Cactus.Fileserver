@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>3.0</Version>
+    <Version>3.1</Version>
     <Authors>Roman Barantsevich</Authors>
     <Company>CactusSoft LLC</Company>
     <Description>Image resizing module for Cactus.Fileserver</Description>

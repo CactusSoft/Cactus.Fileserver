@@ -58,8 +58,8 @@ namespace Cactus.Fileserver.ImageResizer
                 }
 
                 if (metaData != null && request.QueryString.HasValue && metaData.MimeType.StartsWith("image") &&
-                    !metaData.MimeType.EndsWith("gif") &&
-                    !metaData.MimeType.EndsWith("svg"))
+                    !metaData.MimeType.Contains("gif") &&
+                    !metaData.MimeType.Contains("svg"))
                 {
                     var instructions = new Instructions(request.QueryString.Value);
                     var sizeKey = instructions.GetSizeKey();
