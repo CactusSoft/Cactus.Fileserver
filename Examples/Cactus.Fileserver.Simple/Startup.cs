@@ -1,8 +1,10 @@
 using System;
 using System.IO;
+using Cactus.Fileserver.Config;
 using Cactus.Fileserver.ImageResizer;
 using Cactus.Fileserver.ImageResizer.Utils;
 using Cactus.Fileserver.LocalStorage;
+using Cactus.Fileserver.Middleware;
 using Cactus.Fileserver.Pipeline;
 using Cactus.Fileserver.Security;
 using Microsoft.AspNetCore.Builder;
@@ -53,7 +55,10 @@ namespace Cactus.Fileserver.Simple
                 .UseDeveloperExceptionPage()
                      //.Map("/files", branch => branch       //<--- In case of using sub-path
                      .UseDynamicResizing()
-                     .UseLocalFileserver(new DirectoryInfo(env.WebRootPath))
+                     .UseGetLocalFiles(new DirectoryInfo(env.WebRootPath))
+                     .UseAddFile<AddFileHandler>()           //<--- handler may be customized
+                     .UseDelFile()
+                    
                 //)
                 .Run(async context =>
                 {

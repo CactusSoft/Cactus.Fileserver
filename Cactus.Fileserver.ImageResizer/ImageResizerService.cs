@@ -69,8 +69,8 @@ namespace Cactus.Fileserver.ImageResizer
             instructions.Join(options.DefaultInstructions);
             instructions.Join(options.MandatoryInstructions, true);
 
-            if (!(instructions.Width.HasValue || instructions.Height.HasValue) ||
-                !(instructions.MaxWidth.HasValue || instructions.MaxHeight.HasValue))
+            if (!(instructions.Width.HasValue || instructions.MaxWidth.HasValue) ||
+                !(instructions.Height.HasValue || instructions.MaxHeight.HasValue))
                 throw new InvalidOperationException("Resizing instructions are not complete, unable to resize");
 
             _log.LogDebug("Start resizing...");

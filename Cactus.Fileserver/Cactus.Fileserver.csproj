@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Cactus.Fileserver</AssemblyName>
     <RootNamespace>Cactus.Fileserver</RootNamespace>
-    <Version>3.0</Version>
+    <Version>3.2</Version>
     <Description>Lightweight fileserver.</Description>
     <Copyright>Copyright CactusSoft 2016</Copyright>
     <PackageLicenseUrl>https://github.com/CactusSoft/Cactus.Fileserver/blob/master/LICENSE</PackageLicenseUrl>

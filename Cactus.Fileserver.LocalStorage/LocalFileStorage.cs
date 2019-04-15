@@ -32,6 +32,7 @@ namespace Cactus.Fileserver.LocalStorage
             var triesCount = 0;
             for (; File.Exists(fullFilePath) && triesCount < MaxTriesCount; triesCount++)
             {
+                await Task.Delay(42); // you know, the answer to the question of life
                 filename = _nameProvider.Regenerate(info, filename);
                 fullFilePath = UriResolver.ResolvePath(filename);
             }

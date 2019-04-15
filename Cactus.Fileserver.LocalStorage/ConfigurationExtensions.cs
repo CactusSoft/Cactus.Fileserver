@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Cactus.Fileserver.Config;
+using Cactus.Fileserver.Middleware;
 using Cactus.Fileserver.Pipeline;
 using Cactus.Fileserver.Storage;
 using Microsoft.AspNetCore.Builder;
@@ -26,7 +27,7 @@ namespace Cactus.Fileserver.LocalStorage
             return services;
         }
 
-        public static IApplicationBuilder UseLocalFileserver(this IApplicationBuilder app, DirectoryInfo storageFolder)
+        public static IApplicationBuilder UseGetLocalFiles(this IApplicationBuilder app, DirectoryInfo storageFolder)
         {
             if (!storageFolder.Exists)
                 storageFolder.Create();
@@ -37,9 +38,7 @@ namespace Cactus.Fileserver.LocalStorage
                         FileProvider = new PhysicalFileProvider(storageFolder.FullName, ExclusionFilters.None),
                         DefaultContentType = "application/octet-stream",
                         ServeUnknownFileTypes = true
-                    }))
-                .UseAddFile()
-                .UseDelFile();
+                    }));
         }
     }
 

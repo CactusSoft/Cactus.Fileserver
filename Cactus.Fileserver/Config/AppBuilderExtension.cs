@@ -1,6 +1,5 @@
 using System;
 using System.Net.Http;
-using System.Threading.Tasks;
 using Cactus.Fileserver.Middleware;
 using Microsoft.AspNetCore.Builder;
 
@@ -16,10 +15,25 @@ namespace Cactus.Fileserver.Config
             return app;
         }
 
+        public static IApplicationBuilder UseDelFile<T>(this IApplicationBuilder app)
+        {
+            app.MapWhen(c => HttpMethod.Delete.Method.Equals(c.Request.Method, StringComparison.OrdinalIgnoreCase) &&
+                             c.Request.Path.HasValue,
+                builder => builder.UseMiddleware<T>());
+            return app;
+        }
+
         public static IApplicationBuilder UseAddFile(this IApplicationBuilder app)
         {
             app.MapWhen(c => HttpMethod.Post.Method.Equals(c.Request.Method, StringComparison.OrdinalIgnoreCase),
                 builder => builder.UseMiddleware<AddFileHandler>());
+            return app;
+        }
+
+        public static IApplicationBuilder UseAddFile<T>(this IApplicationBuilder app)
+        {
+            app.MapWhen(c => HttpMethod.Post.Method.Equals(c.Request.Method, StringComparison.OrdinalIgnoreCase),
+                builder => builder.UseMiddleware<T>());
             return app;
         }
 
