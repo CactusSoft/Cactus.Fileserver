@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Cactus.Fileserver.Config;
 using Cactus.Fileserver.ImageResizer;
@@ -10,7 +11,10 @@ using Cactus.Fileserver.Security;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.FileProviders.Physical;
 using Microsoft.Extensions.Logging;
 
 namespace Cactus.Fileserver.Simple
@@ -37,13 +41,14 @@ namespace Cactus.Fileserver.Simple
                         .UseMultipartContent()
                         .ExtractFileinfo()
                         .ReadContentStream()
+                        .ResizeIfLargeThen(c.GetRequiredService<IImageResizerService>(), 1000, 1000) //Force resizing for large images
                         //.AcceptOnlyImageContent() //To accept only image content
-                        //.ApplyResizing(c.GetRequiredService<IImageResizerService>()) // <-- BE CAREFUL, IT DOES RESIZING ALL THE TIME
                         .Store(c.GetRequiredService<IFileStorageService>()))
                 .AddSingleton<IImageResizerService, ImageResizerService>()
                 .Configure<ResizingOptions>(o =>
                 {
-                    o.MandatoryInstructions = new Instructions("maxwidth=1000&maxheight=1000");
+                    o.MandatoryInstructions = new ResizeInstructions { MaxWidth = 2000, MaxHeight = 2000 }; //Max size to operate width
+                    o.DefaultInstructions = new ResizeInstructions { KeepAspectRatio = true };
                 });
         }
 
@@ -51,15 +56,32 @@ namespace Cactus.Fileserver.Simple
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddLog4Net();
+            var storageFolder = new DirectoryInfo(env.WebRootPath);
+            if(!storageFolder.Exists)
+                storageFolder.Create();
+
             app
                 .UseDeveloperExceptionPage()
                      //.Map("/files", branch => branch       //<--- In case of using sub-path
                      .UseDynamicResizing()
-                     .UseGetLocalFiles(new DirectoryInfo(env.WebRootPath))
+                     .UseGetFile(b => b
+                        .UseStaticFiles(new StaticFileOptions
+                        {
+                            FileProvider = new PhysicalFileProvider(storageFolder.FullName, ExclusionFilters.None),
+                            DefaultContentType = "application/octet-stream",
+                            ServeUnknownFileTypes = true, //<---- do not use on production to prevent upload executable content like viruses
+                            ContentTypeProvider = new FileExtensionContentTypeProvider(new Dictionary<string, string>
+                            {
+                                { ".json", "application/json"},
+                                { ".svg", "image/svg+xml"}
+                            })
+                        }))
                      .UseAddFile<AddFileHandler>()           //<--- handler may be customized
                      .UseDelFile()
-                    
+
                 //)
+
+                //Default handler for requests that are not targeted to the file server
                 .Run(async context =>
                 {
                     if (context.Request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase))

@@ -32,69 +32,75 @@ namespace Cactus.Fileserver.ImageResizer
                 return;
             }
 
-            if (!context.Request.Query.ContainsKey("height") && !context.Request.Query.ContainsKey("width"))
+            var instructions = new ResizeInstructions(context.Request.QueryString);
+            if (instructions.Width == null && instructions.Height == null)
             {
-                _log.LogDebug("No resizing instructions found, no dynamic resizing");
+                _log.LogDebug("No resizing instruction found in query string");
                 await _next(context);
+                return;
+            }
+
+            _log.LogDebug("It looks like resizing is requested. Looking for the file mete data first...");
+            var request = context.Request;
+            MetaInfo metaData;
+            try
+            {
+                metaData = _storage.GetInfo<MetaInfo>(request.GetAbsoluteUri());
+                if (metaData.Origin != null && !metaData.Uri.Equals(metaData.Origin))
+                {
+                    _log.LogDebug("{0} is not origin, getting the origin for transformation", metaData.Uri);
+                    metaData = _storage.GetInfo<MetaInfo>(metaData.Origin);
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                _log.LogDebug("No metadata found for the requested file. Let the request pass its way");
+                await _next(context);
+                return;
+            }
+
+            _log.LogDebug("Metadata found, let's see if we can resize it");
+            if (!metaData.MimeType.Equals("image/jpeg") &&
+                !metaData.MimeType.Equals("image/jpg") &&
+                !metaData.MimeType.Equals("image/png"))
+            {
+                _log.LogInformation("The file type is {0}, resizing is not supported", metaData.MimeType);
+                await _next(context);
+                return;
+            }
+
+            _log.LogDebug("Let's try to find already resized version");
+            var sizeKey = instructions.BuildSizeKey();
+            if (metaData.Extra.TryGetValue(sizeKey, out var redirectUri))
+            {
+                _log.LogDebug("{0} size found, do redirect", sizeKey);
+                context.Response.Redirect(redirectUri, true);
                 return;
             }
 
             try
             {
-                var request = context.Request;
-                MetaInfo metaData;
-                try
+                _log.LogDebug("Do resizing");
+                using (var tempFile = new MemoryStream())
+                using (var original = await _storage.Get(request.GetAbsoluteUri()))
                 {
-                    metaData = _storage.GetInfo<MetaInfo>(request.GetAbsoluteUri());
-                    if (metaData.Origin != null && !metaData.Uri.Equals(metaData.Origin))
+                    _resizer.Resize(original, tempFile, instructions);
+                    var newFileInfo = new IncomeFileInfo(metaData);
+                    tempFile.Position = 0;
+                    var result = await _storage.Create(tempFile, newFileInfo);
+                    Uri savedRedirectUri;
+                    try
                     {
-                        _log.LogDebug("{0} is not origin, getting the origin for transformation", metaData.Uri);
-                        metaData = _storage.GetInfo<MetaInfo>(metaData.Origin);
+                        savedRedirectUri = _storage.GetRedirectUri(result.Uri);
                     }
-                }
-                catch (FileNotFoundException)
-                {
-                    metaData = null;
-                }
-
-                if (metaData != null && request.QueryString.HasValue && metaData.MimeType.StartsWith("image") &&
-                    !metaData.MimeType.Contains("gif") &&
-                    !metaData.MimeType.Contains("svg"))
-                {
-                    var instructions = new Instructions(request.QueryString.Value);
-                    var sizeKey = instructions.GetSizeKey();
-                    if (metaData.Extra.TryGetValue(sizeKey, out var redirectUri))
+                    catch (NotImplementedException)
                     {
-                        _log.LogDebug("{0} size found, do redirect", sizeKey);
-                        context.Response.Redirect(redirectUri, true);
-                        return;
+                        savedRedirectUri = result.Uri;
                     }
-
-                    using (var tempFile = new MemoryStream())
-                    using (var original = await _storage.Get(request.GetAbsoluteUri()))
-                    {
-                        _resizer.ProcessImage(original, tempFile, instructions);
-                        var newFileInfo = new IncomeFileInfo(metaData);
-                        tempFile.Position = 0;
-                        var result = await _storage.Create(tempFile, newFileInfo);
-                        Uri savedRedirectUri = null;
-                        try
-                        {
-                            savedRedirectUri = _storage.GetRedirectUri(result.Uri);
-                        }
-                        catch (NotImplementedException)
-                        {
-                            savedRedirectUri = result.Uri;
-                        }
-                        finally
-                        {
-                            metaData.Extra.Add(sizeKey, savedRedirectUri.ToString());
-                            await _storage.UpdateMetadata(metaData);
-                            context.Response.Redirect(savedRedirectUri.ToString(), true);
-                        }
-
-                        return;
-                    }
+                    metaData.Extra.Add(sizeKey, savedRedirectUri.ToString());
+                    await _storage.UpdateMetadata(metaData);
+                    context.Response.Redirect(savedRedirectUri.ToString(), true);
+                    return;
                 }
             }
             catch (Exception ex)

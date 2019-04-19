@@ -11,30 +11,24 @@ namespace Cactus.Fileserver.Tests.Unit
         [TestMethod]
         public void GetTargetSizeRatio05Test()
         {
-            var nv = new NameValueCollection();
-            nv.Add("maxwidth", "1000");
-            nv.Add("maxheight", "1000");
-
-            var res = ImageResizerService.GetTargetSize(new Instructions(nv)
+            var res = ImageResizerService.GetTargetSize(new ResizeInstructions
             {
                 Width = 100,
                 Height = 100,
+                KeepAspectRatio = true
             }, 0.5);
-            Assert.AreEqual(50,res.Width);
+            Assert.AreEqual(50, res.Width);
             Assert.AreEqual(100, res.Height);
         }
 
         [TestMethod]
         public void GetTargetSizeRatio15Test()
         {
-            var nv = new NameValueCollection();
-            nv.Add("maxwidth", "1000");
-            nv.Add("maxheight", "1000");
-
-            var res = ImageResizerService.GetTargetSize(new Instructions(nv)
+            var res = ImageResizerService.GetTargetSize(new ResizeInstructions
             {
                 Width = 100,
                 Height = 100,
+                KeepAspectRatio = true
             }, 1.5);
             Assert.AreEqual(100, res.Width);
             Assert.AreEqual(67, res.Height);
@@ -43,49 +37,61 @@ namespace Cactus.Fileserver.Tests.Unit
         [TestMethod]
         public void GetTargetSizeLimitedMaxTest()
         {
-            var nv = new NameValueCollection();
-            nv.Add("maxwidth", "1000");
-            nv.Add("maxheight", "1000");
-
-            var res = ImageResizerService.GetTargetSize(new Instructions(nv)
+            var inst = new ResizeInstructions
             {
+                MaxWidth = 100,
+                MaxHeight = 100,
                 Width = 10000,
                 Height = 10000,
-            }, 1);
-            Assert.AreEqual(1000, res.Width);
-            Assert.AreEqual(1000, res.Height);
+                KeepAspectRatio = true
+            };
+            var res = ImageResizerService.GetTargetSize(inst, 1);
+            Assert.AreEqual(inst.MaxWidth, res.Width);
+            Assert.AreEqual(inst.MaxHeight, res.Height);
         }
 
         [TestMethod]
         public void GetTargetSizeLimitedMaxRatio05Test()
         {
-            var nv = new NameValueCollection();
-            nv.Add("maxwidth", "1000");
-            nv.Add("maxheight", "1000");
-
-            var res = ImageResizerService.GetTargetSize(new Instructions(nv)
+            var inst = new ResizeInstructions
             {
+                MaxWidth = 100,
+                MaxHeight = 100,
                 Width = 10000,
                 Height = 10000,
-            }, 0.5);
-            Assert.AreEqual(500, res.Width);
-            Assert.AreEqual(1000, res.Height);
+                KeepAspectRatio = true
+            };
+            var res = ImageResizerService.GetTargetSize(inst, 0.5);
+            Assert.AreEqual(50, res.Width);
+            Assert.AreEqual(100, res.Height);
         }
 
         [TestMethod]
         public void GetTargetSizeNotZeroTest()
         {
-            var nv = new NameValueCollection();
-            nv.Add("maxwidth", "1000");
-            nv.Add("maxheight", "1000");
-
-            var res = ImageResizerService.GetTargetSize(new Instructions(nv)
+            var res = ImageResizerService.GetTargetSize(new ResizeInstructions
             {
                 Width = 100,
                 Height = null,
+                KeepAspectRatio = true
             }, 1);
             Assert.AreEqual(100, res.Width);
             Assert.AreEqual(100, res.Height);
+        }
+
+        [TestMethod]
+        public void BuildSizeKeyTest()
+        {
+            Assert.AreEqual("alt_size_800x600", new ResizeInstructions
+            {
+                Width = 800,
+                Height = 600
+            }.BuildSizeKey());
+            Assert.AreEqual("alt_size_800x-", new ResizeInstructions
+            {
+                Width = 800
+            }.BuildSizeKey());
+            Assert.AreEqual("alt_size_-x-", new ResizeInstructions().BuildSizeKey());
         }
     }
 }

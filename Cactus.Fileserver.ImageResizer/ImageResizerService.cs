@@ -1,10 +1,14 @@
-using System;
-using System.IO;
 using Cactus.Fileserver.ImageResizer.Utils;
+
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
+
+using System;
+using System.IO;
+
 using Image = SixLabors.ImageSharp.Image;
 
 
@@ -20,7 +24,9 @@ namespace Cactus.Fileserver.ImageResizer
         /// <param name="outputStream">Output stream to write the result</param>
         /// <param name="instructions">Instructions to apply</param>
         /// <returns>Result image as a stream. Caller have to care about the stream disposing.</returns>
-        void ProcessImage(Stream inputStream, Stream outputStream, Instructions instructions);
+        void Resize(Stream inputStream, Stream outputStream, ResizeInstructions instructions);
+
+        (int Width, int Height, bool isResizable) Probe(Stream stream);
     }
 
     public class ImageResizerService : IImageResizerService
@@ -59,7 +65,7 @@ namespace Cactus.Fileserver.ImageResizer
         //    image.SaveAsJpeg(outputStream);
         //}
 
-        public virtual void ProcessImage(Stream inputStream, Stream outputStream, Instructions instructions)
+        public virtual void Resize(Stream inputStream, Stream outputStream, ResizeInstructions instructions)
         {
             if (!inputStream.CanRead)
                 throw new ArgumentException("inputStream is nor readable");
@@ -68,10 +74,6 @@ namespace Cactus.Fileserver.ImageResizer
             var options = _optionsMonitor.CurrentValue;
             instructions.Join(options.DefaultInstructions);
             instructions.Join(options.MandatoryInstructions, true);
-
-            if (!(instructions.Width.HasValue || instructions.MaxWidth.HasValue) ||
-                !(instructions.Height.HasValue || instructions.MaxHeight.HasValue))
-                throw new InvalidOperationException("Resizing instructions are not complete, unable to resize");
 
             _log.LogDebug("Start resizing...");
             using (var image = Image.Load(inputStream, out var imageInfo))
@@ -84,43 +86,41 @@ namespace Cactus.Fileserver.ImageResizer
             }
         }
 
-        internal static (int Width, int Height) GetTargetSize(Instructions instructions, double imageRatio)
+        public (int Width, int Height, bool isResizable) Probe(Stream stream)
         {
-            if (instructions.MaxWidth == null && instructions.Width == null)
-                throw new ArgumentException("Target width could not be determined");
-            if (instructions.MaxHeight == null && instructions.Height == null)
-                throw new ArgumentException("Target height could not be determined");
+            var info = Image.Identify(stream);
+            return (info.Width, info.Height, true); //For now we consider everything as resizable
+        }
+       
+        internal static (int Width, int Height) GetTargetSize(ResizeInstructions instructions, double imageRatio)
+        {
+            var targetWidth = Math.Min(instructions.Width ?? -1, instructions.MaxWidth);
+            var targetHeight = Math.Min(instructions.Height ?? -1, instructions.MaxHeight);
 
-            var targetWidth = Math.Min(instructions.Width ?? int.MaxValue, instructions.MaxWidth ?? 0);
-            var targetHeight = Math.Min(instructions.Height ?? int.MaxValue, instructions.MaxHeight ?? 0);
+            if (targetWidth == -1 && targetHeight == -1)
+                throw new ArgumentException("Nigher width or height are defined");
 
-            if (targetHeight == 0 || targetHeight == int.MaxValue || targetWidth == 0 || targetWidth == int.MaxValue)
-                throw new ArgumentException("Invalid combination of height/with & maxheight/maxwidth");
-
-            if (instructions.KeepRatio)
+            if (targetHeight == -1 || targetWidth == -1 || (instructions.KeepAspectRatio.HasValue && instructions.KeepAspectRatio.Value))
             {
-                var mayUseWidthBase = instructions.Width.HasValue && instructions.Width.Value <= targetWidth;
-                var mayUseHeightBase = instructions.Height.HasValue && instructions.Height.Value <= targetHeight;
-
-                if (mayUseWidthBase && mayUseHeightBase)
+                if (targetHeight != -1 && targetWidth != -1)
                 {
                     if (imageRatio > 1)
                         targetHeight = (int)Math.Round(targetWidth / imageRatio);
                     else
                         targetWidth = (int)Math.Round(targetHeight * imageRatio);
-                }else if (mayUseHeightBase)
+                }
+                else if (targetHeight != -1)
                 {
                     targetWidth = (int)Math.Round(targetHeight * imageRatio);
-                }else if (mayUseWidthBase)
+                }
+                else if (targetWidth != -1)
                 {
                     targetHeight = (int)Math.Round(targetWidth / imageRatio);
                 }
                 else
                 {
-                    if (imageRatio > 1)
-                        targetHeight = (int)Math.Round(targetWidth / imageRatio);
-                    else
-                        targetWidth = (int)Math.Round(targetHeight * imageRatio);
+                    //That's generally impossible because of the same check above, but let's check it twice 
+                    throw new ArgumentException("Nigher width or height are defined");
                 }
             }
             return (targetWidth, targetHeight);
@@ -129,7 +129,7 @@ namespace Cactus.Fileserver.ImageResizer
 
     public class ResizingOptions
     {
-        public Instructions DefaultInstructions { get; set; }
-        public Instructions MandatoryInstructions { get; set; }
+        public ResizeInstructions DefaultInstructions { get; set; }
+        public ResizeInstructions MandatoryInstructions { get; set; }
     }
 }

@@ -37,25 +37,39 @@ namespace Cactus.Fileserver.ImageResizer
             return app.UseMiddleware<DynamicResizingMiddleware>();
         }
 
-        public static PipelineBuilder ApplyResizing(
-            this PipelineBuilder builder, IImageResizerService resizer)
+        public static PipelineBuilder ResizeIfLargeThen(
+            this PipelineBuilder builder, IImageResizerService resizer, int maxWidth, int maxHeight)
         {
+            var instructions = new ResizeInstructions { Width = maxWidth, Height = maxHeight, KeepAspectRatio = true };
             return builder.Use(next => async (request, content, stream, info) =>
             {
-                //TODO: need to be refactored:
-                // 2. Pass mandatory & default params here instead of ImageResizerService constructor.
-                // 3. Change the meaning of ImageResizerService constructor parameters. It should be a maximum operable size of image (in order to avoid OutOfMemory)
-                if (info.MimeType.StartsWith("image", StringComparison.OrdinalIgnoreCase) &&
-                    !info.MimeType.Contains("gif") &&
-                    !info.MimeType.Contains("svg"))
+                if (!stream.CanSeek)
+                {
+                    //Log warn that the income stream is not seekable
+                    return await next(request, content, stream, info);
+                }
+
+                if (!info.MimeType.StartsWith("image/", StringComparison.OrdinalIgnoreCase) &&
+                    !info.MimeType.Equals("image/jpeg", StringComparison.OrdinalIgnoreCase) &&
+                    !info.MimeType.Equals("image/jpg", StringComparison.OrdinalIgnoreCase) &&
+                    !info.MimeType.Equals("image/png", StringComparison.OrdinalIgnoreCase))
+                {
+                    //Log debug that the mimetype is not resizable image
+                    return await next(request, content, stream, info);
+                }
+
+                var probe = resizer.Probe(stream);
+                stream.Position = 0;
+                if (probe.Width > instructions.Width || probe.Height > instructions.Height)
                 {
                     using (var output = new MemoryStream())
                     {
-                        resizer.ProcessImage(stream, output, new Instructions(request.QueryString.Value));
+                        resizer.Resize(stream, output, instructions);
                         output.Position = 0;
                         return await next(request, content, output, info);
                     }
                 }
+
                 return await next(request, content, stream, info);
             });
         }

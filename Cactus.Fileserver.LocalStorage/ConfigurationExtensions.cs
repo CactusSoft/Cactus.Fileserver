@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Cactus.Fileserver.Config;
 using Cactus.Fileserver.Middleware;
 using Cactus.Fileserver.Pipeline;
 using Cactus.Fileserver.Storage;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.FileProviders.Physical;
@@ -25,20 +27,6 @@ namespace Cactus.Fileserver.LocalStorage
                 .ExtractFileinfo()
                 .Store(c.GetRequiredService<IFileStorageService>()));
             return services;
-        }
-
-        public static IApplicationBuilder UseGetLocalFiles(this IApplicationBuilder app, DirectoryInfo storageFolder)
-        {
-            if (!storageFolder.Exists)
-                storageFolder.Create();
-            return app
-                .UseGetFile(b => b
-                    .UseStaticFiles(new StaticFileOptions
-                    {
-                        FileProvider = new PhysicalFileProvider(storageFolder.FullName, ExclusionFilters.None),
-                        DefaultContentType = "application/octet-stream",
-                        ServeUnknownFileTypes = true
-                    }));
         }
     }
 
