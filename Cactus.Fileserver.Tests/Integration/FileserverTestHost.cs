@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
 using Cactus.Fileserver.Simple;
-using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 using RestSharp;
@@ -15,23 +14,31 @@ namespace Cactus.Fileserver.Tests.Integration
     [TestClass]
     public class FileserverTestHost
     {
-        protected static string BaseUrl = "http://localhost:5000";
-        private static IDisposable hostedSrv;
+        protected static string BaseUrl => _server?.BaseAddress?.ToString();
+        private static IWebHost _host;
+        protected static TestServer _server;
 
         [AssemblyInitialize]
-        public static void StartSimpleFileserver(TestContext context)
+        public static async Task StartSimpleFileserver(TestContext context)
         {
-            Environment.SetEnvironmentVariable("ASPNETCORE_URLS", BaseUrl);
-            if (hostedSrv == null)
-                hostedSrv = WebHost.CreateDefaultBuilder()
-                    .UseStartup<Startup>()
-                    .Start();
+            _server = new TestServer(new WebHostBuilder()
+                .UseStartup<Startup>()
+                .UseConfiguration(
+                    new ConfigurationBuilder()
+                        .Build()));
+            _host = _server.Host;
+            await _host.StartAsync();
+            //Environment.SetEnvironmentVariable("ASPNETCORE_URLS", BaseUrl);
+            //if (hostedSrv == null)
+            //    hostedSrv = WebHost.CreateDefaultBuilder()
+            //        .UseStartup<Startup>()
+            //        .Start();
         }
 
         [AssemblyCleanup]
         public static void ShutdownFileserver()
         {
-            hostedSrv?.Dispose();
+            _host?.Dispose();
         }
 
         protected void LogRequest(RestClient restClient, IRestRequest request, IRestResponse response, long durationMs)

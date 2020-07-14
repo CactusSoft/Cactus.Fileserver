@@ -1,7 +1,9 @@
-using System.Linq;
+using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RestSharp;
 
 namespace Cactus.Fileserver.Tests.Integration
 {
@@ -9,33 +11,32 @@ namespace Cactus.Fileserver.Tests.Integration
     public class CreateReadDeleteTest : FileserverTestHost
     {
         [TestMethod]
-        public void DummyFileTest()
+        public async Task DummyFileTest()
         {
             var bytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
-            var filename = "something.dummy";
-            var mimetype = "application/octet-stream";
-            var restClient = new RestClient(BaseUrl+"/files");
-            var post = new RestRequest(Method.POST);
-            post.AddFileBytes(filename, bytes, filename, mimetype);
-            var postRes = restClient.Execute(post);
-            LogRequest(restClient, post, postRes, 0);
+            var filename = "kartman.png";
 
-            Assert.AreEqual(ResponseStatus.Completed, postRes.ResponseStatus);
-            Assert.AreEqual(HttpStatusCode.Created, postRes.StatusCode);
-            var location = postRes.Headers.First(e => e.Name.Equals("Location")).Value.ToString();
+            using var form = new MultipartFormDataContent();
+            using var fileContent = new ByteArrayContent(await File.ReadAllBytesAsync(filename));
+            fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("multipart/form-data");
+            form.Add(fileContent, "file", Path.GetFileName(filename));
+            var client = _server.CreateClient();
+            var response = await client.PostAsync(BaseUrl + "files", form);
+
+            Assert.IsTrue(response.IsSuccessStatusCode, response.ToString());
+            Assert.AreEqual(HttpStatusCode.Created, response.StatusCode);
+            var location = response.Headers.Location.ToString();
             Assert.IsNotNull(location);
 
-            var get = new RestRequest(location, Method.GET);
-            var gerRes = restClient.Execute(get);
-            Assert.AreEqual(ResponseStatus.Completed, gerRes.ResponseStatus);
-            Assert.AreEqual(HttpStatusCode.OK, gerRes.StatusCode);
-            Assert.AreEqual(bytes.Length, gerRes.RawBytes.Length);
-            Assert.AreEqual(mimetype, gerRes.ContentType);
 
-            var del = new RestRequest(location, Method.DELETE);
-            var delRes = restClient.Execute(del);
-            Assert.AreEqual(ResponseStatus.Completed, delRes.ResponseStatus);
-            Assert.AreEqual(HttpStatusCode.NoContent, delRes.StatusCode);
+            var getRes = await _server.CreateRequest(location).GetAsync();
+            Assert.IsTrue(getRes.IsSuccessStatusCode, getRes.ToString());
+            Assert.AreEqual(HttpStatusCode.OK, getRes.StatusCode, getRes.ToString());
+            Assert.AreEqual((new FileInfo(filename)).Length, (await getRes.Content.ReadAsByteArrayAsync()).Length);
+
+            var delRes = await _server.CreateRequest(location).SendAsync(HttpMethod.Delete.Method);
+            Assert.IsTrue(delRes.IsSuccessStatusCode, delRes.ToString());
+            Assert.AreEqual(HttpStatusCode.NoContent, delRes.StatusCode, delRes.ToString());
         }
     }
 }
