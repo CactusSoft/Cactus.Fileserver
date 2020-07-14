@@ -13,7 +13,6 @@ namespace Cactus.Fileserver.Tests.Integration
         [TestMethod]
         public async Task DummyFileTest()
         {
-            var bytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 };
             var filename = "kartman.png";
 
             using var form = new MultipartFormDataContent();
