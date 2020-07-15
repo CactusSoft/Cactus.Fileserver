@@ -1,4 +1,3 @@
-using System;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -94,26 +93,19 @@ namespace Cactus.Fileserver.Tests.Integration
             Assert.IsTrue(getRes.IsSuccessStatusCode, getRes.ToString());
             Assert.AreEqual(HttpStatusCode.OK, getRes.StatusCode, getRes.ToString());
             Assert.IsTrue((new FileInfo(filename)).Length > (await getRes.Content.ReadAsByteArrayAsync()).Length);
-            Assert.AreEqual("image/png", getRes.Content.Headers.ContentType.MediaType);
 
-            await Task.Delay(5000);
-
-            getRes = await _server.CreateRequest(resizedFileLocation + ".json").GetAsync();
+            getRes = await _server.CreateRequest(resizedFileLocation + ".json").AddHeader("Cache-Control", "no-cache").GetAsync();
             Assert.IsTrue(getRes.IsSuccessStatusCode, getRes.ToString());
-            Assert.IsNotNull(postRes.Content);
-            var resString = await postRes.Content.ReadAsStringAsync();
-            metaData = JsonConvert.DeserializeObject<MetaInfo>(await postRes.Content.ReadAsStringAsync());
-
-            //Test server returns out-of-date file version (cache?) for some reason
-            //Assert.AreEqual(originLocation, metaData.Origin.ToString());
+            Assert.IsNotNull(getRes.Content);
+            metaData = JsonConvert.DeserializeObject<MetaInfo>(await getRes.Content.ReadAsStringAsync());
+            Assert.AreEqual(originLocation, metaData.Origin.ToString());
 
             getRes = await _server.CreateRequest(originLocation + ".json").GetAsync();
             Assert.IsTrue(getRes.IsSuccessStatusCode, getRes.ToString());
-            Assert.IsNotNull(postRes.Content);
-            metaData = JsonConvert.DeserializeObject<MetaInfo>(await postRes.Content.ReadAsStringAsync());
-            //Test server returns out-of-date file version (cache?) for some reason
-            //Assert.IsNotNull(metaData.Extra);
-            //Assert.IsNotNull(metaData.Extra[instructions200.BuildSizeKey()]);
+            Assert.IsNotNull(getRes.Content);
+            metaData = JsonConvert.DeserializeObject<MetaInfo>(await getRes.Content.ReadAsStringAsync());
+            Assert.IsNotNull(metaData.Extra);
+            Assert.IsNotNull(metaData.Extra[instructions200.BuildSizeKey()]);
 
             var delRes = await _server.CreateRequest(originLocation).SendAsync(HttpMethod.Delete.Method);
             Assert.IsTrue(delRes.IsSuccessStatusCode, delRes.ToString());
