@@ -3,23 +3,24 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security.Principal;
 using System.Threading.Tasks;
-using Cactus.Fileserver.Logging;
 using Cactus.Fileserver.Model;
 using Cactus.Fileserver.Pipeline;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Cactus.Fileserver.Middleware
 {
     public class AddFileHandler
     {
-        private static readonly ILog Log = LogProvider.GetLogger(typeof(AddFileHandler));
         private readonly FileProcessorDelegate _processPipelineEntry;
+        private readonly ILogger<AddFileHandler> _log;
 
-        public AddFileHandler(RequestDelegate next, FileProcessorDelegate processFunc)
+        public AddFileHandler(RequestDelegate next, FileProcessorDelegate processFunc, ILogger<AddFileHandler> log)
         {
             _processPipelineEntry = processFunc;
-            Log.Debug(".ctor");
+            _log = log;
+            log.LogDebug(".ctor");
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -32,7 +33,7 @@ namespace Cactus.Fileserver.Middleware
             context.Response.Headers.Add("Location", meta.Uri.ToString());
             context.Response.ContentType = "application/json";
             await context.Response.WriteAsync(JsonConvert.SerializeObject(BuldOkResponseObject(meta)));
-            Log.Info("Served by AddFileMiddleware");
+            _log.LogInformation("Served by AddFileMiddleware");
         }
 
         protected virtual object BuldOkResponseObject(IFileInfo meta)

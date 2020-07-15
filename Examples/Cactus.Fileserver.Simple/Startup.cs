@@ -36,7 +36,7 @@ namespace Cactus.Fileserver.Simple
                 .AddLogging()
                 .AddSingleton<ISecurityManager, NothingCheckSecurityManager>()
                 .AddLocalFileserver(new Uri(url),
-                    c => c.GetRequiredService<IHostingEnvironment>().WebRootPath,
+                    c => c.GetRequiredService<IWebHostEnvironment>().WebRootPath,
                     c => new PipelineBuilder()
                         .UseMultipartContent()
                         .ExtractFileinfo()
@@ -53,7 +53,7 @@ namespace Cactus.Fileserver.Simple
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddLog4Net();
             var storageFolder = new DirectoryInfo(env.WebRootPath);
@@ -73,7 +73,8 @@ namespace Cactus.Fileserver.Simple
                             ContentTypeProvider = new FileExtensionContentTypeProvider(new Dictionary<string, string>
                             {
                                 { ".json", "application/json"},
-                                { ".svg", "image/svg+xml"}
+                                { ".svg", "image/svg+xml"},
+                                { ".png", "image/png"}
                             })
                         }))
                      .UseAddFile<AddFileHandler>()           //<--- handler may be customized

@@ -1,9 +1,9 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Cactus.Fileserver.Logging;
 using Cactus.Fileserver.Model;
 using Cactus.Fileserver.Storage;
+using Microsoft.Extensions.Logging;
 
 namespace Cactus.Fileserver.LocalStorage
 {
@@ -11,12 +11,13 @@ namespace Cactus.Fileserver.LocalStorage
     {
         private const int MaxTriesCount = 10;
 
-        private static readonly ILog Log = LogProvider.GetLogger(typeof(LocalFileStorage));
         private readonly IStoredNameProvider _nameProvider;
+        private readonly ILogger _log;
 
-        public LocalFileStorage(Uri baseUri, IStoredNameProvider nameProvider, string storeFolder = null) : base(new DefaultUriResolver(baseUri, storeFolder))
+        public LocalFileStorage(Uri baseUri, IStoredNameProvider nameProvider, ILogger log, string storeFolder = null) : base(new DefaultUriResolver(baseUri, storeFolder, log))
         {
             _nameProvider = nameProvider;
+            _log = log;
         }
 
         public LocalFileStorage(IStoredNameProvider nameProvider, IUriResolver uriResolver) : base(uriResolver)
@@ -66,11 +67,13 @@ namespace Cactus.Fileserver.LocalStorage
         {
             private readonly string _baseFolder;
             private readonly Uri _baseUri;
+            private readonly ILogger _log;
 
 
-            public DefaultUriResolver(Uri baseUri, string baseFolder)
+            public DefaultUriResolver(Uri baseUri, string baseFolder, ILogger log)
             {
                 _baseUri = baseUri;
+                _log = log;
                 _baseFolder = Path.GetTempPath();
                 if (!string.IsNullOrEmpty(baseFolder))
                     try
@@ -79,11 +82,11 @@ namespace Cactus.Fileserver.LocalStorage
                             Directory.CreateDirectory(baseFolder);
 
                         _baseFolder = baseFolder;
-                        Log.Info("Storage folder is configured successfully");
+                        _log.LogInformation("Storage folder is configured successfully");
                     }
                     catch (Exception)
                     {
-                        Log.ErrorFormat(
+                        _log.LogError(
                             "Configuration error. StorageFolder {0} is unaccesable, temporary folder {1} will be used instead",
                             baseFolder, _baseFolder);
                     }

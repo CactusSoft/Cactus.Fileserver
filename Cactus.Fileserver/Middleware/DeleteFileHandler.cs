@@ -1,26 +1,27 @@
 using System.Net;
 using System.Threading.Tasks;
-using Cactus.Fileserver.Logging;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace Cactus.Fileserver.Middleware
 {
     internal class DeleteFileHandler
     {
-        private static readonly ILog Log = LogProvider.GetLogger(typeof(DeleteFileHandler));
         protected readonly IFileStorageService StorageService;
+        private readonly ILogger<AddFileHandler> _log;
 
-        public DeleteFileHandler(RequestDelegate next, IFileStorageService storageService)
+        public DeleteFileHandler(RequestDelegate next, IFileStorageService storageService, ILogger<AddFileHandler> log)
         {
             StorageService = storageService;
-            Log.Debug(".ctor");
+            _log = log;
+            log.LogDebug(".ctor");
         }
 
         public async Task InvokeAsync(HttpContext context)
         {
             await StorageService.Delete(context.Request.GetAbsoluteUri());
             context.Response.StatusCode = (int) HttpStatusCode.NoContent;
-            Log.Info("Served by DeleteFileMiddleware");
+            _log.LogInformation("Served by DeleteFileMiddleware");
         }
     }
 }

@@ -1,21 +1,21 @@
 using System;
 using System.IO;
-using Cactus.Fileserver.Logging;
 using Cactus.Fileserver.Model;
 using Cactus.Fileserver.Storage;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Cactus.Fileserver.LocalStorage
 {
     public class LocalMetaInfoStorage : IMetaInfoStorage
     {
-        private static readonly ILog Log = LogProvider.GetLogger(typeof(LocalMetaInfoStorage));
-
         private readonly string _baseFolder;
         private readonly string _metafileExt;
+        private readonly ILogger _log;
 
-        public LocalMetaInfoStorage(string folder, string fileExt = ".json")
+        public LocalMetaInfoStorage(string folder, ILogger log, string fileExt = ".json")
         {
+            _log = log;
             if (string.IsNullOrEmpty(fileExt))
                 throw new ArgumentNullException(nameof(fileExt));
             if (fileExt[0] != '.')
@@ -24,18 +24,19 @@ namespace Cactus.Fileserver.LocalStorage
                 throw new ArgumentNullException(nameof(folder));
 
             _metafileExt = fileExt;
+            _log = log;
             try
             {
                 if (!Directory.Exists(folder))
                     Directory.CreateDirectory(folder);
 
                 _baseFolder = folder;
-                Log.Info("Storage folder is configured successfully");
+                _log.LogInformation("Storage folder is configured successfully");
             }
             catch (Exception)
             {
-                Log.ErrorFormat(
-                    "Configuration error. StorageFolder {0} is unaccesable, temporary folder {1} will be used instead",
+                _log.LogError(
+                    "Configuration error. StorageFolder {0} is inaccessible, temporary folder {1} will be used instead",
                     folder, _baseFolder);
             }
         }
