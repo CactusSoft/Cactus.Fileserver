@@ -1,11 +1,11 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Cactus.Fileserver.Logging;
 using Cactus.Fileserver.Model;
 using Cactus.Fileserver.Storage;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.Azure.Storage;
+using Microsoft.Azure.Storage.Blob;
+using Microsoft.Extensions.Logging;
 
 namespace Cactus.Fileserver.AzureStorage
 {
@@ -13,15 +13,16 @@ namespace Cactus.Fileserver.AzureStorage
     {
         private readonly string _containerName;
         private readonly IStoredNameProvider _nameProvider;
+        private readonly ILogger _log;
         private readonly string _cacheControl;
         private readonly string _connectionString;
         private CloudBlobContainer _cloudBlobContainer;
-        private static readonly ILog Log = LogProvider.GetLogger(typeof(AzureFileStorage));
 
-        public AzureFileStorage(string connectionString, string containerName, IStoredNameProvider nameProvider)
+        public AzureFileStorage(string connectionString, string containerName, IStoredNameProvider nameProvider, ILogger log)
         {
             _containerName = containerName;
             _nameProvider = nameProvider;
+            _log = log;
             //// sec * min * hour
             _cacheControl = $"max-age={60 * 60 * 24}, must-revalidate";
             _connectionString = connectionString;
@@ -31,7 +32,7 @@ namespace Cactus.Fileserver.AzureStorage
             }
             catch (Exception e)
             {
-                Log.Error("Init failed {0}: {1}", e.GetType().Name, e.Message);
+                _log.LogError("Init failed {0}: {1}", e.GetType().Name, e.Message);
             }
         }
 
@@ -41,7 +42,7 @@ namespace Cactus.Fileserver.AzureStorage
         {
             await InitStorage().ConfigureAwait(false);
             var targetFile = _nameProvider.GetName(info);
-            Log.Debug("Writing {0} azure", targetFile);
+            _log.LogDebug("Writing {0} azure", targetFile);
             var blockBlob = _cloudBlobContainer.GetBlockBlobReference(targetFile);
             blockBlob.Properties.ContentType = info.MimeType;
             blockBlob.Properties.CacheControl = _cacheControl;
@@ -68,7 +69,7 @@ namespace Cactus.Fileserver.AzureStorage
         {
             await InitStorage().ConfigureAwait(false);
             var targetFile = uri.GetResource();
-            Log.Debug("Delete {0} from azure", targetFile);
+            _log.LogDebug("Delete {0} from azure", targetFile);
             var blockBlob = _cloudBlobContainer.GetBlockBlobReference(targetFile);
             await blockBlob.DeleteIfExistsAsync().ConfigureAwait(false);
         }

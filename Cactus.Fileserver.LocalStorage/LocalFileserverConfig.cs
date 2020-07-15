@@ -1,25 +1,27 @@
 using System;
-using Cactus.Fileserver.Config;
 using Cactus.Fileserver.Pipeline;
 using Cactus.Fileserver.Security;
 using Cactus.Fileserver.Storage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.Extensions.Logging;
 
 namespace Cactus.Fileserver.LocalStorage
 {
     public class LocalFileserverConfig 
     {
-        private readonly string fileStorageFolder;
-        private readonly string metaStorageFolder;
+        private readonly string _fileStorageFolder;
+        private readonly string _metaStorageFolder;
+        private readonly ILoggerFactory _loggerFactory;
 
-        public LocalFileserverConfig(string fileStorageFolder, string metaStorageFolder, Uri baseUri, string path)
+        public LocalFileserverConfig(string fileStorageFolder, string metaStorageFolder, Uri baseUri, string path, ILoggerFactory loggerFactory)
         {
-            this.fileStorageFolder = fileStorageFolder;
-            this.metaStorageFolder = metaStorageFolder;
+            this._fileStorageFolder = fileStorageFolder;
+            this._metaStorageFolder = metaStorageFolder;
+            _loggerFactory = loggerFactory;
             BaseUri = baseUri;
             Path = path;
-            this.fileStorageFolder = fileStorageFolder;
+            this._fileStorageFolder = fileStorageFolder;
             SecurityManager = () => new NothingCheckSecurityManager();
         }
 
@@ -39,8 +41,8 @@ namespace Cactus.Fileserver.LocalStorage
                         ? BaseUri
                         : new Uri(BaseUri, Path + '/');
                     var fileStorage = new LocalFileStorage(baseFilesUri,
-                        new RandomNameProvider {StoreExt = true}, fileStorageFolder);
-                    var metaStorage = new LocalMetaInfoStorage(metaStorageFolder);
+                        new RandomNameProvider {StoreExt = true},_loggerFactory.CreateLogger(typeof(LocalFileStorage)), _fileStorageFolder);
+                    var metaStorage = new LocalMetaInfoStorage(_metaStorageFolder, _loggerFactory.CreateLogger(typeof(LocalMetaInfoStorage)));
                     return new FileStorageService(metaStorage, fileStorage, SecurityManager());
                 };
             }
@@ -65,7 +67,7 @@ namespace Cactus.Fileserver.LocalStorage
         {
             return app.UseStaticFiles(new StaticFileOptions
             {
-                FileProvider = new PhysicalFileProvider(fileStorageFolder),
+                FileProvider = new PhysicalFileProvider(_fileStorageFolder),
                 DefaultContentType = "application/octet-stream",
                 ServeUnknownFileTypes = true
             });
