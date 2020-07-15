@@ -73,7 +73,8 @@ namespace Cactus.Fileserver.Simple
                             ContentTypeProvider = new FileExtensionContentTypeProvider(new Dictionary<string, string>
                             {
                                 { ".json", "application/json"},
-                                { ".svg", "image/svg+xml"}
+                                { ".svg", "image/svg+xml"},
+                                { ".png", "image/png"}
                             })
                         }))
                      .UseAddFile<AddFileHandler>()           //<--- handler may be customized

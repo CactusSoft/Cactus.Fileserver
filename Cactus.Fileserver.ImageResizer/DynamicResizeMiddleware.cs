@@ -85,7 +85,7 @@ namespace Cactus.Fileserver.ImageResizer
                 using (var original = await _storage.Get(request.GetAbsoluteUri()))
                 {
                     _resizer.Resize(original, tempFile, instructions);
-                    var newFileInfo = new IncomeFileInfo(metaData);
+                    var newFileInfo = new IncomeFileInfo(metaData) {Origin = metaData.Uri, Uri = null};
                     tempFile.Position = 0;
                     var result = await _storage.Create(tempFile, newFileInfo);
                     Uri savedRedirectUri;

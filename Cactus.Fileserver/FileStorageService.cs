@@ -64,7 +64,7 @@ namespace Cactus.Fileserver
             return res;
         }
 
-        public Task UpdateMetadata(MetaInfo fileInfo)
+        public  Task UpdateMetadata(MetaInfo fileInfo)
         {
             _metaStorage.Add(fileInfo);
             return Task.FromResult(0);
