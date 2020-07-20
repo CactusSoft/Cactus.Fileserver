@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Cactus.Fileserver.Config;
-using Cactus.Fileserver.ImageResizer;
-using Cactus.Fileserver.ImageResizer.Utils;
+using Cactus.Fileserver.Aspnet.Config;
+using Cactus.Fileserver.Aspnet.Middleware;
 using Cactus.Fileserver.LocalStorage;
-using Cactus.Fileserver.Middleware;
-using Cactus.Fileserver.Pipeline;
-using Cactus.Fileserver.Security;
+using Cactus.Fileserver.Storage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -33,23 +30,31 @@ namespace Cactus.Fileserver.Simple
             //url += url.EndsWith('/') ? "files/" : "/files/";     //<--- In case of using sub-path
 
             services
-                .AddLogging()
-                .AddSingleton<ISecurityManager, NothingCheckSecurityManager>()
-                .AddLocalFileserver(new Uri(url),
-                    c => c.GetRequiredService<IWebHostEnvironment>().WebRootPath,
-                    c => new PipelineBuilder()
-                        .UseMultipartContent()
-                        .ExtractFileinfo()
-                        .ReadContentStream()
-                        .ResizeIfLargeThen(c.GetRequiredService<IImageResizerService>(), 1000, 1000) //Force resizing for large images
-                        //.AcceptOnlyImageContent() //To accept only image content
-                        .Store(c.GetRequiredService<IFileStorageService>()))
-                .AddSingleton<IImageResizerService, ImageResizerService>()
-                .Configure<ResizingOptions>(o =>
-                {
-                    o.MandatoryInstructions = new ResizeInstructions { MaxWidth = 2000, MaxHeight = 2000 }; //Max size to operate width
-                    o.DefaultInstructions = new ResizeInstructions { KeepAspectRatio = true };
-                });
+                .AddLogging();
+
+            var baseFolder = Path.GetTempPath();
+            services.AddScoped<IUriResolver, AllInTheSameFolderUriResolver>(c => new AllInTheSameFolderUriResolver(new Uri(url), baseFolder));
+            services.AddScoped<IMetaInfoStorage, LocalMetaInfoStorage>(c => new LocalMetaInfoStorage(baseFolder, c.GetRequiredService<ILogger<LocalMetaInfoStorage>>()));
+            services.AddScoped<IFileStorage, LocalFileStorage>();
+            services.AddScoped<IStoredNameProvider, RandomNameProvider>();
+            services.AddScoped<IFileStorageService, FileStorageService>();
+
+
+            //.AddLocalFileserver(new Uri(url),
+            //    c => c.GetRequiredService<IWebHostEnvironment>().WebRootPath,
+            //    c => new PipelineBuilder()
+            //        .UseMultipartContent()
+            //        .ExtractFileinfo()
+            //        .ReadContentStream()
+            //        .ResizeIfLargeThen(c.GetRequiredService<IImageResizerService>(), 1000, 1000) //Force resizing for large images
+            //        //.AcceptOnlyImageContent() //To accept only image content
+            //        .Store(c.GetRequiredService<IFileStorageService>()))
+            //.AddSingleton<IImageResizerService, ImageResizerService>()
+            //.Configure<ResizingOptions>(o =>
+            //{
+            //    o.MandatoryInstructions = new ResizeInstructions { MaxWidth = 2000, MaxHeight = 2000 }; //Max size to operate width
+            //    o.DefaultInstructions = new ResizeInstructions { KeepAspectRatio = true };
+            //});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,13 +62,13 @@ namespace Cactus.Fileserver.Simple
         {
             loggerFactory.AddLog4Net();
             var storageFolder = new DirectoryInfo(env.WebRootPath);
-            if(!storageFolder.Exists)
+            if (!storageFolder.Exists)
                 storageFolder.Create();
 
             app
                 .UseDeveloperExceptionPage()
                      //.Map("/files", branch => branch       //<--- In case of using sub-path
-                     .UseDynamicResizing()
+                     //.UseDynamicResizing()
                      .UseGetFile(b => b
                         .UseStaticFiles(new StaticFileOptions
                         {

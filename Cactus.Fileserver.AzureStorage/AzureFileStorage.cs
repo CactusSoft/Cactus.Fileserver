@@ -38,7 +38,7 @@ namespace Cactus.Fileserver.AzureStorage
 
         public IUriResolver UriResolver { get; }
 
-        public async Task<Uri> Add(Stream stream, IFileInfo info)
+        public async Task<Uri> Add(Stream stream, IMetaInfo info)
         {
             await InitStorage().ConfigureAwait(false);
             var targetFile = _nameProvider.GetName(info);

@@ -15,20 +15,12 @@ namespace Cactus.Fileserver
         Task<Stream> Get(Uri uri);
 
         /// <summary>
-        ///  Get uri to static file
-        /// </summary>
-        /// <param name="uri">Request Uri</param>
-        /// <returns></returns>
-        Uri GetRedirectUri(Uri uri);
-
-
-        /// <summary>
         ///     Store a new file from stream
         /// </summary>
         /// <param name="stream"></param>
-        /// <param name="fileInfo"></param>
+        /// <param name="metaInfo"></param>
         /// <returns></returns>
-        Task<MetaInfo> Create(Stream stream, IFileInfo fileInfo);
+        Task Create(Stream stream, IMetaInfo metaInfo);
 
         /// <summary>
         ///     Delete file by URI
@@ -42,14 +34,14 @@ namespace Cactus.Fileserver
         /// </summary>
         /// <param name="uri"></param>
         /// <returns></returns>
-        T GetInfo<T>(Uri uri) where T : MetaInfo;
+        Task<T> GetInfo<T>(Uri uri) where T : IMetaInfo;
 
         /// <summary>
         ///  Update metadata
         /// </summary>
         /// <param name="fileInfo">Meta</param>
         /// <returns></returns>
-        Task UpdateMetadata(MetaInfo fileInfo);
+        Task UpdateInfo(IMetaInfo fileInfo);
 
     }
 }

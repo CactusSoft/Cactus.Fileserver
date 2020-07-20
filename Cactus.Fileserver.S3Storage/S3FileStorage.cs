@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Cactus.Fileserver.Model;
@@ -9,117 +8,64 @@ using Cactus.Fileserver.Storage;
 
 namespace Cactus.Fileserver.S3Storage
 {
-    public class S3FileStorage : BaseFileStore
+    public class S3FileStorage : IFileStorage
     {
-        public const string AwsUrlFormat = "https://s3.{0}.amazonaws.com/{1}/{2}";
-        public const string AwsUrlReplace = "https://s3.{0}.amazonaws.com/{1}/";
-        private readonly string _bucketName;
-        private readonly IStoredNameProvider _nameProvider;
-        private readonly Func<AmazonS3Client> _amazonClientFactory;
-        
-        public S3FileStorage(string bucketName, RegionEndpoint regionEndpoint, string accessKey, string secretKey, Uri fileserverBaseUri, IStoredNameProvider nameProvider) : base(new DefaultUriResolver(bucketName, regionEndpoint, fileserverBaseUri))
+        protected readonly IS3FileStorageSettings Settings;
+        protected readonly IAmazonS3 S3Client;
+        protected readonly IStoredNameProvider NameProvider;
+        protected readonly IUriResolver UriResolver;
+
+
+        public S3FileStorage(IS3FileStorageSettings settings, IAmazonS3 s3Client, IStoredNameProvider nameProvider, IUriResolver uriResolver)
         {
-            _bucketName = bucketName;
-            _nameProvider = nameProvider;
-            _amazonClientFactory = () => new AmazonS3Client(accessKey, secretKey, regionEndpoint);
+            Settings = settings;
+            S3Client = s3Client;
+            NameProvider = nameProvider;
+            UriResolver = uriResolver;
         }
 
-        public S3FileStorage(string bucketName, Uri fileserverBaseUri, IStoredNameProvider nameProvider) : base(new DefaultUriResolver(bucketName, new AmazonS3Client().Config.RegionEndpoint, fileserverBaseUri))
+        public virtual async Task<Uri> Add(Stream stream, IMetaInfo info)
         {
-            _bucketName = bucketName;
-            _nameProvider = nameProvider;
-            _amazonClientFactory = () => new AmazonS3Client();
+            var key = NameProvider.GetName(info);
+            var putRequest = new PutObjectRequest
+            {
+                BucketName = Settings.BucketName,
+                Key = key,
+                InputStream = stream,
+                AutoCloseStream = true,
+                CannedACL = S3CannedACL.PublicRead
+            };
+            putRequest.Metadata.Add(nameof(info.OriginalName), info.OriginalName);
+            putRequest.Metadata.Add(nameof(info.MimeType), info.MimeType);
+            putRequest.Metadata.Add(nameof(info.Owner), info.Owner);
+
+            await S3Client.PutObjectAsync(putRequest);
+            return UriResolver.ResolveUri(Settings.Region, Settings.BucketName, key);
+
         }
 
-        protected override async Task<string> ExecuteAdd(Stream stream, IFileInfo info)
+        public virtual Task Delete(IMetaInfo fileInfo)
         {
-            var key = _nameProvider.GetName(info);
-            using (var client = _amazonClientFactory.Invoke())
+            var key = UriResolver.ResolveKey(fileInfo);
+            var deleteRequest = new DeleteObjectRequest
             {
-                var putRequest = new PutObjectRequest
-                {
-                    BucketName = _bucketName,
-                    Key = key,
-                    InputStream = stream,
-                    AutoCloseStream = true,
-                    CannedACL = S3CannedACL.PublicRead
-                };
-                putRequest.Metadata.Add(nameof(info.OriginalName), info.OriginalName);
-                putRequest.Metadata.Add(nameof(info.MimeType), info.MimeType);
-                putRequest.Metadata.Add(nameof(info.Owner), info.Owner);
-
-                await client.PutObjectAsync(putRequest);
-                return key;
-            }
+                BucketName = Settings.BucketName,
+                Key = key
+            };
+            return S3Client.DeleteObjectAsync(deleteRequest);
         }
 
-        public override async Task Delete(Uri uri)
+        public virtual async Task<Stream> Get(IMetaInfo fileInfo)
         {
-            var key = uri.Segments[1];
-            using (var client = _amazonClientFactory.Invoke())
+            var filename = UriResolver.ResolveKey(fileInfo);
+            var getRequest = new GetObjectRequest
             {
-                var deleteRequest = new DeleteObjectRequest
-                {
-                    BucketName = _bucketName,
-                    Key = key
-                };
+                BucketName = Settings.BucketName,
+                Key = filename
+            };
 
-                await client.DeleteObjectAsync(deleteRequest);
-            }
-        }
-
-        protected override async Task<Stream> ExecuteGet(string filename)
-        {
-            using (var client = _amazonClientFactory.Invoke())
-            {
-                var getRequest = new GetObjectRequest
-                {
-                    BucketName = _bucketName,
-                    Key = filename
-                };
-
-                var response = await client.GetObjectAsync(getRequest);
-                return response.ResponseStream;
-            }
-        }
-        
-        protected class DefaultUriResolver : IUriResolver
-        {
-            private readonly string _bucketName;
-            private readonly RegionEndpoint _regionEndpoint;
-            private readonly Uri _fileserverBaseUri;
-
-            public DefaultUriResolver(string bucketName, RegionEndpoint regionEndpoint, Uri fileserverBaseUri)
-            {
-                _bucketName = bucketName;
-                _regionEndpoint = regionEndpoint;
-                _fileserverBaseUri = fileserverBaseUri;
-            }
-
-            public Uri ResolveStaticUri(Uri currentUri)
-            {
-                return new Uri(string.Format(AwsUrlFormat, _regionEndpoint.SystemName, _bucketName, ResolveFilename(currentUri)));;
-            }
-
-            public Uri ResolveUri(string newFileName)
-            {
-                return new Uri(_fileserverBaseUri, newFileName);
-            }
-
-            public string ResolveFilename(Uri fileUri)
-            {
-                return fileUri.GetResource();
-            }
-
-            public string ResolvePath(Uri fileUri)
-            {
-                throw new NotImplementedException("Not implemented for this store");
-            }
-
-            public string ResolvePath(string fileName)
-            {
-                throw new NotImplementedException("Not implemented for this store");
-            }
+            var response = await S3Client.GetObjectAsync(getRequest);
+            return response.ResponseStream;
         }
     }
 }

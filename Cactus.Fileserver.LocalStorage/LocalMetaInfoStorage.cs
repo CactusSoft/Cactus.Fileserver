@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Cactus.Fileserver.Model;
 using Cactus.Fileserver.Storage;
 using Microsoft.Extensions.Logging;
@@ -25,50 +26,48 @@ namespace Cactus.Fileserver.LocalStorage
 
             _metafileExt = fileExt;
             _log = log;
-            try
-            {
-                if (!Directory.Exists(folder))
-                    Directory.CreateDirectory(folder);
-
-                _baseFolder = folder;
-                _log.LogInformation("Storage folder is configured successfully");
-            }
-            catch (Exception)
-            {
-                _log.LogError(
-                    "Configuration error. StorageFolder {0} is inaccessible, temporary folder {1} will be used instead",
-                    folder, _baseFolder);
-            }
+            _baseFolder = folder;
         }
 
-        public void Add(MetaInfo info)
+        public async Task Add<T>(T info) where T : IMetaInfo
         {
             var fullFilename = GetFile(info.Uri);
+            _log.LogDebug("Write metainfo to {file}", fullFilename);
             using (var writer = new StreamWriter(File.Create(fullFilename)))
             {
-                // Damn XMLSerializer could not serialize Uri type, cause of it has no default constructor. What is the bullshit!!!!
-                // Use JSON and relax.
-
-                writer.Write(JsonConvert.SerializeObject(info));
+                await writer.WriteAsync(JsonConvert.SerializeObject(info));
             }
         }
 
-        public void Delete(Uri uri)
+        public Task Update<T>(T info) where T : IMetaInfo
+        {
+            return Add(info);
+        }
+
+        public Task Delete(Uri uri)
         {
             var fullFilename = GetFile(uri);
+            _log.LogDebug("Delete metainfo {file}", fullFilename);
             File.Delete(fullFilename);
+            return Task.CompletedTask;
         }
 
-        public T Get<T>(Uri uri) where T : MetaInfo
+        public async Task<T> Get<T>(Uri uri) where T : IMetaInfo
         {
-            var metafile = GetFile(uri);
-            using (var reader = new StreamReader(new FileStream(metafile, FileMode.Open)))
+            var file = GetFile(uri);
+            _log.LogDebug("Get metainfo from {file}", file);
+            using (var reader = new StreamReader(new FileStream(file, FileMode.Open)))
             {
-                return JsonConvert.DeserializeObject<T>(reader.ReadToEnd());
+                return JsonConvert.DeserializeObject<T>(await reader.ReadToEndAsync());
             }
         }
 
-        protected string GetFile(Uri uri)
+        /// <summary>
+        /// Returns full file path to the metainfo file
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <returns></returns>
+        protected virtual string GetFile(Uri uri)
         {
             return Path.Combine(_baseFolder, uri.GetResource() + _metafileExt);
         }

@@ -1,41 +1,18 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Cactus.Fileserver.Model
+namespace Cactus.Fileserver.Aspnet.Dto
 {
-    /// <summary>
-    ///     Represent file info. For example image that you uploaded pic.jpeg and received back URL like
-    ///     http://cdn.texas.srv.com/debug-folder/abcdf.png?x=y
-    /// </summary>
-    public class MetaInfo : IMetaInfo
+    public class ResponseDto
     {
-        public MetaInfo()
-        {
-            Extra = new Dictionary<string, string>();
-        }
-
-        public MetaInfo(IMetaInfo copyFrom):this()
-        {
-            if (copyFrom != null)
-            {
-                Uri = copyFrom.Uri;
-                Origin = copyFrom.Origin;
-                MimeType = copyFrom.MimeType;
-                OriginalName = copyFrom.OriginalName;
-                Owner = copyFrom.Owner;
-                Icon = copyFrom.Icon;
-            }
-        }
-
+        /// <summary>
+        /// Not null if a error took place
+        /// </summary>
+        public string Error { get; set; }
         /// <summary>
         ///     Full URL for getting the file. http://cdn.texas.srv.com/debug-folder/abcdf.png?x=y  in our case
         /// </summary>
         public Uri Uri { get; set; }
-
-        /// <summary>
-        /// Internal storage URI. Local file system path or S3/Azure storage URI
-        /// </summary>
-        public Uri InternalUri { get; set; }
 
         /// <summary>
         /// Origin URI.

@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Cactus.Fileserver.Model;
 
 namespace Cactus.Fileserver.Storage
@@ -14,13 +15,20 @@ namespace Cactus.Fileserver.Storage
         /// </summary>
         /// <param name="info">Meta information.
         /// The Url field must be filled up - it uses to address the meta info in Get or Delete operations </param>
-        void Add(MetaInfo info);
+        Task Add<T>(T info) where T : IMetaInfo;
+
+        /// <summary>
+        /// Update meta information to the storage
+        /// </summary>
+        /// <param name="info">Meta information.
+        /// The Url field must be filled up - it uses to address the meta info in Get or Delete operations </param>
+        Task Update<T>(T info) where T : IMetaInfo;
 
         /// <summary>
         /// Delete meta information by the file URI
         /// </summary>
         /// <param name="uri">A file URI. The same URI that was set in MetaInfo.Uri during Add operation</param>
-        void Delete(Uri uri);
+        Task Delete(Uri uri);
 
         /// <summary>
         /// Get a file metadata
@@ -28,6 +36,6 @@ namespace Cactus.Fileserver.Storage
         /// <typeparam name="T">Metadata could be deserialized as any other type derived from MetaInfo</typeparam>
         /// <param name="uri">A file URI. The same URI that was set in MetaInfo.Uri during Add operation</param>
         /// <returns>Meta data</returns>
-        T Get<T>(Uri uri) where T : MetaInfo;
+        Task<T> Get<T>(Uri uri) where T : IMetaInfo;
     }
 }

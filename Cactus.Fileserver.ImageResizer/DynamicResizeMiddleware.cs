@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Cactus.Fileserver.ImageResizer.Utils;
@@ -45,11 +46,11 @@ namespace Cactus.Fileserver.ImageResizer
             MetaInfo metaData;
             try
             {
-                metaData = _storage.GetInfo<MetaInfo>(request.GetAbsoluteUri());
+                metaData = await _storage.GetInfo<MetaInfo>(request.GetAbsoluteUri());
                 if (metaData.Origin != null && !metaData.Uri.Equals(metaData.Origin))
                 {
                     _log.LogDebug("{0} is not origin, getting the origin for transformation", metaData.Uri);
-                    metaData = _storage.GetInfo<MetaInfo>(metaData.Origin);
+                    metaData = await _storage.GetInfo<MetaInfo>(metaData.Origin);
                 }
             }
             catch (FileNotFoundException)
@@ -85,21 +86,13 @@ namespace Cactus.Fileserver.ImageResizer
                 using (var original = await _storage.Get(request.GetAbsoluteUri()))
                 {
                     _resizer.Resize(original, tempFile, instructions);
-                    var newFileInfo = new IncomeFileInfo(metaData) {Origin = metaData.Uri, Uri = null};
+                    var newFileInfo = new MetaInfo(metaData) {Origin = metaData.Uri, Uri = null};
                     tempFile.Position = 0;
-                    var result = await _storage.Create(tempFile, newFileInfo);
-                    Uri savedRedirectUri;
-                    try
-                    {
-                        savedRedirectUri = _storage.GetRedirectUri(result.Uri);
-                    }
-                    catch (NotImplementedException)
-                    {
-                        savedRedirectUri = result.Uri;
-                    }
-                    metaData.Extra.Add(sizeKey, savedRedirectUri.ToString());
-                    await _storage.UpdateMetadata(metaData);
-                    context.Response.Redirect(savedRedirectUri.ToString(), true);
+                    await _storage.Create(tempFile, newFileInfo);
+                    Debug.Assert(newFileInfo.Uri != null, "newFileInfo.Uri != null");
+                    metaData.Extra.Add(sizeKey, newFileInfo.Uri.ToString());
+                    await _storage.UpdateInfo(metaData);
+                    context.Response.Redirect(newFileInfo.Uri.ToString(), true);
                     return;
                 }
             }

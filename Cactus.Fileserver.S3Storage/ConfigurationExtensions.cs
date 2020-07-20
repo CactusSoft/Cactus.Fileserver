@@ -1,5 +1,6 @@
 ﻿using System;
 using Amazon;
+using Amazon.S3;
 using Cactus.Fileserver.Config;
 using Cactus.Fileserver.LocalStorage;
 using Cactus.Fileserver.Pipeline;
@@ -11,13 +12,17 @@ using Microsoft.Extensions.Logging;
 
 namespace Cactus.Fileserver.S3Storage
 {
+    public class S3FileserverBuilder
+    {
+
+    }
     public static class ConfigurationExtensions
     {
         public static IServiceCollection AddS3Fileserver(this IServiceCollection services, Uri baseFileserverUri, string bucketName, string awsSecretKey, string awsAccessKey, RegionEndpoint regionEndpoint, Func<IServiceProvider, string> metaStorageFolder, Func<IServiceProvider, FileProcessorDelegate> pipeline = null)
         {
-            services.AddSingleton<IMetaInfoStorage>(c => new LocalMetaInfoStorage(metaStorageFolder(c),c.GetRequiredService<ILogger<LocalMetaInfoStorage>>()));
+            services.AddSingleton<IMetaInfoStorage>(c => new LocalMetaInfoStorage(metaStorageFolder(c), c.GetRequiredService<ILogger<LocalMetaInfoStorage>>()));
             services.AddSingleton<IStoredNameProvider, RandomNameProvider>();
-            services.AddSingleton<IFileStorage>(c => new S3FileStorage(bucketName, regionEndpoint, awsAccessKey, awsSecretKey, baseFileserverUri, c.GetRequiredService<IStoredNameProvider>()));
+            services.AddSingleton<IFileStorage>(c => new S3FileStorage(c.GetRequiredService<IS3FileStorageSettings>(), c.GetRequiredService<IAmazonS3>(), c.GetRequiredService<IStoredNameProvider>(), c.GetRequiredService<IUriResolver>()));
             services.AddSingleton<IFileStorageService, FileStorageService>();
             services.AddSingleton(c => pipeline != null ? pipeline(c) :
                 new PipelineBuilder()

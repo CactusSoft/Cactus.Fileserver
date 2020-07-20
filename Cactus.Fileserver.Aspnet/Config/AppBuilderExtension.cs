@@ -1,9 +1,9 @@
 using System;
 using System.Net.Http;
-using Cactus.Fileserver.Middleware;
+using Cactus.Fileserver.Aspnet.Middleware;
 using Microsoft.AspNetCore.Builder;
 
-namespace Cactus.Fileserver.Config
+namespace Cactus.Fileserver.Aspnet.Config
 {
     public static class AppBuilderExtension
     {

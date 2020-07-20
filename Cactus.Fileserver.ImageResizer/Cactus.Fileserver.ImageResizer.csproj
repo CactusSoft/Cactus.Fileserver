@@ -8,9 +8,10 @@
     <Company>CactusSoft LLC</Company>
     <Description>Image resizing module for Cactus.Fileserver</Description>
     <Copyright>CactusSoft LLC</Copyright>
-    <PackageLicenseUrl>https://github.com/CactusSoft/Cactus.Fileserver/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/CactusSoft/Cactus.Fileserver</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CactusSoft/Cactus.Fileserver</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>

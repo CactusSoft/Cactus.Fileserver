@@ -41,14 +41,21 @@ namespace Cactus.Fileserver.Tests.Integration
             _host?.Dispose();
         }
 
-        protected async Task<HttpResponseMessage> PostFile(string filename, string mimeType)
+        protected Task<HttpResponseMessage> PostFile(string fullFilePath, string mimeType)
         {
             using var form = new MultipartFormDataContent();
-            using var fileContent = new ByteArrayContent(await File.ReadAllBytesAsync(filename));
+            using var content = File.OpenRead(fullFilePath);
+            return PostFile(content, Path.GetFileName(fullFilePath), mimeType);
+        }
+
+        protected Task<HttpResponseMessage> PostFile(Stream content, string fileName, string mimeType)
+        {
+            using var form = new MultipartFormDataContent();
+            using var fileContent = new StreamContent(content);
             fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(mimeType);
-            form.Add(fileContent, "file", Path.GetFileName(filename));
+            form.Add(fileContent, "file", fileName);
             var client = _server.CreateClient();
-            return await client.PostAsync(BaseUrl + "files", form);
+            return client.PostAsync(BaseUrl + "files", form);
         }
     }
 }

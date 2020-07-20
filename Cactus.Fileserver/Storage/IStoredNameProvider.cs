@@ -10,7 +10,7 @@ namespace Cactus.Fileserver.Storage
         /// </summary>
         /// <param name="info">Meta file info</param>
         /// <returns>Name</returns>
-        string GetName(IFileInfo info);
+        string GetName(IMetaInfo info);
 
         /// <summary>
         ///     Called if generated name was not unique and required to be regenerated.
@@ -18,6 +18,6 @@ namespace Cactus.Fileserver.Storage
         /// <param name="info">File info</param>
         /// <param name="duplicatedName">Previously generated result</param>
         /// <returns>New name</returns>
-        string Regenerate(IFileInfo info, string duplicatedName);
+        string Regenerate(IMetaInfo info, string duplicatedName);
     }
 }

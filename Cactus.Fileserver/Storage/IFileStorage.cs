@@ -10,7 +10,7 @@ namespace Cactus.Fileserver.Storage
     /// </summary>
     public interface IFileStorage
     { 
-        IUriResolver UriResolver { get; }
+        //IUriResolver UriResolver { get; }
 
         /// <summary>
         /// Add file to the storage
@@ -19,20 +19,18 @@ namespace Cactus.Fileserver.Storage
         /// <param name="info">File info.
         /// The meta information that could be used in some specific storage implementations like S3 or AzureBlob </param>
         /// <returns>An URI that can be used to Get or Delete operations</returns>
-        Task<Uri> Add(Stream stream, IFileInfo info);
+        Task<Uri> Add(Stream stream, IMetaInfo info);
 
         /// <summary>
         /// Delete file from storage
         /// </summary>
-        /// <param name="uri">URI received from Create method</param>
         /// <returns></returns>
-        Task Delete(Uri uri);
+        Task Delete(IMetaInfo fileInfo);
 
         /// <summary>
         /// Get file content
         /// </summary>
-        /// <param name="uri">URI received from Create method</param>
         /// <returns>File content as a stream</returns>
-        Task<Stream> Get(Uri uri);
+        Task<Stream> Get(IMetaInfo fileInfo);
     }
 }

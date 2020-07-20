@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
 
-namespace Cactus.Fileserver
+namespace Cactus.Fileserver.Aspnet
 {
-    public static class HttpRequestExtension
+    internal static class HttpRequestExtension
     {
         public static Uri GetAbsoluteUri(this HttpRequest request)
         {

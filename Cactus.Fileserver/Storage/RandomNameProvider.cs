@@ -21,7 +21,7 @@ namespace Cactus.Fileserver.Storage
 
         public bool StoreExt { get; set; }
 
-        public string GetName(IFileInfo info)
+        public string GetName(IMetaInfo info)
         {
             _randomNumberGenerator.NextBytes(_buffer);
             var res = Convert.ToBase64String(_buffer).Replace('+', '-').Replace('/', '_');
@@ -35,7 +35,7 @@ namespace Cactus.Fileserver.Storage
             return res;
         }
 
-        public string Regenerate(IFileInfo info, string duplicatedName)
+        public string Regenerate(IMetaInfo info, string duplicatedName)
         {
             return GetName(info);
         }
