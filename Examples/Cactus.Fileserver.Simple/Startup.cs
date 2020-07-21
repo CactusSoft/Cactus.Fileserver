@@ -4,6 +4,8 @@ using System.IO;
 using System.Net.Http;
 using Cactus.Fileserver.Aspnet.Config;
 using Cactus.Fileserver.Aspnet.Middleware;
+using Cactus.Fileserver.ImageResizer;
+using Cactus.Fileserver.ImageResizer.Utils;
 using Cactus.Fileserver.LocalStorage;
 using Cactus.Fileserver.Storage;
 using Microsoft.AspNetCore.Builder;
@@ -23,6 +25,8 @@ namespace Cactus.Fileserver.Simple
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddLogging();
+            
             var url = Environment.GetEnvironmentVariable("ASPNETCORE_URLS");
             if (string.IsNullOrEmpty(url))
             {
@@ -30,32 +34,18 @@ namespace Cactus.Fileserver.Simple
             }
             //url += url.EndsWith('/') ? "files/" : "/files/";     //<--- In case of using sub-path
 
-            services
-                .AddLogging();
-
-            //var baseFolder = Path.GetTempPath();
             services.AddScoped<IUriResolver, AllInTheSameFolderUriResolver>(c => new AllInTheSameFolderUriResolver(new Uri(url), c.GetRequiredService<IWebHostEnvironment>().WebRootPath));
             services.AddScoped<IMetaInfoStorage, LocalMetaInfoStorage>(c => new LocalMetaInfoStorage(c.GetRequiredService<IWebHostEnvironment>().WebRootPath, c.GetRequiredService<ILogger<LocalMetaInfoStorage>>()));
             services.AddScoped<IFileStorage, LocalFileStorage>();
             services.AddScoped<IStoredNameProvider, RandomNameProvider>();
             services.AddScoped<IFileStorageService, FileStorageService>();
 
-
-            //.AddLocalFileserver(new Uri(url),
-            //    c => c.GetRequiredService<IWebHostEnvironment>().WebRootPath,
-            //    c => new PipelineBuilder()
-            //        .UseMultipartContent()
-            //        .ExtractFileinfo()
-            //        .ReadContentStream()
-            //        .ResizeIfLargeThen(c.GetRequiredService<IImageResizerService>(), 1000, 1000) //Force resizing for large images
-            //        //.AcceptOnlyImageContent() //To accept only image content
-            //        .Store(c.GetRequiredService<IFileStorageService>()))
-            //.AddSingleton<IImageResizerService, ImageResizerService>()
-            //.Configure<ResizingOptions>(o =>
-            //{
-            //    o.MandatoryInstructions = new ResizeInstructions { MaxWidth = 2000, MaxHeight = 2000 }; //Max size to operate width
-            //    o.DefaultInstructions = new ResizeInstructions { KeepAspectRatio = true };
-            //});
+            services.Configure<ResizingOptions>(o =>
+            {
+                o.MandatoryInstructions = new ResizeInstructions { MaxHeight = 4068, MaxWidth = 4068 };
+                o.DefaultInstructions = new ResizeInstructions { KeepAspectRatio = true };
+            });
+            services.AddDynamicResizing();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -65,16 +55,11 @@ namespace Cactus.Fileserver.Simple
             var storageFolder = new DirectoryInfo(env.WebRootPath);
             if (!storageFolder.Exists)
                 storageFolder.Create();
-            using (var scope = app.ApplicationServices.CreateScope())
-            {
-                var x1 = scope.ServiceProvider.GetService<IUriResolver>();
-                var x = scope.ServiceProvider.GetService<IFileStorageService>();
-            }
 
             app
                 .UseDeveloperExceptionPage()
                      //.Map("/files", branch => branch       //<--- In case of using sub-path
-                     //.UseDynamicResizing()
+                     .UseDynamicResizing()
                      .UseGetFile(b => b
                         .UseStaticFiles(new StaticFileOptions
                         {

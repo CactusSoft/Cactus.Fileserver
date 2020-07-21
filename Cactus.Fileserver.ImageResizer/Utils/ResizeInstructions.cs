@@ -51,6 +51,7 @@ namespace Cactus.Fileserver.ImageResizer.Utils
 
         public void Join(ResizeInstructions instructions, bool @override = false)
         {
+            if (instructions == null) return;
             if (instructions.Width.HasValue && (!Width.HasValue || @override))
                 Width = instructions.Width;
 

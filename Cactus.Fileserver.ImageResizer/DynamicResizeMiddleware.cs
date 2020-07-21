@@ -11,20 +11,17 @@ namespace Cactus.Fileserver.ImageResizer
 {
     public class DynamicResizingMiddleware
     {
-        private readonly IFileStorageService _storage;
-        private readonly IImageResizerService _resizer;
+
         private readonly RequestDelegate _next;
         private readonly ILogger<DynamicResizingMiddleware> _log;
 
-        public DynamicResizingMiddleware(RequestDelegate next, IImageResizerService resizer, IFileStorageService storage, ILogger<DynamicResizingMiddleware> logger)
+        public DynamicResizingMiddleware(RequestDelegate next, ILogger<DynamicResizingMiddleware> logger)
         {
             _next = next;
-            _resizer = resizer;
-            _storage = storage;
             _log = logger;
         }
 
-        public async Task InvokeAsync(HttpContext context)
+        public async Task InvokeAsync(HttpContext context, IImageResizerService resizer, IFileStorageService storage)
         {
             if (!context.Request.QueryString.HasValue)
             {
@@ -46,11 +43,11 @@ namespace Cactus.Fileserver.ImageResizer
             MetaInfo metaData;
             try
             {
-                metaData = await _storage.GetInfo<MetaInfo>(request.GetAbsoluteUri());
+                metaData = await storage.GetInfo<MetaInfo>(request.GetAbsoluteUri());
                 if (metaData.Origin != null && !metaData.Uri.Equals(metaData.Origin))
                 {
                     _log.LogDebug("{0} is not origin, getting the origin for transformation", metaData.Uri);
-                    metaData = await _storage.GetInfo<MetaInfo>(metaData.Origin);
+                    metaData = await storage.GetInfo<MetaInfo>(metaData.Origin);
                 }
             }
             catch (FileNotFoundException)
@@ -83,22 +80,23 @@ namespace Cactus.Fileserver.ImageResizer
             {
                 _log.LogDebug("Do resizing");
                 using (var tempFile = new MemoryStream())
-                using (var original = await _storage.Get(request.GetAbsoluteUri()))
+                using (var original = await storage.Get(request.GetAbsoluteUri()))
                 {
-                    _resizer.Resize(original, tempFile, instructions);
+                    resizer.Resize(original, tempFile, instructions);
                     var newFileInfo = new MetaInfo(metaData) {Origin = metaData.Uri, Uri = null};
                     tempFile.Position = 0;
-                    await _storage.Create(tempFile, newFileInfo);
+                    await storage.Create(tempFile, newFileInfo);
                     Debug.Assert(newFileInfo.Uri != null, "newFileInfo.Uri != null");
                     metaData.Extra.Add(sizeKey, newFileInfo.Uri.ToString());
-                    await _storage.UpdateInfo(metaData);
+                    await storage.UpdateInfo(metaData);
                     context.Response.Redirect(newFileInfo.Uri.ToString(), true);
                     return;
                 }
             }
             catch (Exception ex)
             {
-                _log.LogError("Exception during dynamic resizing, skip middleware and continue with regular pipeline: {0}", ex);
+                _log.LogError("Exception during dynamic resizing, redirect to the origin {0}", ex);
+                context.Response.Redirect(metaData.Uri.ToString(), false);
             }
 
             await _next(context);
