@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -16,8 +17,8 @@ namespace Cactus.Fileserver.Tests.Integration
         public async Task FileCrudTest()
         {
             var filename = "test.txt";
-            await using var fileStream = new MemoryStream(Encoding.ASCII.GetBytes("Hello world!"));
-            fileStream.Seek(0, 0);
+            var fileContent = Encoding.ASCII.GetBytes("Hello world!");
+            var fileStream = new MemoryStream(fileContent);
             var postRes = await PostFile(fileStream, filename, "plain/text");
             Assert.IsTrue(postRes.IsSuccessStatusCode, postRes.ToString());
             Assert.AreEqual(HttpStatusCode.Created, postRes.StatusCode);
@@ -27,7 +28,7 @@ namespace Cactus.Fileserver.Tests.Integration
             var getRes = await _server.CreateRequest(location).GetAsync();
             Assert.IsTrue(getRes.IsSuccessStatusCode, getRes.ToString());
             Assert.AreEqual(HttpStatusCode.OK, getRes.StatusCode, getRes.ToString());
-            Assert.AreEqual(fileStream.Length, (await getRes.Content.ReadAsByteArrayAsync()).Length);
+            Assert.AreEqual(fileContent.Length, (await getRes.Content.ReadAsByteArrayAsync()).Length);
 
             var delRes = await _server.CreateRequest(location).SendAsync(HttpMethod.Delete.Method);
             Assert.IsTrue(delRes.IsSuccessStatusCode, delRes.ToString());
@@ -35,12 +36,59 @@ namespace Cactus.Fileserver.Tests.Integration
         }
 
         [TestMethod]
+        public async Task MultipleUploadTest()
+        {
+            var files = new[]
+            {
+                new FileUpload
+                {
+                    FileName = "test1.txt",
+                    MimeType = "text/plain",
+                    Content = new MemoryStream(Encoding.ASCII.GetBytes("Hello world!"))
+                },
+                new FileUpload
+                {
+                    //FileName = "kartman.png",
+                    //Content = File.OpenRead("kartman.png"),
+                    //MimeType = "image/png"
+                    FileName = "test2.txt",
+                    MimeType = "text/plain",
+                    Content = new MemoryStream(Encoding.ASCII.GetBytes("second file content"))
+                },
+                new FileUpload
+                {
+                    FileName = "test3.txt",
+                    MimeType = "text/plain",
+                    Content = new MemoryStream(Encoding.ASCII.GetBytes("Hello world!!!!"))
+                }
+            };
+
+            var postRes = await PostFiles(files);
+            Assert.IsTrue(postRes.IsSuccessStatusCode, postRes.ToString());
+            Assert.AreEqual(HttpStatusCode.Created, postRes.StatusCode);
+            var location = postRes.Headers.Location.ToString();
+            Assert.IsNotNull(location);
+            Assert.IsNotNull(postRes.Content);
+            var metaData = JsonConvert.DeserializeObject<MetaInfo[]>(await postRes.Content.ReadAsStringAsync());
+            Assert.AreEqual(files[0].FileName, metaData[0].OriginalName);
+            Assert.AreEqual(files[1].FileName, metaData[1].OriginalName);
+            Assert.AreEqual(files[2].FileName, metaData[2].OriginalName);
+
+            foreach (var meta in metaData)
+            {
+                var delRes = await _server.CreateRequest(meta.Uri.ToString()).SendAsync(HttpMethod.Delete.Method);
+                Assert.IsTrue(delRes.IsSuccessStatusCode, delRes.ToString());
+                Assert.AreEqual(HttpStatusCode.NoContent, delRes.StatusCode, delRes.ToString());
+            }
+        }
+
+        [TestMethod]
         public async Task FileMetadataTest()
         {
             var filename = "test.txt";
-            await using var fileStream = new MemoryStream(Encoding.ASCII.GetBytes("Hello meta world!"));
-            fileStream.Seek(0, 0);
-            var postRes = await PostFile(filename, "plain/text");
+            var fileContent = Encoding.ASCII.GetBytes("Hello meta world!");
+            await using var fileStream = new MemoryStream(fileContent);
+            var postRes = await PostFile(fileStream, filename, "plain/text");
             Assert.IsTrue(postRes.IsSuccessStatusCode, postRes.ToString());
             Assert.AreEqual(HttpStatusCode.Created, postRes.StatusCode);
             var location = postRes.Headers.Location.ToString();
@@ -50,8 +98,8 @@ namespace Cactus.Fileserver.Tests.Integration
             Assert.IsTrue(getRes.IsSuccessStatusCode, getRes.ToString());
             Assert.AreEqual(HttpStatusCode.OK, getRes.StatusCode, getRes.ToString());
             Assert.IsNotNull(getRes.Content);
-            var metaData = JsonConvert.DeserializeObject<MetaInfo>(await postRes.Content.ReadAsStringAsync());
-            Assert.AreEqual(filename, metaData.OriginalName);
+            var metaData = JsonConvert.DeserializeObject<MetaInfo[]>(await postRes.Content.ReadAsStringAsync());
+            Assert.AreEqual(filename, metaData.First().OriginalName);
 
             var delRes = await _server.CreateRequest(location).SendAsync(HttpMethod.Delete.Method);
             Assert.IsTrue(delRes.IsSuccessStatusCode, delRes.ToString());

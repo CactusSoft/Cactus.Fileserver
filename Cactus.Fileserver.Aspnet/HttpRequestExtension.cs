@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Http;
 
 namespace Cactus.Fileserver.Aspnet
 {
-    internal static class HttpRequestExtension
+    internal static class HttpExtension
     {
         public static Uri GetAbsoluteUri(this HttpRequest request)
         {
@@ -14,6 +15,11 @@ namespace Cactus.Fileserver.Aspnet
                 request.PathBase.ToUriComponent(),
                 request.Path.ToUriComponent(),
                 request.QueryString.ToUriComponent()));
+        }
+
+        public static string GetFileName(this HttpContentHeaders headers)
+        {
+            return headers.ContentDisposition.FileName?.Trim('"');
         }
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
 using Cactus.Fileserver.Aspnet.Config;
 using Cactus.Fileserver.Aspnet.Middleware;
 using Cactus.Fileserver.LocalStorage;
@@ -32,9 +33,9 @@ namespace Cactus.Fileserver.Simple
             services
                 .AddLogging();
 
-            var baseFolder = Path.GetTempPath();
-            services.AddScoped<IUriResolver, AllInTheSameFolderUriResolver>(c => new AllInTheSameFolderUriResolver(new Uri(url), baseFolder));
-            services.AddScoped<IMetaInfoStorage, LocalMetaInfoStorage>(c => new LocalMetaInfoStorage(baseFolder, c.GetRequiredService<ILogger<LocalMetaInfoStorage>>()));
+            //var baseFolder = Path.GetTempPath();
+            services.AddScoped<IUriResolver, AllInTheSameFolderUriResolver>(c => new AllInTheSameFolderUriResolver(new Uri(url), c.GetRequiredService<IWebHostEnvironment>().WebRootPath));
+            services.AddScoped<IMetaInfoStorage, LocalMetaInfoStorage>(c => new LocalMetaInfoStorage(c.GetRequiredService<IWebHostEnvironment>().WebRootPath, c.GetRequiredService<ILogger<LocalMetaInfoStorage>>()));
             services.AddScoped<IFileStorage, LocalFileStorage>();
             services.AddScoped<IStoredNameProvider, RandomNameProvider>();
             services.AddScoped<IFileStorageService, FileStorageService>();
@@ -64,6 +65,11 @@ namespace Cactus.Fileserver.Simple
             var storageFolder = new DirectoryInfo(env.WebRootPath);
             if (!storageFolder.Exists)
                 storageFolder.Create();
+            using (var scope = app.ApplicationServices.CreateScope())
+            {
+                var x1 = scope.ServiceProvider.GetService<IUriResolver>();
+                var x = scope.ServiceProvider.GetService<IFileStorageService>();
+            }
 
             app
                 .UseDeveloperExceptionPage()
@@ -82,7 +88,9 @@ namespace Cactus.Fileserver.Simple
                                 { ".png", "image/png"}
                             })
                         }))
-                     .UseAddFile<AddFileHandler>()           //<--- handler may be customized
+                        .MapWhen(c => HttpMethod.Post.Method.Equals(c.Request.Method, StringComparison.OrdinalIgnoreCase), b => b
+                                  .UseMiddleware<AddFilesFromMultipartContentHandler>()
+                                  .UseMiddleware<AddFileHandler>())
                      .UseDelFile()
 
                 //)

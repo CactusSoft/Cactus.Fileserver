@@ -1,10 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Cactus.Fileserver.Model;
 
 namespace Cactus.Fileserver.Aspnet.Dto
 {
     public class ResponseDto
     {
+
+        public ResponseDto() { }
+
+        public ResponseDto(IMetaInfo meta)
+        {
+            Uri = meta.Uri;
+            Extra = meta.Extra?.ToDictionary(e => e.Key, e => e.Value);
+            Owner = meta.Owner;
+            Origin = meta.Origin;
+            OriginalName = meta.OriginalName;
+            MimeType = meta.MimeType;
+            Icon = meta.Icon;
+        }
         /// <summary>
         /// Not null if a error took place
         /// </summary>

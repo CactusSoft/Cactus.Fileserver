@@ -43,19 +43,38 @@ namespace Cactus.Fileserver.Tests.Integration
 
         protected Task<HttpResponseMessage> PostFile(string fullFilePath, string mimeType)
         {
-            using var form = new MultipartFormDataContent();
             using var content = File.OpenRead(fullFilePath);
             return PostFile(content, Path.GetFileName(fullFilePath), mimeType);
         }
 
         protected Task<HttpResponseMessage> PostFile(Stream content, string fileName, string mimeType)
         {
+            return PostFiles(new FileUpload
+            {
+                Content = content,
+                MimeType = mimeType,
+                FileName = fileName
+            });
+        }
+
+        protected Task<HttpResponseMessage> PostFiles(params FileUpload[] upload)
+        {
             using var form = new MultipartFormDataContent();
-            using var fileContent = new StreamContent(content);
-            fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(mimeType);
-            form.Add(fileContent, "file", fileName);
+            foreach (var fileUpload in upload)
+            {
+                var fileContent = new StreamContent(fileUpload.Content);
+                fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(fileUpload.MimeType);
+                form.Add(fileContent, "file", fileUpload.FileName);
+            }
             var client = _server.CreateClient();
             return client.PostAsync(BaseUrl + "files", form);
+        }
+
+        public class FileUpload
+        {
+            public Stream Content { get; set; }
+            public string FileName { get; set; }
+            public string MimeType { get; set; }
         }
     }
 }

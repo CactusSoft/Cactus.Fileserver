@@ -199,3 +199,4 @@ $RECYCLE.BIN/
 Sommelier.Api/Sommelier.Api/UploadFiles/
 Cactus.Fileserver.ImageResizer.Nuget/
 Cactus.Fileserver.Owin.Nuget/
+Examples/Cactus.Fileserver.Simple/wwwroot/
