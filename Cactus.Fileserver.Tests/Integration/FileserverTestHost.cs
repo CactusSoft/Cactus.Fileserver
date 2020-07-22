@@ -1,11 +1,11 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Cactus.Fileserver.Simple;
+using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 
@@ -14,42 +14,52 @@ namespace Cactus.Fileserver.Tests.Integration
     [TestClass]
     public class FileserverTestHost
     {
-        protected static string BaseUrl => _server?.BaseAddress?.ToString();
+        
         private static IWebHost _host;
-        protected static TestServer _server;
+        protected static string BaseUrl => "http://localhost:18047/";
+        //protected static TestServer _server;
+        //protected static string BaseUrl => _server?.BaseAddress?.ToString();
 
         [AssemblyInitialize]
         public static async Task StartSimpleFileserver(TestContext context)
         {
-            _server = new TestServer(new WebHostBuilder()
+            Environment.SetEnvironmentVariable("ASPNETCORE_URLS", BaseUrl);
+            //DO NOT USE: for some reason TestServer hangs if request is more then X bytes, so all image resizing tests fail
+            //_server = new TestServer(new WebHostBuilder()
+            //    .UseStartup<Startup>()
+            //    .UseConfiguration(
+            //        new ConfigurationBuilder()
+            //            .Build()));
+            //_host = _server.Host;
+            //await _host.StartAsync();
+            _host = WebHost.CreateDefaultBuilder()
+                .ConfigureAppConfiguration((ctx, config) =>
+                {
+                })
+                .ConfigureLogging((ctx, logging) =>
+                {
+                })
                 .UseStartup<Startup>()
-                .UseConfiguration(
-                    new ConfigurationBuilder()
-                        .Build()));
-            _host = _server.Host;
+                .Build();
             await _host.StartAsync();
-            //Environment.SetEnvironmentVariable("ASPNETCORE_URLS", BaseUrl);
-            //if (hostedSrv == null)
-            //    hostedSrv = WebHost.CreateDefaultBuilder()
-            //        .UseStartup<Startup>()
-            //        .Start();
         }
 
         [AssemblyCleanup]
-        public static void ShutdownFileserver()
+        public static void Cleanup()
         {
-            _host?.Dispose();
+            var stopped = _host?.StopAsync().Wait(TimeSpan.FromSeconds(5));
+            if (stopped ?? false) _host?.Dispose();
+        }
+         
+        protected Task<HttpResponseMessage> Post(string fullFilePath, string mimeType)
+        {
+            var content = File.OpenRead(fullFilePath);
+            return Post(content, Path.GetFileName(fullFilePath), mimeType);
         }
 
-        protected Task<HttpResponseMessage> PostFile(string fullFilePath, string mimeType)
+        protected Task<HttpResponseMessage> Post(Stream content, string fileName, string mimeType)
         {
-            using var content = File.OpenRead(fullFilePath);
-            return PostFile(content, Path.GetFileName(fullFilePath), mimeType);
-        }
-
-        protected Task<HttpResponseMessage> PostFile(Stream content, string fileName, string mimeType)
-        {
-            return PostFiles(new FileUpload
+            return Post(new FileUpload
             {
                 Content = content,
                 MimeType = mimeType,
@@ -57,17 +67,33 @@ namespace Cactus.Fileserver.Tests.Integration
             });
         }
 
-        protected Task<HttpResponseMessage> PostFiles(params FileUpload[] upload)
+        protected Task<HttpResponseMessage> Post(params FileUpload[] upload)
         {
-            using var form = new MultipartFormDataContent();
+            var form = new MultipartFormDataContent();
             foreach (var fileUpload in upload)
             {
                 var fileContent = new StreamContent(fileUpload.Content);
                 fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse(fileUpload.MimeType);
                 form.Add(fileContent, "file", fileUpload.FileName);
             }
-            var client = _server.CreateClient();
+            var client = new HttpClient();
             return client.PostAsync(BaseUrl + "files", form);
+        }
+
+        protected Task<HttpResponseMessage> Get(string url)
+        {
+            var client = new HttpClient(new HttpClientHandler
+            {
+                AllowAutoRedirect = false,
+                MaxAutomaticRedirections = 20
+            });
+            return client.GetAsync(url);
+        }
+
+        protected Task<HttpResponseMessage> Delete(string url)
+        {
+            var client = new HttpClient();
+            return client.DeleteAsync(url);
         }
 
         public class FileUpload

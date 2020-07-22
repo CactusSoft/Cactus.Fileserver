@@ -1,7 +1,6 @@
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Cactus.Fileserver.Model;
@@ -19,18 +18,18 @@ namespace Cactus.Fileserver.Tests.Integration
             var filename = "test.txt";
             var fileContent = Encoding.ASCII.GetBytes("Hello world!");
             var fileStream = new MemoryStream(fileContent);
-            var postRes = await PostFile(fileStream, filename, "plain/text");
+            var postRes = await Post(fileStream, filename, "plain/text");
             Assert.IsTrue(postRes.IsSuccessStatusCode, postRes.ToString());
             Assert.AreEqual(HttpStatusCode.Created, postRes.StatusCode);
             var location = postRes.Headers.Location.ToString();
             Assert.IsNotNull(location);
 
-            var getRes = await _server.CreateRequest(location).GetAsync();
+            var getRes = await Get(location);
             Assert.IsTrue(getRes.IsSuccessStatusCode, getRes.ToString());
             Assert.AreEqual(HttpStatusCode.OK, getRes.StatusCode, getRes.ToString());
             Assert.AreEqual(fileContent.Length, (await getRes.Content.ReadAsByteArrayAsync()).Length);
 
-            var delRes = await _server.CreateRequest(location).SendAsync(HttpMethod.Delete.Method);
+            var delRes = await Delete(location);
             Assert.IsTrue(delRes.IsSuccessStatusCode, delRes.ToString());
             Assert.AreEqual(HttpStatusCode.NoContent, delRes.StatusCode, delRes.ToString());
         }
@@ -63,7 +62,7 @@ namespace Cactus.Fileserver.Tests.Integration
                 }
             };
 
-            var postRes = await PostFiles(files);
+            var postRes = await Post(files);
             Assert.IsTrue(postRes.IsSuccessStatusCode, postRes.ToString());
             Assert.AreEqual(HttpStatusCode.Created, postRes.StatusCode);
             var location = postRes.Headers.Location.ToString();
@@ -76,7 +75,7 @@ namespace Cactus.Fileserver.Tests.Integration
 
             foreach (var meta in metaData)
             {
-                var delRes = await _server.CreateRequest(meta.Uri.ToString()).SendAsync(HttpMethod.Delete.Method);
+                var delRes = await Delete(meta.Uri.ToString());
                 Assert.IsTrue(delRes.IsSuccessStatusCode, delRes.ToString());
                 Assert.AreEqual(HttpStatusCode.NoContent, delRes.StatusCode, delRes.ToString());
             }
@@ -88,20 +87,20 @@ namespace Cactus.Fileserver.Tests.Integration
             var filename = "test.txt";
             var fileContent = Encoding.ASCII.GetBytes("Hello meta world!");
             await using var fileStream = new MemoryStream(fileContent);
-            var postRes = await PostFile(fileStream, filename, "plain/text");
+            var postRes = await Post(fileStream, filename, "plain/text");
             Assert.IsTrue(postRes.IsSuccessStatusCode, postRes.ToString());
             Assert.AreEqual(HttpStatusCode.Created, postRes.StatusCode);
             var location = postRes.Headers.Location.ToString();
             Assert.IsNotNull(location);
 
-            var getRes = await _server.CreateRequest(location + ".json").GetAsync();
+            var getRes = await Get(location + ".json");
             Assert.IsTrue(getRes.IsSuccessStatusCode, getRes.ToString());
             Assert.AreEqual(HttpStatusCode.OK, getRes.StatusCode, getRes.ToString());
             Assert.IsNotNull(getRes.Content);
             var metaData = JsonConvert.DeserializeObject<MetaInfo[]>(await postRes.Content.ReadAsStringAsync());
             Assert.AreEqual(filename, metaData.First().OriginalName);
 
-            var delRes = await _server.CreateRequest(location).SendAsync(HttpMethod.Delete.Method);
+            var delRes = await Delete(location);
             Assert.IsTrue(delRes.IsSuccessStatusCode, delRes.ToString());
             Assert.AreEqual(HttpStatusCode.NoContent, delRes.StatusCode, delRes.ToString());
         }
