@@ -26,7 +26,9 @@ namespace Cactus.Fileserver.Aspnet.Config
         public static IApplicationBuilder UseAddFile(this IApplicationBuilder app)
         {
             app.MapWhen(c => HttpMethod.Post.Method.Equals(c.Request.Method, StringComparison.OrdinalIgnoreCase),
-                builder => builder.UseMiddleware<AddFileHandler>());
+                builder => builder
+                    .UseMiddleware<AddFilesFromMultipartContentHandler>()
+                    .UseMiddleware<AddFileHandler>());
             return app;
         }
 

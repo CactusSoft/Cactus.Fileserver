@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Cactus.Fileserver.LocalStorage.Config;
 using Cactus.Fileserver.Model;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Options;
 using NUnit.Framework;
 
 namespace Cactus.Fileserver.LocalStorage.Test
@@ -16,7 +18,11 @@ namespace Cactus.Fileserver.LocalStorage.Test
             var metafileExt = ".json";
             var baseFolder = Path.GetTempPath();
             var fileName = Path.GetRandomFileName();
-            var metaStorage = new LocalMetaInfoStorage(baseFolder, NullLogger.Instance, metafileExt);
+            var options = Options.Create<LocalMetaStorageOptions>(new LocalMetaStorageOptions
+            {
+                BaseFolder = baseFolder
+            });
+            var metaStorage = new LocalMetaInfoStorage(options, NullLogger<LocalMetaInfoStorage>.Instance);
             var metaInfo = new MetaInfo
             {
                 InternalUri = new Uri("file://" + baseFolder + '/' + fileName),
@@ -31,7 +37,7 @@ namespace Cactus.Fileserver.LocalStorage.Test
             metaInfo.Extra.Add("updated", "-");
             await metaStorage.Update(metaInfo);
             Assert.IsTrue(File.Exists(Path.Combine(baseFolder, fileName + metafileExt)));
-            
+
             var metaInfoReceived = await metaStorage.Get<MetaInfo>(metaInfo.Uri);
             Assert.IsTrue(metaInfoReceived.Extra.ContainsKey("updated"));
 

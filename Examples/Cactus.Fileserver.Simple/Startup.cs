@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net.Http;
 using Cactus.Fileserver.Aspnet.Config;
-using Cactus.Fileserver.Aspnet.Middleware;
 using Cactus.Fileserver.ImageResizer;
 using Cactus.Fileserver.ImageResizer.Utils;
-using Cactus.Fileserver.LocalStorage;
-using Cactus.Fileserver.Storage;
+using Cactus.Fileserver.LocalStorage.Config;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -21,12 +18,18 @@ namespace Cactus.Fileserver.Simple
 {
     public class Startup
     {
+        private readonly IWebHostEnvironment _env;
+
+        public Startup(IWebHostEnvironment env)
+        {
+            _env = env;
+        }
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddLogging();
-            
+
             var url = Environment.GetEnvironmentVariable("ASPNETCORE_URLS");
             if (string.IsNullOrEmpty(url))
             {
@@ -34,18 +37,22 @@ namespace Cactus.Fileserver.Simple
             }
             //url += url.EndsWith('/') ? "files/" : "/files/";     //<--- In case of using sub-path
 
-            services.AddScoped<IUriResolver, AllInTheSameFolderUriResolver>(c => new AllInTheSameFolderUriResolver(new Uri(url), c.GetRequiredService<IWebHostEnvironment>().WebRootPath));
-            services.AddScoped<IMetaInfoStorage, LocalMetaInfoStorage>(c => new LocalMetaInfoStorage(c.GetRequiredService<IWebHostEnvironment>().WebRootPath, c.GetRequiredService<ILogger<LocalMetaInfoStorage>>()));
-            services.AddScoped<IFileStorage, LocalFileStorage>();
-            services.AddScoped<IStoredNameProvider, RandomNameProvider>();
-            services.AddScoped<IFileStorageService, FileStorageService>();
+            services.AddLocalFileStorage(o =>
+            {
+                o.BaseFolder = _env.WebRootPath;
+                o.BaseUri = new Uri(url);
+            });
 
-            services.Configure<ResizingOptions>(o =>
+            services.AddLocalMetaStorage(o =>
+            {
+                o.BaseFolder = _env.WebRootPath;
+            });
+
+            services.AddDynamicResizing(o =>
             {
                 o.MandatoryInstructions = new ResizeInstructions { MaxHeight = 4068, MaxWidth = 4068 };
                 o.DefaultInstructions = new ResizeInstructions { KeepAspectRatio = true };
             });
-            services.AddDynamicResizing();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -60,7 +67,7 @@ namespace Cactus.Fileserver.Simple
                 .UseDeveloperExceptionPage()
                      //.Map("/files", branch => branch       //<--- In case of using sub-path
                      .UseDynamicResizing()
-                     .UseGetFile(b => b
+                     .UseGetFile(b => b //Files will be retrieved using StaticFiles middleware which is fast but insecure
                         .UseStaticFiles(new StaticFileOptions
                         {
                             FileProvider = new PhysicalFileProvider(storageFolder.FullName, ExclusionFilters.None),
@@ -73,9 +80,7 @@ namespace Cactus.Fileserver.Simple
                                 { ".png", "image/png"}
                             })
                         }))
-                        .MapWhen(c => HttpMethod.Post.Method.Equals(c.Request.Method, StringComparison.OrdinalIgnoreCase), b => b
-                                  .UseMiddleware<AddFilesFromMultipartContentHandler>()
-                                  .UseMiddleware<AddFileHandler>())
+                     .UseAddFile()
                      .UseDelFile()
 
                 //)

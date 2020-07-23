@@ -1,9 +1,11 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Cactus.Fileserver.LocalStorage.Config;
 using Cactus.Fileserver.Model;
 using Cactus.Fileserver.Storage;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace Cactus.Fileserver.LocalStorage
@@ -12,21 +14,13 @@ namespace Cactus.Fileserver.LocalStorage
     {
         private readonly string _baseFolder;
         private readonly string _metafileExt;
-        private readonly ILogger _log;
+        private readonly ILogger<LocalMetaInfoStorage> _log;
 
-        public LocalMetaInfoStorage(string folder, ILogger log, string fileExt = ".json")
+        public LocalMetaInfoStorage(IOptions<LocalMetaStorageOptions> settings, ILogger<LocalMetaInfoStorage> log)
         {
             _log = log;
-            if (string.IsNullOrEmpty(fileExt))
-                throw new ArgumentNullException(nameof(fileExt));
-            if (fileExt[0] != '.')
-                throw new ArgumentException("File extension should be started from dot symbol", nameof(fileExt));
-            if (string.IsNullOrEmpty(folder))
-                throw new ArgumentNullException(nameof(folder));
-
-            _metafileExt = fileExt;
-            _log = log;
-            _baseFolder = folder;
+            _baseFolder = settings.Value.BaseFolder;
+            _metafileExt = settings.Value.Extension;
         }
 
         public async Task Add<T>(T info) where T : IMetaInfo
@@ -69,7 +63,9 @@ namespace Cactus.Fileserver.LocalStorage
         /// <returns></returns>
         protected virtual string GetFile(Uri uri)
         {
-            return Path.Combine(_baseFolder, uri.GetResource() + _metafileExt);
+            var fileName = uri.GetResource();
+            if (!string.IsNullOrWhiteSpace(_metafileExt)) fileName += _metafileExt;
+            return Path.Combine(_baseFolder, fileName);
         }
     }
 }

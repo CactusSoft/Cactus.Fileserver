@@ -10,13 +10,13 @@ namespace Cactus.Fileserver.S3Storage
 {
     public class S3FileStorage : IFileStorage
     {
-        protected readonly IS3FileStorageSettings Settings;
+        protected readonly IS3FileStorageOptions Settings;
         protected readonly IAmazonS3 S3Client;
         protected readonly IStoredNameProvider NameProvider;
         protected readonly IUriResolver UriResolver;
 
 
-        public S3FileStorage(IS3FileStorageSettings settings, IAmazonS3 s3Client, IStoredNameProvider nameProvider, IUriResolver uriResolver)
+        public S3FileStorage(IS3FileStorageOptions settings, IAmazonS3 s3Client, IStoredNameProvider nameProvider, IUriResolver uriResolver)
         {
             Settings = settings;
             S3Client = s3Client;

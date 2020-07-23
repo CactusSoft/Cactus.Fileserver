@@ -1,5 +1,7 @@
 using System;
+using Cactus.Fileserver.LocalStorage.Config;
 using Cactus.Fileserver.Model;
+using Microsoft.Extensions.Options;
 
 namespace Cactus.Fileserver.LocalStorage
 {
@@ -18,15 +20,18 @@ namespace Cactus.Fileserver.LocalStorage
         string ResolvePath(IMetaInfo info);
     }
 
-    public class AllInTheSameFolderUriResolver : IUriResolver
+    /// <summary>
+    /// Direct all requests to store files into base folder 
+    /// </summary>
+    public class BaseFolderUriResolver : IUriResolver
     {
         private readonly string _baseFolder;
         private readonly string _baseUri;
 
-        public AllInTheSameFolderUriResolver(Uri baseUri, string baseFolder)
+        public BaseFolderUriResolver(IOptions<LocalFileStorageOptions> settings)
         {
-            _baseUri = baseUri.ToString().TrimEnd('/');
-            _baseFolder = baseFolder;
+            _baseUri = settings.Value.BaseUri.ToString().TrimEnd('/');
+            _baseFolder = settings.Value.BaseFolder;
         }
 
         public Uri ResolveUri(IMetaInfo info)

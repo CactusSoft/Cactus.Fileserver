@@ -1,17 +1,18 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Version>3.0</Version>
+    <Version>4.0.0</Version>
     <Company>CactusSoft LLC</Company>
     <Product>Cactus.Fileserver.S3Storage</Product>
     <Authors>Roman Barantsevich</Authors>
     <Description>Amazone S3 storage for files</Description>
     <Copyright>Copyright CactusSoft 2017</Copyright>
-    <PackageLicenseUrl>https://github.com/CactusSoft/Cactus.Fileserver/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/CactusSoft/Cactus.Fileserver</PackageProjectUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/CactusSoft/Cactus.Fileserver</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
   <ItemGroup>

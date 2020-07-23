@@ -1,6 +1,8 @@
 using System;
 using System.IO;
+using Cactus.Fileserver.LocalStorage.Config;
 using Cactus.Fileserver.Model;
+using Microsoft.Extensions.Options;
 using NUnit.Framework;
 
 namespace Cactus.Fileserver.LocalStorage.Test
@@ -14,7 +16,12 @@ namespace Cactus.Fileserver.LocalStorage.Test
             var baseFolder = Path.GetTempPath();
             var fileName = "somefile.ext";
             var fullFilePath = Path.Combine(baseFolder, fileName);
-            var resolver = new AllInTheSameFolderUriResolver(new Uri(baseUri), baseFolder);
+            var options = Options.Create<LocalFileStorageOptions>(new LocalFileStorageOptions
+            {
+                BaseFolder = baseFolder,
+                BaseUri = new Uri(baseUri)
+            });
+            var resolver = new BaseFolderUriResolver(options);
 
             var res = resolver.ResolveUri(new MetaInfo { InternalUri = new Uri("file://" + fullFilePath) });
             Assert.AreEqual(baseUri + "/" + fileName, res.ToString());

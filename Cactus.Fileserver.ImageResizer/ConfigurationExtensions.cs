@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,8 +23,9 @@ namespace Cactus.Fileserver.ImageResizer
         public static readonly string NotAnImageExceptionMessage = "Income stream doesn't look to be an image";
 
 
-        public static IServiceCollection AddDynamicResizing(this IServiceCollection services)
+        public static IServiceCollection AddDynamicResizing(this IServiceCollection services, Action<ResizingOptions> configureOptions)
         {
+            services.Configure(configureOptions);
             services.AddSingleton<IImageResizerService, ImageResizerService>();
             return services;
         }
