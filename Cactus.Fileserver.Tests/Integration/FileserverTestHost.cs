@@ -50,16 +50,28 @@ namespace Cactus.Fileserver.Tests.Integration
             var stopped = _host?.StopAsync().Wait(TimeSpan.FromSeconds(5));
             if (stopped ?? false) _host?.Dispose();
         }
-         
-        protected Task<HttpResponseMessage> Post(string fullFilePath, string mimeType)
+        
+        protected Task<HttpResponseMessage> Post(StringContent content)
         {
-            var content = File.OpenRead(fullFilePath);
-            return Post(content, Path.GetFileName(fullFilePath), mimeType);
+            var client = new HttpClient();
+            return client.PostAsync(BaseUrl, content);
         }
 
-        protected Task<HttpResponseMessage> Post(Stream content, string fileName, string mimeType)
+        protected Task<HttpResponseMessage> Post(HttpContent content)
         {
-            return Post(new FileUpload
+            var client = new HttpClient();
+            return client.PostAsync(BaseUrl, content);
+        }
+
+        protected Task<HttpResponseMessage> PostMultipart(string fullFilePath, string mimeType)
+        {
+            var content = File.OpenRead(fullFilePath);
+            return PostMultipart(content, Path.GetFileName(fullFilePath), mimeType);
+        }
+
+        protected Task<HttpResponseMessage> PostMultipart(Stream content, string fileName, string mimeType)
+        {
+            return PostMultipart(new FileUpload
             {
                 Content = content,
                 MimeType = mimeType,
@@ -67,7 +79,7 @@ namespace Cactus.Fileserver.Tests.Integration
             });
         }
 
-        protected Task<HttpResponseMessage> Post(params FileUpload[] upload)
+        protected Task<HttpResponseMessage> PostMultipart(params FileUpload[] upload)
         {
             var form = new MultipartFormDataContent();
             foreach (var fileUpload in upload)
@@ -84,8 +96,7 @@ namespace Cactus.Fileserver.Tests.Integration
         {
             var client = new HttpClient(new HttpClientHandler
             {
-                AllowAutoRedirect = false,
-                MaxAutomaticRedirections = 20
+                AllowAutoRedirect = false
             });
             return client.GetAsync(url);
         }

@@ -36,8 +36,6 @@ namespace Cactus.Fileserver.AzureStorage
             }
         }
 
-        public IUriResolver UriResolver { get; }
-
         public async Task<Uri> Add(Stream stream, IMetaInfo info)
         {
             await InitStorage().ConfigureAwait(false);
@@ -64,20 +62,20 @@ namespace Cactus.Fileserver.AzureStorage
             await blockBlob.UploadFromStreamAsync(stream);
             return blockBlob.Uri;
         }
-
-        public async Task Delete(Uri uri)
+        
+        public async Task Delete(IMetaInfo metaInfo)
         {
             await InitStorage().ConfigureAwait(false);
-            var targetFile = uri.GetResource();
+            var targetFile = metaInfo.InternalUri.GetResource();
             _log.LogDebug("Delete {0} from azure", targetFile);
             var blockBlob = _cloudBlobContainer.GetBlockBlobReference(targetFile);
             await blockBlob.DeleteIfExistsAsync().ConfigureAwait(false);
         }
 
-        public async Task<Stream> Get(Uri uri)
+        public async Task<Stream> Get(IMetaInfo metaInfo)
         {
             await InitStorage().ConfigureAwait(false);
-            var targetFile = uri.GetResource();
+            var targetFile = metaInfo.InternalUri.GetResource();
             var blob = _cloudBlobContainer.GetBlockBlobReference(targetFile);
             return await blob.OpenReadAsync().ConfigureAwait(false);
         }

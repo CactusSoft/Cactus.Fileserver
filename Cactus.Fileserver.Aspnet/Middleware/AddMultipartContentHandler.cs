@@ -31,11 +31,10 @@ namespace Cactus.Fileserver.Aspnet.Middleware
 
         public async Task InvokeAsync(HttpContext ctx, IFileStorageService fileStorage)
         {
-            var content = new StreamContent(ctx.Request.Body);
-            content.Headers.ContentType = MediaTypeHeaderValue.Parse(ctx.Request.ContentType);
-
-            if (content.IsMimeMultipartContent())
+            if (ctx.Request.ContentType?.StartsWith("multipart/", StringComparison.OrdinalIgnoreCase) ?? false)
             {
+                var content = new StreamContent(ctx.Request.Body);
+                content.Headers.ContentType = MediaTypeHeaderValue.Parse(ctx.Request.ContentType);
                 var provider = await content.ReadAsMultipartAsync();
                 var resList = new List<object>(provider.Contents.Count);
                 foreach (var contentPart in provider.Contents)
@@ -104,12 +103,12 @@ namespace Cactus.Fileserver.Aspnet.Middleware
         {
             return new MetaInfo
             {
-                MimeType = contentHeaders.ContentType?.ToString() ?? "octet/stream",
+                MimeType = contentHeaders.ContentType?.ToString() ?? "application/octet-stream",
                 OriginalName = contentHeaders.GetFileName() ?? "file",
                 Owner = GetOwner(ctx.User.Identity)
             };
         }
-        
+
         /// <summary>
         ///     Returns a string that represent file owner based on authentication context.
         ///     By default returns Identity.Name or nul if user is not authenticated.

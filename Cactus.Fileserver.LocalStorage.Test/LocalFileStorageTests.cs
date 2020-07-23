@@ -35,7 +35,7 @@ namespace Cactus.Fileserver.LocalStorage.Test
             uriResolverMock.Setup(e => e.ResolveUri(It.IsAny<IMetaInfo>()))
                 .Returns<IMetaInfo>(meta => new Uri(baseUri + '/' + meta.InternalUri.GetResource()));
 
-            var storage = new LocalFileStorage(nameGeneratorMock.Object, uriResolverMock.Object, NullLogger.Instance);
+            var storage = new LocalFileStorage(nameGeneratorMock.Object, uriResolverMock.Object, NullLogger<LocalFileStorage>.Instance);
             await using (var stream = new MemoryStream())
             {
                 stream.Write(Encoding.ASCII.GetBytes("hello world"));

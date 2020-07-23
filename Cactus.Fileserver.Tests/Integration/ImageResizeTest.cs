@@ -23,7 +23,7 @@ namespace Cactus.Fileserver.Tests.Integration
         public async Task ImageOriginalStored()
         {
             var filename = "kartman.png";
-            var postRes = await Post(filename, "image/png");
+            var postRes = await PostMultipart(filename, "image/png");
             Assert.IsTrue(postRes.IsSuccessStatusCode, postRes.ToString());
             Assert.AreEqual(HttpStatusCode.Created, postRes.StatusCode);
             Assert.IsNotNull(postRes.Headers.Location);
@@ -43,7 +43,7 @@ namespace Cactus.Fileserver.Tests.Integration
         public async Task ImageDynamicallyResized()
         {
             var filename = "kartman.png";
-            var postRes = await Post(filename, "image/png");
+            var postRes = await PostMultipart(filename, "image/png");
 
             Assert.IsTrue(postRes.IsSuccessStatusCode, postRes.ToString());
             Assert.AreEqual(HttpStatusCode.Created, postRes.StatusCode);
@@ -79,7 +79,7 @@ namespace Cactus.Fileserver.Tests.Integration
         {
             var filename = "kartman.png";
             var instructions200 = new ResizeInstructions { Width = 200, Height = 200 };
-            var postRes = await Post(filename, "image/png");
+            var postRes = await PostMultipart(filename, "image/png");
             Assert.IsTrue(postRes.IsSuccessStatusCode, postRes.ToString());
             Assert.AreEqual(HttpStatusCode.Created, postRes.StatusCode);
             Assert.IsNotNull(postRes.Headers.Location);
