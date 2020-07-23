@@ -48,6 +48,10 @@ namespace Cactus.Fileserver.Tests.Integration
             Assert.IsNotNull(location);
 
             var getRes = await Get(location);
+            if (getRes.StatusCode == HttpStatusCode.MovedPermanently)
+            {
+                getRes = await Get(getRes.Headers.Location.ToString());
+            }
             Assert.IsTrue(getRes.IsSuccessStatusCode, getRes.ToString());
             Assert.AreEqual(HttpStatusCode.OK, getRes.StatusCode, getRes.ToString());
             Assert.AreEqual(content.Length, (await getRes.Content.ReadAsByteArrayAsync()).Length);

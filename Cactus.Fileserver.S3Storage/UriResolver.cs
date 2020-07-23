@@ -1,5 +1,6 @@
 using System;
 using Cactus.Fileserver.Model;
+using Microsoft.Extensions.Options;
 
 namespace Cactus.Fileserver.S3Storage
 {
@@ -21,7 +22,7 @@ namespace Cactus.Fileserver.S3Storage
         string ResolveKey(IMetaInfo fileInfo);
     }
 
-    public class DirectUriResolver : IUriResolver
+    public class DirectS3UriResolver : IUriResolver
     {
         public const string AwsUrlFormat = "https://s3.{0}.amazonaws.com/{1}/{2}";
 
@@ -32,7 +33,27 @@ namespace Cactus.Fileserver.S3Storage
 
         public string ResolveKey(IMetaInfo fileInfo)
         {
-            return fileInfo.Uri.GetResource();
+            return fileInfo.InternalUri.GetResource();
+        }
+    }
+
+    public class FileserverUriResolver : IUriResolver
+    {
+        private readonly string _baseUri;
+
+        public FileserverUriResolver(IOptions<S3FileStorageOptions> options)
+        {
+            _baseUri = options.Value.BaseUri.ToString().TrimEnd('/');
+        }
+
+        public Uri ResolveUri(string region, string bucket, string key)
+        {
+            return new Uri($"{_baseUri}/{bucket}/{key}");
+        }
+
+        public string ResolveKey(IMetaInfo fileInfo)
+        {
+            return fileInfo.InternalUri.GetResource();
         }
     }
 }

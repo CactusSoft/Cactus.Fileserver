@@ -1,4 +1,5 @@
 ﻿using System;
+using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
 using Cactus.Fileserver.Storage;
@@ -20,10 +21,11 @@ namespace Cactus.Fileserver.S3Storage
             services.AddScoped<IAmazonS3, AmazonS3Client>(c =>
              {
                  var config = c.GetRequiredService<IOptions<S3FileStorageOptions>>().Value;
-                 return new AmazonS3Client(new BasicAWSCredentials(config.AccessKey, config.SecretKey));
+                 return new AmazonS3Client(config.AccessKey, config.SecretKey, RegionEndpoint.GetBySystemName(config.Region));
              });
 
             services.AddSingleton<IStoredNameProvider, RandomNameProvider>();
+            services.AddScoped<IUriResolver, FileserverUriResolver>();
             services.AddScoped<IFileStorage>(c => new S3FileStorage(
                 c.GetRequiredService<IOptions<S3FileStorageOptions>>().Value,
                 c.GetRequiredService<IAmazonS3>(),

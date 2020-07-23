@@ -1,3 +1,5 @@
+using System;
+
 namespace Cactus.Fileserver.S3Storage
 {
     public interface IS3FileStorageOptions
@@ -15,6 +17,7 @@ namespace Cactus.Fileserver.S3Storage
 
     public class S3FileStorageOptions : IS3FileStorageOptions, IS3SecretOptions
     {
+        public Uri BaseUri { get; set; }
         public string BucketName { get; set; }
         public string Region { get; set; }
         public string AccessKey { get; set; }

@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Cactus.Fileserver.Aspnet.Config;
+using Cactus.Fileserver.Aspnet.Middleware;
 using Cactus.Fileserver.ImageResizer;
 using Cactus.Fileserver.ImageResizer.Utils;
 using Cactus.Fileserver.LocalStorage.Config;
+using Cactus.Fileserver.S3Storage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -43,6 +45,15 @@ namespace Cactus.Fileserver.Simple
                 o.BaseUri = new Uri(url);
             });
 
+            //services.AddS3FileStorage(o =>
+            //{
+            //    o.BaseUri = new Uri(url);
+            //    o.BucketName = "cactussoft.fileserver.test";
+            //    o.Region = "eu-central-1";
+            //    o.AccessKey = "-";
+            //    o.SecretKey = "-";
+            //});
+
             services.AddLocalMetaStorage(o =>
             {
                 o.BaseFolder = _env.WebRootPath;
@@ -67,23 +78,23 @@ namespace Cactus.Fileserver.Simple
                 .UseDeveloperExceptionPage()
                      //.Map("/files", branch => branch       //<--- In case of using sub-path
                      .UseDynamicResizing()
-                     .UseGetFile(b => b //Files will be retrieved using StaticFiles middleware which is fast but insecure
-                        .UseStaticFiles(new StaticFileOptions
-                        {
-                            FileProvider = new PhysicalFileProvider(storageFolder.FullName, ExclusionFilters.None),
-                            DefaultContentType = "application/octet-stream",
-                            ServeUnknownFileTypes = true, //<---- do not use on production to prevent upload executable content like viruses
-                            ContentTypeProvider = new FileExtensionContentTypeProvider(new Dictionary<string, string>
-                            {
-                                { ".json", "application/json"},
-                                { ".svg", "image/svg+xml"},
-                                { ".png", "image/png"}
-                            })
-                        }))
+                     .UseGetFile(b => b
+                         //.UseMiddleware<RedirectToInternalStorageHandler>())  //Redirect to S3/Azure for case of public accessible bucket
+                         //.UseMiddleware<GetFileHandler>())                    //Slower, but full-controlled
+                         .UseStaticFiles(new StaticFileOptions                  //Files will be retrieved using StaticFiles middleware which is fast but insecure
+                         {
+                             FileProvider = new PhysicalFileProvider(storageFolder.FullName, ExclusionFilters.None),
+                             DefaultContentType = "application/octet-stream",
+                             ServeUnknownFileTypes = true, //<---- do not use on production to prevent upload executable content like viruses
+                             ContentTypeProvider = new FileExtensionContentTypeProvider(new Dictionary<string, string>
+                             {
+                                 { ".json", "application/json"},
+                                 { ".svg", "image/svg+xml"},
+                                 { ".png", "image/png"}
+                             })
+                         }))
                      .UseAddFile()
                      .UseDelFile()
-
-                //)
 
                 //Default handler for requests that are not targeted to the file server
                 .Run(async context =>

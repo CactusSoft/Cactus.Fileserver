@@ -26,22 +26,44 @@ namespace Cactus.Fileserver.S3Storage
 
         public virtual async Task<Uri> Add(Stream stream, IMetaInfo info)
         {
-            var key = NameProvider.GetName(info);
-            var putRequest = new PutObjectRequest
+            var streamToUpload = stream;
+            var disposeRequired = false;
+            if (!stream.CanSeek)
             {
-                BucketName = Settings.BucketName,
-                Key = key,
-                InputStream = stream,
-                AutoCloseStream = true,
-                CannedACL = S3CannedACL.PublicRead
-            };
-            putRequest.Metadata.Add(nameof(info.OriginalName), info.OriginalName);
-            putRequest.Metadata.Add(nameof(info.MimeType), info.MimeType);
-            putRequest.Metadata.Add(nameof(info.Owner), info.Owner);
+                //AWS requires stream to have defined Length (be seakable)
+                //Here the income stream could be 'raw from request' with unknown length
+                //So, let's read it into MemoryStream as a buffer
+                streamToUpload = new MemoryStream();
+                await stream.CopyToAsync(streamToUpload);
+                streamToUpload.Seek(0, 0);
+                disposeRequired = true;
+            }
 
-            await S3Client.PutObjectAsync(putRequest);
-            return UriResolver.ResolveUri(Settings.Region, Settings.BucketName, key);
+            try
+            {
+                var key = NameProvider.GetName(info);
+                var putRequest = new PutObjectRequest
+                {
+                    BucketName = Settings.BucketName,
+                    Key = key,
+                    InputStream = streamToUpload,
+                    AutoCloseStream = true,
+                    CannedACL = S3CannedACL.PublicRead
+                };
+                putRequest.Metadata.Add(nameof(info.OriginalName), info.OriginalName);
+                putRequest.Metadata.Add(nameof(info.MimeType), info.MimeType);
+                putRequest.Metadata.Add(nameof(info.Owner), info.Owner);
 
+                var res = await S3Client.PutObjectAsync(putRequest);
+                info.InternalUri = new Uri($"https://s3.{Settings.Region}.amazonaws.com/{Settings.BucketName}/{key}");
+                info.Uri = UriResolver.ResolveUri(Settings.Region, Settings.BucketName, key);
+                return info.Uri;
+            }
+            finally
+            {
+                if (disposeRequired)
+                    streamToUpload.Dispose();
+            }
         }
 
         public virtual Task Delete(IMetaInfo fileInfo)
