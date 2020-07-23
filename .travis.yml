@@ -9,6 +9,6 @@ script:
   - dotnet restore
   - dotnet build
   - dotnet test Cactus.Fileserver.Tests/Cactus.Fileserver.Tests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
-  - dotnet test Cactus.Fileserver.LocalStorage.Tests/Cactus.Fileserver.LocalStorage.Tests.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
+  - dotnet test Cactus.Fileserver.LocalStorage.Test/Cactus.Fileserver.LocalStorage.Test.csproj /p:CollectCoverage=true /p:CoverletOutputFormat=opencover
 after_script:
   - bash <(curl -s https://codecov.io/bash)
