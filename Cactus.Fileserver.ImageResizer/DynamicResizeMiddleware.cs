@@ -83,10 +83,9 @@ namespace Cactus.Fileserver.ImageResizer
                 using (var original = await storage.Get(request.GetAbsoluteUri()))
                 {
                     resizer.Resize(original, tempFile, instructions);
-                    var newFileInfo = new MetaInfo(metaData) {Origin = metaData.Uri, Uri = null};
+                    var newFileInfo = new MetaInfo(metaData) {Origin = metaData.Uri, Uri = metaData.Uri.GetFolder() };
                     tempFile.Position = 0;
                     await storage.Create(tempFile, newFileInfo);
-                    Debug.Assert(newFileInfo.Uri != null, "newFileInfo.Uri != null");
                     metaData.Extra.Add(sizeKey, newFileInfo.Uri.ToString());
                     await storage.UpdateInfo(metaData);
                     context.Response.Redirect(newFileInfo.Uri.ToString(), true);

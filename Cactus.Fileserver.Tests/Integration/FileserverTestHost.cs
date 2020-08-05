@@ -89,7 +89,7 @@ namespace Cactus.Fileserver.Tests.Integration
                 form.Add(fileContent, "file", fileUpload.FileName);
             }
             var client = new HttpClient();
-            return client.PostAsync(BaseUrl + "files", form);
+            return client.PostAsync(BaseUrl, form);
         }
 
         protected Task<HttpResponseMessage> Get(string url)

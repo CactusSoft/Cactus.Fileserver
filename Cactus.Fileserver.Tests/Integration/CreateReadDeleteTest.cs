@@ -143,7 +143,7 @@ namespace Cactus.Fileserver.Tests.Integration
             Assert.IsNotNull(location);
 
             var getRes = await Get(location + ".json");
-            Assert.IsTrue(getRes.IsSuccessStatusCode, getRes.ToString());
+            Assert.IsTrue(getRes.IsSuccessStatusCode, $"Fail to get {location}.json: {getRes}");
             Assert.AreEqual(HttpStatusCode.OK, getRes.StatusCode, getRes.ToString());
             Assert.IsNotNull(getRes.Content);
             var metaData = JsonConvert.DeserializeObject<MetaInfo[]>(await postRes.Content.ReadAsStringAsync());

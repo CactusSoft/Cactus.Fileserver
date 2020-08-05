@@ -13,7 +13,7 @@ namespace Cactus.Fileserver.LocalStorage.Config
             services.Configure(configureOptions);
             services.TryAddEnumerable(ServiceDescriptor.Singleton<IValidateOptions<LocalFileStorageOptions>, LocalFileStorageOptionsValidator>());
 
-            services.AddScoped<IUriResolver, BaseFolderUriResolver>();
+            services.AddScoped<IUriResolver, SubfolderUriResolver>();
             services.AddScoped<IFileStorage, LocalFileStorage>();
             services.AddSingleton<IStoredNameProvider, RandomNameProvider>();
             services.AddScoped<IFileStorageService, FileStorageService>();

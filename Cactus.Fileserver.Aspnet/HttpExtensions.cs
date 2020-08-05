@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Cactus.Fileserver.Aspnet
 {
-    internal static class HttpExtension
+    internal static class HttpExtensions
     {
         public static Uri GetAbsoluteUri(this HttpRequest request)
         {

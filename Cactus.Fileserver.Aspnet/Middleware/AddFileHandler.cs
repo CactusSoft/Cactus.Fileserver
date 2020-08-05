@@ -54,6 +54,7 @@ namespace Cactus.Fileserver.Aspnet.Middleware
         {
             return new MetaInfo
             {
+                Uri = ctx.Request.GetAbsoluteUri(),
                 MimeType = ctx.Request.ContentType ?? "application/octet-stream",
                 Owner = GetOwner(ctx.User.Identity)
             };

@@ -4,7 +4,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>Cactus.Fileserver.LocalStorage</AssemblyName>
     <RootNamespace>Cactus.Fileserver.LocalStorage</RootNamespace>
-    <Version>4.0.0</Version>
+    <Version>4.0.3</Version>
     <Company>CactusSoft LLC</Company>
     <Authors>YanO</Authors>
     <Copyright>Copyright CactusSoft 2016</Copyright>

@@ -21,7 +21,7 @@ namespace Cactus.Fileserver.LocalStorage.Test
                 BaseFolder = baseFolder,
                 BaseUri = new Uri(baseUri)
             });
-            var resolver = new BaseFolderUriResolver(options);
+            var resolver = new SingleFolderUriResolver(options);
 
             var res = resolver.ResolveUri(new MetaInfo { InternalUri = new Uri("file://" + fullFilePath) });
             Assert.AreEqual(baseUri + "/" + fileName, res.ToString());
