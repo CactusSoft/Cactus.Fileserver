@@ -1,14 +1,10 @@
 using Cactus.Fileserver.ImageResizer.Utils;
-
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
-
 using System;
 using System.IO;
-
 using Image = SixLabors.ImageSharp.Image;
 
 
@@ -40,31 +36,6 @@ namespace Cactus.Fileserver.ImageResizer
             _log = log;
         }
 
-        //public virtual void ProcessImage(Stream inputStream, Stream outputStream, Instructions instructions)
-        //{
-        //    if (!inputStream.CanRead)
-        //        throw new ArgumentException("inputStream is nor readable");
-        //    if (!outputStream.CanWrite)
-        //        throw new ArgumentException("outputStream is nor writable");
-
-        //    var image = new Image(inputStream); //<<<< DISPOSABLE!!!
-        //    var imageRatio = image.PixelRatio;
-        //    instructions.Join(_defaultInstructions);
-        //    instructions.Join(_mandatoryInstructions, true);
-        //    if (instructions.Width != null || instructions.Height != null || instructions["maxwidth"] != null || instructions["maxheight"] != null)
-        //    {
-        //        GetActualSize(instructions,imageRatio);
-        //        image.Resize(new ResizeOptions
-        //        {
-        //            Sampler = new BicubicResampler(),
-        //            Size = new Size(instructions.Width.Value, instructions.Height.Value),
-        //            Mode = instructions.Mode??ResizeMode.Max
-        //        });
-        //    }
-
-        //    image.SaveAsJpeg(outputStream);
-        //}
-
         public virtual void Resize(Stream inputStream, Stream outputStream, ResizeInstructions instructions)
         {
             if (!inputStream.CanRead)
@@ -75,14 +46,13 @@ namespace Cactus.Fileserver.ImageResizer
             instructions.Join(options.DefaultInstructions);
             instructions.Join(options.MandatoryInstructions, true);
 
-            _log.LogDebug("Start resizing...");
             using (var image = Image.Load(inputStream, out var imageInfo))
             {
                 var targetSize = GetTargetSize(instructions, image.Width / (double)image.Height);
-                _log.LogDebug("Format {0}, original size {1}x{2}:{3} bytes, target size {4}x{5}", imageInfo.Name, image.Width, image.Height, inputStream.Length, targetSize.Width, targetSize.Height);
+                _log.LogDebug("Resize {image_format_name}, original size {width}x{height}:{size} bytes, target size {width}x{height}", imageInfo.Name, image.Width, image.Height, inputStream.Length, targetSize.Width, targetSize.Height);
                 image.Mutate(x => x.Resize(targetSize.Width, targetSize.Height));
                 image.Save(outputStream, imageInfo); // Automatic encoder selected based on extension.
-                _log.LogDebug("Resizing complete, output image size: {0}x{1}:{2} bytes", targetSize.Width, targetSize.Height, outputStream.Length);
+                _log.LogDebug("Resizing complete, output image size: {width}x{height}:{size} bytes", targetSize.Width, targetSize.Height, outputStream.Length);
             }
         }
 

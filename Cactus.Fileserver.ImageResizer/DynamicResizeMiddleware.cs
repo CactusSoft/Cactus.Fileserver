@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Cactus.Fileserver.ImageResizer.Utils;
@@ -33,7 +32,7 @@ namespace Cactus.Fileserver.ImageResizer
             var instructions = new ResizeInstructions(context.Request.QueryString);
             if (instructions.Width == null && instructions.Height == null)
             {
-                _log.LogDebug("No resizing instruction found in query string");
+                _log.LogDebug("No resizing instruction found in query string, continue pipeline");
                 await _next(context);
                 return;
             }
@@ -44,15 +43,17 @@ namespace Cactus.Fileserver.ImageResizer
             try
             {
                 metaData = await storage.GetInfo<MetaInfo>(request.GetAbsoluteUri());
+                _ = metaData ?? throw new FileNotFoundException($"No metadata found for {request.GetAbsoluteUri()}");
+
                 if (metaData.Origin != null && !metaData.Uri.Equals(metaData.Origin))
                 {
-                    _log.LogDebug("{0} is not origin, getting the origin for transformation", metaData.Uri);
+                    _log.LogDebug("{uri} is not origin, getting the origin for transformation", metaData.Uri);
                     metaData = await storage.GetInfo<MetaInfo>(metaData.Origin);
                 }
             }
             catch (FileNotFoundException)
             {
-                _log.LogDebug("No metadata found for the requested file. Let the request pass its way");
+                _log.LogWarning("No metadata found for the requested file, continue pipeline");
                 await _next(context);
                 return;
             }
@@ -62,7 +63,7 @@ namespace Cactus.Fileserver.ImageResizer
                 !metaData.MimeType.Equals("image/jpg") &&
                 !metaData.MimeType.Equals("image/png"))
             {
-                _log.LogInformation("The file type is {0}, resizing is not supported", metaData.MimeType);
+                _log.LogInformation("The file type is {content-type}, resizing is not supported, continue pipeline", metaData.MimeType);
                 await _next(context);
                 return;
             }
@@ -71,8 +72,9 @@ namespace Cactus.Fileserver.ImageResizer
             var sizeKey = instructions.BuildSizeKey();
             if (metaData.Extra.TryGetValue(sizeKey, out var redirectUri))
             {
-                _log.LogDebug("{0} size found, do redirect", sizeKey);
+                _log.LogDebug("{size_key} size found, do redirect", sizeKey);
                 context.Response.Redirect(redirectUri, true);
+                _log.LogInformation("Served by {handler}", GetType().Name);
                 return;
             }
 
@@ -83,12 +85,14 @@ namespace Cactus.Fileserver.ImageResizer
                 using (var original = await storage.Get(request.GetAbsoluteUri()))
                 {
                     resizer.Resize(original, tempFile, instructions);
-                    var newFileInfo = new MetaInfo(metaData) {Origin = metaData.Uri, Uri = metaData.Uri.GetFolder() };
+                    var newFileInfo = new MetaInfo(metaData) { Origin = metaData.Uri, Uri = metaData.Uri.GetFolder() };
                     tempFile.Position = 0;
                     await storage.Create(tempFile, newFileInfo);
                     metaData.Extra.Add(sizeKey, newFileInfo.Uri.ToString());
                     await storage.UpdateInfo(metaData);
+                    _log.LogDebug("Resized successfully to {size_key}, redirect to {url}", sizeKey, newFileInfo.Uri);
                     context.Response.Redirect(newFileInfo.Uri.ToString(), true);
+                    _log.LogInformation("Served by {handler}", GetType().Name);
                     return;
                 }
             }

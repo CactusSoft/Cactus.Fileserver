@@ -43,8 +43,8 @@ namespace Cactus.Fileserver.LocalStorage
             {
                 await stream.CopyToAsync(dest);
             }
-            
-            info.InternalUri=new Uri("file://"+fullFilePath);
+
+            info.InternalUri = new Uri("file://" + fullFilePath);
             info.Uri = _uriResolver.ResolveUri(info);
             _log.LogDebug("{filename} stored as {file}, the full uri is {uri}", info.OriginalName, fullFilePath, info.Uri);
             return info.Uri;
@@ -52,17 +52,19 @@ namespace Cactus.Fileserver.LocalStorage
 
         public Task Delete(IMetaInfo fileInfo)
         {
+            _log.LogDebug("Delete file {name}: {uri}", fileInfo.OriginalName, fileInfo.InternalUri.AbsolutePath);
             File.Delete(fileInfo.InternalUri.AbsolutePath);
             return Task.CompletedTask;
         }
 
         public Task<Stream> Get(IMetaInfo fileInfo)
         {
+            _log.LogDebug("Read file {name}: {uri}", fileInfo.OriginalName, fileInfo.InternalUri.AbsolutePath);
             var fullFilePath = fileInfo.InternalUri.AbsolutePath;
             var stream = new FileStream(fullFilePath, FileMode.Open, FileAccess.Read, FileShare.Read);
             return Task.FromResult((Stream)stream);
         }
     }
 
-    
+
 }

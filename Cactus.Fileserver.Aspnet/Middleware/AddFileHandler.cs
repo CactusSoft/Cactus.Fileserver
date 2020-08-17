@@ -16,10 +16,12 @@ namespace Cactus.Fileserver.Aspnet.Middleware
     {
         protected static readonly string JsonMimeType = "application/json";
         private readonly ILogger<AddFileHandler> _log;
+        protected readonly JsonSerializerSettings SerializerSettings;
 
         public AddFileHandler(RequestDelegate next, ILogger<AddFileHandler> log)
         {
             _log = log;
+            SerializerSettings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
         }
 
         public async Task InvokeAsync(HttpContext ctx, IFileStorageService fileStorage)
@@ -35,7 +37,7 @@ namespace Cactus.Fileserver.Aspnet.Middleware
             ctx.Response.StatusCode = (int)HttpStatusCode.Created;
             ctx.Response.Headers.Add("Location", metaInfo.Uri.ToString());
             ctx.Response.ContentType = JsonMimeType;
-            await ctx.Response.WriteAsync(JsonConvert.SerializeObject(BuldOkResponseObject(metaInfo)));
+            await ctx.Response.WriteAsync(JsonConvert.SerializeObject(BuldOkResponseObject(metaInfo), SerializerSettings));
         }
 
         protected virtual async Task<IMetaInfo> ProcessUpload(HttpContext ctx, IFileStorageService fileStorage)

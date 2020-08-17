@@ -22,11 +22,13 @@ namespace Cactus.Fileserver.Aspnet.Middleware
         protected static readonly string JsonMimeType = "application/json";
         private readonly RequestDelegate _next;
         private readonly ILogger<AddFilesFromMultipartContentHandler> _log;
+        protected readonly JsonSerializerSettings SerializerSettings;
 
         public AddFilesFromMultipartContentHandler(RequestDelegate next, ILogger<AddFilesFromMultipartContentHandler> log)
         {
             _next = next;
             _log = log;
+            SerializerSettings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore};
         }
 
         public async Task InvokeAsync(HttpContext ctx, IFileStorageService fileStorage)
@@ -72,7 +74,7 @@ namespace Cactus.Fileserver.Aspnet.Middleware
             }
 
             ctx.Response.ContentType = JsonMimeType;
-            await ctx.Response.WriteAsync(JsonConvert.SerializeObject(results));
+            await ctx.Response.WriteAsync(JsonConvert.SerializeObject(results, SerializerSettings));
         }
 
         protected virtual async Task<IMetaInfo> ProcessPart(HttpContext ctx, HttpContent content,
