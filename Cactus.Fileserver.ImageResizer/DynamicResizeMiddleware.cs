@@ -11,11 +11,14 @@ namespace Cactus.Fileserver.ImageResizer
     public class DynamicResizingMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly IUriResolver _uriResolver;
         private readonly ILogger<DynamicResizingMiddleware> _log;
 
-        public DynamicResizingMiddleware(RequestDelegate next, ILogger<DynamicResizingMiddleware> logger)
+        public DynamicResizingMiddleware(RequestDelegate next, IUriResolver uriResolver,
+            ILogger<DynamicResizingMiddleware> logger)
         {
             _next = next;
+            _uriResolver = uriResolver;
             _log = logger;
         }
 
@@ -41,7 +44,7 @@ namespace Cactus.Fileserver.ImageResizer
             MetaInfo metaData;
             try
             {
-                var resourceUri = ResolveResourceUri(context);
+                var resourceUri = _uriResolver.Resolve(request);
                 metaData = await storage.GetInfo<MetaInfo>(resourceUri);
                 _ = metaData ?? throw new FileNotFoundException($"No metadata found for {resourceUri}");
 
@@ -104,11 +107,6 @@ namespace Cactus.Fileserver.ImageResizer
             }
 
             await _next(context);
-        }
-
-        protected virtual Uri ResolveResourceUri(HttpContext context)
-        {
-            return context.Request.GetAbsoluteUri();
         }
     }
 }
