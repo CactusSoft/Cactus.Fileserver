@@ -12,6 +12,7 @@
     <PackageProjectUrl>https://github.com/CactusSoft/Cactus.Fileserver</PackageProjectUrl>
     <RepositoryUrl>https://github.com/CactusSoft/Cactus.Fileserver</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageVersion>4.0.6</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>

@@ -10,7 +10,6 @@ namespace Cactus.Fileserver.ImageResizer
 {
     public class DynamicResizingMiddleware
     {
-
         private readonly RequestDelegate _next;
         private readonly ILogger<DynamicResizingMiddleware> _log;
 
@@ -42,8 +41,9 @@ namespace Cactus.Fileserver.ImageResizer
             MetaInfo metaData;
             try
             {
-                metaData = await storage.GetInfo<MetaInfo>(request.GetAbsoluteUri());
-                _ = metaData ?? throw new FileNotFoundException($"No metadata found for {request.GetAbsoluteUri()}");
+                var resourceUri = ResolveResourceUri(context);
+                metaData = await storage.GetInfo<MetaInfo>(resourceUri);
+                _ = metaData ?? throw new FileNotFoundException($"No metadata found for {resourceUri}");
 
                 if (metaData.Origin != null && !metaData.Uri.Equals(metaData.Origin))
                 {
@@ -63,7 +63,8 @@ namespace Cactus.Fileserver.ImageResizer
                 !metaData.MimeType.Equals("image/jpg") &&
                 !metaData.MimeType.Equals("image/png"))
             {
-                _log.LogInformation("The file type is {content-type}, resizing is not supported, continue pipeline", metaData.MimeType);
+                _log.LogInformation("The file type is {content-type}, resizing is not supported, continue pipeline",
+                    metaData.MimeType);
                 await _next(context);
                 return;
             }
@@ -85,7 +86,7 @@ namespace Cactus.Fileserver.ImageResizer
                 using (var original = await storage.Get(request.GetAbsoluteUri()))
                 {
                     resizer.Resize(original, tempFile, instructions);
-                    var newFileInfo = new MetaInfo(metaData) { Origin = metaData.Uri, Uri = metaData.Uri.GetFolder() };
+                    var newFileInfo = new MetaInfo(metaData) {Origin = metaData.Uri, Uri = metaData.Uri.GetFolder()};
                     tempFile.Position = 0;
                     await storage.Create(tempFile, newFileInfo);
                     metaData.Extra.Add(sizeKey, newFileInfo.Uri.ToString());
@@ -103,6 +104,11 @@ namespace Cactus.Fileserver.ImageResizer
             }
 
             await _next(context);
+        }
+
+        protected virtual Uri ResolveResourceUri(HttpContext context)
+        {
+            return context.Request.GetAbsoluteUri();
         }
     }
 }
