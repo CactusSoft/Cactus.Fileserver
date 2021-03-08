@@ -13,11 +13,11 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/CactusSoft/Cactus.Fileserver</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageVersion>4.0.1</PackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AWSSDK.Core" Version="3.3.107.26" />
-    <PackageReference Include="AWSSDK.S3" Version="3.3.111.27" />
+    <PackageReference Include="AWSSDK.S3" Version="3.5.9.3" />
   </ItemGroup>
 
   <ItemGroup>

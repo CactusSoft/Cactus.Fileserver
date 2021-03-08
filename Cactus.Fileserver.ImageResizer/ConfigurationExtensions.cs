@@ -15,9 +15,7 @@ namespace Cactus.Fileserver.ImageResizer
             return services;
         }
 
-        public static IServiceCollection AddDynamicResizing<T>(
-            this IServiceCollection services,
-            T uriResolver,
+        public static IServiceCollection AddDynamicResizing<T>(this IServiceCollection services,
             Action<ResizingOptions> configureOptions) where T : class, IUriResolver
         {
             services.Configure(configureOptions);
