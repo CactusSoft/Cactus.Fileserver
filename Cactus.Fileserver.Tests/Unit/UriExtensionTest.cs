@@ -17,6 +17,8 @@ namespace Cactus.Fileserver.Tests.Unit
             Assert.AreEqual("file.ext", new Uri("http://srv.co//folder/folder/file.ext").GetResource());
             Assert.AreEqual("", new Uri("http://srv.co").GetResource());
             Assert.AreEqual("", new Uri("http://srv.co/folder/").GetResource());
+            Assert.AreEqual("80yoJH0M3GVAXxjm.jpg", new Uri("https://s3.eu-north-1.amazonaws.com/wrprod/80yoJH0M3GVAXxjm.jpg").GetResource());
+            
         }
 
         [TestMethod]

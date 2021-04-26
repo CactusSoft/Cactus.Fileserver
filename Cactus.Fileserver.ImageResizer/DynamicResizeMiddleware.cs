@@ -37,7 +37,7 @@ namespace Cactus.Fileserver.ImageResizer
                 return;
             }
 
-            _log.LogDebug("It looks like resizing is requested. Looking for the file mete data first...");
+            _log.LogDebug("It looks like resizing is requested. Looking for the file meta data first...");
             var request = context.Request;
             MetaInfo metaData;
             try
@@ -82,7 +82,7 @@ namespace Cactus.Fileserver.ImageResizer
             {
                 _log.LogDebug("Do resizing");
                 using (var tempFile = new MemoryStream())
-                using (var original = await storage.Get(request.GetAbsoluteUri()))
+                using (var original = await storage.Get(metaData.Uri))
                 {
                     resizer.Resize(original, tempFile, instructions);
                     var newFileInfo = new MetaInfo(metaData) { Origin = metaData.Uri, Uri = metaData.Uri.GetFolder() };

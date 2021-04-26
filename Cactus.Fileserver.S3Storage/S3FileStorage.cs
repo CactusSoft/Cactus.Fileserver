@@ -1,5 +1,8 @@
 using System;
 using System.IO;
+using System.Linq;
+using System.Net.Mime;
+using System.Text;
 using System.Threading.Tasks;
 using Amazon.S3;
 using Amazon.S3.Model;
@@ -50,7 +53,10 @@ namespace Cactus.Fileserver.S3Storage
                     AutoCloseStream = true,
                     CannedACL = S3CannedACL.PublicRead
                 };
-                putRequest.Metadata.Add(nameof(info.OriginalName), info.OriginalName);
+                var asciiOriginName = new string(Encoding.ASCII.GetChars(Encoding.ASCII.GetBytes(info.OriginalName))
+                    .Select(c => c == '?' ? '-' : c)
+                    .ToArray());
+                putRequest.Metadata.Add(nameof(info.OriginalName), asciiOriginName);
                 putRequest.Metadata.Add(nameof(info.MimeType), info.MimeType);
                 putRequest.Metadata.Add(nameof(info.Owner), info.Owner);
 
